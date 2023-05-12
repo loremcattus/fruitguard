@@ -1,0 +1,53 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <p>Ver campañas</p>
+    </section>
+    <hr>
+    <h1>Buscar campaña</h1>
+    <form action="">
+        <select class="half">
+            <option selected>Región</option>
+            <% for (let i=0; i <=5; i++ ) { %>
+                <option>Opción <%= i+1 %>
+                </option>
+                <% } %>
+        </select>
+        <select class="half" disabled>
+            <option selected>Comuna</option>
+            <% for (let i=0; i <=5; i++ ) { %>
+                <option>Opción <%= i+1 %>
+                </option>
+                <% } %>
+        </select>
+        <input class="full" type="text" placeholder="ID o nombre de la campaña">
+        <div class="bottom-crud">
+            <div class="check-container">
+                <label for="close">Mostrar cerradas</label>
+                <input id="close" type="checkbox">
+            </div>
+            <a class="button-green-crud" href="#">Buscar</a>
+        </div>
+    </form>
+    <hr>
+    <section class="cards">
+        <% for (let i=0; i <=5; i++ ) { %>
+            <a href="#">
+                <div class="card-left-side">
+                    <p class="card-left-side-top">ID | <span class="card-left-side-top-highlight">Nombre
+                            campaña</span>
+                    </p>
+                    <p class="card-left-side-bottom">Región > Comuna</p>
+                </div>
+                <div class="card-right-side">
+                    <p>Estado</p>
+                </div>
+            </a>
+            <% } %>
+    </section>
+    <button type="button" class="add-button" data-toggle="modal" data-target="#addModal"
+        aria-label="addButton"></button>
+</main>
+<div style="display: none;" id="addModal" role="form" aria-labelledby="addModalLabel">
+    hola
+</div>

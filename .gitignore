@@ -1,0 +1,28 @@
+# Ignora binario de Node.js
+node/
+
+# Ignora la carpeta node_modules y su contenido
+node_modules/
+
+# Ignora el archivo .env
+.env
+
+# Ignora los archivos de respaldo de VS Code
+.vscode/
+
+# Ignora los archivos de configuración de Visual Studio
+*.sln
+*.suo
+*.csproj
+*.user
+*.vspscc
+*.vssscc
+*.obj
+*.pdb
+*.cache
+*.ilk
+*.log
+*.xls
+*.xlsx
+*.mdf
+*.ldf
