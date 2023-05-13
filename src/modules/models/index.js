@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { Sequelize, DataTypes, Model } from 'sequelize';
 import userModel from  './user.js';
 import campaignModel from  './campaign.js';
+import userRegisterModel from  './userRegister.js';
 
 dotenv.config();
 
@@ -33,21 +34,18 @@ try {
 }
 
 // Modelos
-const sendToModels = {sequelize, DataTypes, Model};
-
 const models = {
   force,
   Sequelize,
   sequelize,
-  User: userModel(sendToModels),
-  Campaign: campaignModel(sendToModels)
+  User: userModel(sequelize),
+  Campaign: campaignModel(sequelize),
+  UserRegister: userRegisterModel(sequelize),
 };
 
-// TODO: Separar UserRegister en un archivo de modelo distinto y llamarlo en este
 // Associations
-const UserRegister = sequelize.define( 'UserRegister', {}, { tableName: 'user_registers', timestamps: false } );
-models.Campaign.belongsToMany( models.User, { through: UserRegister } ); // Relación muchos a muchos entre Campaign y User
-models.User.belongsToMany( models.Campaign, { through: UserRegister } ); // Relación muchos a muchos entre User y Campaign
+models.Campaign.belongsToMany( models.User, { through: models.UserRegister } ); // Relación muchos a muchos entre Campaign y User
+models.User.belongsToMany( models.Campaign, { through: models.UserRegister } ); // Relación muchos a muchos entre User y Campaign
 
 // Synchronize
 models.sequelize.sync({ force })

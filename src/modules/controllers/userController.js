@@ -4,13 +4,13 @@ import { validateRequestBody, validateFieldsDataType, validateRUT } from '../../
 const { User, force } = models;
 
 // Define las propiedades que se van a extraer de los usuarios
-const userProps = ['id', 'role', 'name', 'run', 'dv_run', 'email', 'has_license'];
+const userProps = ['id', 'role', 'name', 'run', 'dvRun', 'email', 'hasLicense'];
 
 // Formatear respuesta de un usuario
 const formatUser = (user) => {
-  const { id, role, name, run, dv_run, email, has_license } = user;
-  const rut = `${run}-${dv_run}`;
-  return { id, role, name, rut, email, has_license };
+  const { id, role, name, run, dvRun, email, hasLicense } = user;
+  const rut = `${run}-${dvRun}`;
+  return { id, role, name, rut, email, hasLicense };
 };
 
 // Obtener todos los usuarios
@@ -67,11 +67,11 @@ export const addUser = async (req, res) => {
       return res.status(400).json(filteredObject);
     }
 
-    // Obtener el valor del campo run y dv_run del objeto validado
-    const { run, dv_run } = filteredObject;
+    // Obtener el valor del campo run y dvRun del objeto validado
+    const { run, dvRun } = filteredObject;
     // Validar el RUT
-    if (!validateRUT(`${run}-${dv_run}`)) {
-      return res.status(400).json({ errors: `El RUT '${run}-${dv_run}' es inválido` });
+    if (!validateRUT(`${run}-${dvRun}`)) {
+      return res.status(400).json({ errors: `El RUT '${run}-${dvRun}' es inválido` });
     }
 
     // Comprobar si el rut ya existe en la base de datos

@@ -1,4 +1,6 @@
-const campaignModel = ( { sequelize, DataTypes, Model } ) => {
+import { DataTypes, Model } from 'sequelize';
+
+const campaignModel = ( sequelize ) => {
 
   class Campaign extends Model {};
 
@@ -15,7 +17,7 @@ const campaignModel = ( { sequelize, DataTypes, Model } ) => {
     // Comuna a la que pertenece la campaña
     commune: DataTypes.STRING(50),
     // Identificador y nombre del archivo que contiene la imagen del mapa asociado a la campaña
-    map_id: DataTypes.INTEGER,
+    mapId: DataTypes.INTEGER,
   }, {
     sequelize,
     paranoid: true,
