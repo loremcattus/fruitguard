@@ -8,16 +8,14 @@
     <form action="">
         <select class="half">
             <option selected>Región</option>
-            <% for (let i=0; i <=5; i++ ) { %>
-                <option>Opción <%= i+1 %>
-                </option>
+                <% for (let i=0; i <=5; i++ ) { %>
+                    <option>Opción <%= i+1 %></option>
                 <% } %>
         </select>
         <select class="half" disabled>
             <option selected>Comuna</option>
-            <% for (let i=0; i <=5; i++ ) { %>
-                <option>Opción <%= i+1 %>
-                </option>
+                <% for (let i=0; i <=5; i++ ) { %>
+                    <option>Opción <%= i+1 %></option>
                 <% } %>
         </select>
         <input class="full" type="text" placeholder="ID o nombre de la campaña">
@@ -43,7 +41,7 @@
                     <p>Estado</p>
                 </div>
             </a>
-            <% } %>
+        <% } %>
     </section>
     <button type="button" class="add-button" data-toggle="modal" data-target="#addModal"
         aria-label="addButton"></button>

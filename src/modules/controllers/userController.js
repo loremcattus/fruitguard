@@ -1,7 +1,7 @@
 import models from '../models/index.js';
 import { validateRequestBody, validateFieldsDataType, validateRUT } from '../../helpers/validators.js';
 
-const { User } = models;
+const { User, force } = models;
 
 // Define las propiedades que se van a extraer de los usuarios
 const userProps = ['id', 'role', 'name', 'run', 'dv_run', 'email', 'has_license'];
@@ -14,16 +14,20 @@ const formatUser = (user) => {
 };
 
 // Obtener todos los usuarios
-export const getUsers = async (req, res) => {
+export const getUsers = async (__, res) => {
   try {
     // Obtener todos los usuarios con las propiedades definidas
     const users = await User.findAll({ attributes: userProps });
+
+    // Si no existen usuarios, lanzar un error para capturarlo en el bloque catch
+    if (!users[0]) throw new Error('No hay usuarios registrados');
+    
     // Dar formato a cada usuario y crear un nuevo array
     const formattedUsers = users.map(formatUser);
     // Enviar el array con los usuarios formateados
-    res.status(200).json(formattedUsers);
+    return res.status(200).json(formattedUsers);
   } catch (error) {
-    res.status(404).send();
+    return res.status(404).send({ error: error.message });
   }
 };
 
@@ -36,14 +40,14 @@ export const getUser = async (req, res) => {
     const user = await User.findByPk(id, { attributes: userProps });
 
     // Si el usuario no existe, lanzar un error para capturarlo en el bloque catch
-    if (!user) throw new Error('User not found');
+    if (!user) throw new Error('El usuario no existe');
 
     // Dar formato al usuario y crear un nuevo objeto
     const formattedUser = formatUser(user);
     // Enviar el usuario formateado
-    res.json(formattedUser);
+    return res.json(formattedUser);
   } catch (error) {
-    res.status(404).send({ error: error.message });
+    return res.status(404).send({ error: error.message });
   }
 };
 
@@ -55,9 +59,9 @@ export const addUser = async (req, res) => {
     if (Object.keys(req.body).length === 0) {
       return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío.' });
     }
-    // Validar el cuerpo de la solicitud
-    const filteredObject = await validateRequestBody(req.body, User);
 
+    // Filtrar y validar el cuerpo de la solicitud
+    const filteredObject = await validateRequestBody(req.body, User);
     // Comprobar errores de validación
     if (filteredObject.error) {
       return res.status(400).json(filteredObject);
@@ -70,7 +74,7 @@ export const addUser = async (req, res) => {
       return res.status(400).json({ errors: `El RUT '${run}-${dv_run}' es inválido` });
     }
 
-    // Comprobar si el usuario ya existe en la base de datos
+    // Comprobar si el rut ya existe en la base de datos
     const existingUser = await User.count({ where: { run }, paranoid: false });
     if (existingUser) {
       return res.status(409).json({ error: `El valor de run '${run}' ya está registrado` });
@@ -98,14 +102,6 @@ export const updateUser = async (req, res) => {
 
     // Obtener los campos que se desean actualizar desde el cuerpo de la solicitud
     let fieldsToUpdate = req.body;
-    // Eliminar los campos no deseados del objeto fieldsToUpdate
-    const unwantedFields = ['id', 'run', 'dv_run', 'has_license', 'role', 'createdAt', 'updatedAt', 'deletedAt'];
-    fieldsToUpdate = Object.keys(fieldsToUpdate)
-      .filter(field => !unwantedFields.includes(field))
-      .reduce((obj, field) => {
-        obj[field] = fieldsToUpdate[field];
-        return obj;
-      }, {});
 
     // Validar el cuerpo de la solicitud
     const fieldsValidated = validateFieldsDataType(fieldsToUpdate, User);
@@ -140,7 +136,7 @@ export const deleteUser = async (req, res) => {
     // Intentar eliminar el usuario de la base de datos
     const deletedRows = await User.destroy({
       where: { id },
-      // force: true
+      force
     });
 
     // Si se eliminaron filas, devolver una respuesta de éxito 200

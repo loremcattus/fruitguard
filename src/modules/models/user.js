@@ -10,7 +10,7 @@ const userModel = ( { sequelize, DataTypes, Model } ) => {
     // Nombre del usuario
     name: DataTypes.STRING(100),
     // RUT del usuario
-    run: DataTypes.STRING(8),
+    run: DataTypes.INTEGER,
     dv_run: DataTypes.CHAR(1),
     // Correo electrónico del usuario
     email: DataTypes.STRING(250),
