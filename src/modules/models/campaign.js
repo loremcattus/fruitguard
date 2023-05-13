@@ -1,8 +1,8 @@
 import { DataTypes, Model } from 'sequelize';
 
-const campaignModel = ( sequelize ) => {
+const campaignModel = (sequelize) => {
 
-  class Campaign extends Model {};
+  class Campaign extends Model { };
 
   Campaign.init({
     // Nombre de la campaña

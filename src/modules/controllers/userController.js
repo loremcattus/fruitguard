@@ -21,7 +21,7 @@ export const getUsers = async (__, res) => {
 
     // Si no existen usuarios, lanzar un error para capturarlo en el bloque catch
     if (!users[0]) throw new Error('No hay usuarios registrados');
-    
+
     // Dar formato a cada usuario y crear un nuevo array
     const formattedUsers = users.map(formatUser);
     // Enviar el array con los usuarios formateados

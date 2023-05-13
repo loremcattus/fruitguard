@@ -115,7 +115,7 @@ export const validateFieldsDataType = (data, model) => {
       errors[key] = `El valor debe tener una longitud exacta de ${attribute.type.options.length} caracteres`;
       continue;
     }
-    
+
     // Si el tipo de dato es un enum y el valor no está en los valores permitidos, se agrega un error al objeto de errores
     if (type === 'enum' && validateEnum(value, attribute)) {
       errors[key] = `El valor no es válido`;
@@ -211,26 +211,26 @@ export const validateRequestBody = async (body, model) => {
 export const validateRUT = (rut) => {
   let splitRUT = rut.split('-');
   let verificationDigit = splitRUT[1].toUpperCase();
-  let rutWithoutDigit = splitRUT[0].replace(/\./g,'');
+  let rutWithoutDigit = splitRUT[0].replace(/\./g, '');
   let sum = 0;
   let multiplier = 2;
-  for(let i = rutWithoutDigit.length -1; i >= 0; i--) {
+  for (let i = rutWithoutDigit.length - 1; i >= 0; i--) {
     sum += multiplier * rutWithoutDigit.charAt(i);
-    if(multiplier < 7) {
+    if (multiplier < 7) {
       multiplier += 1;
     } else {
       multiplier = 2;
     }
   }
   let calculatedDigit = 11 - (sum % 11);
-  if(calculatedDigit == 11){
+  if (calculatedDigit == 11) {
     calculatedDigit = '0';
-  } else if(calculatedDigit == 10) {
+  } else if (calculatedDigit == 10) {
     calculatedDigit = 'K';
   } else {
     calculatedDigit = calculatedDigit.toString();
   }
-  if(calculatedDigit != verificationDigit) {
+  if (calculatedDigit != verificationDigit) {
     return false;
   } else {
     return true;

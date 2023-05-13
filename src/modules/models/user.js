@@ -4,9 +4,9 @@ import { roles } from '../../helpers/enums.js';
 
 const rolesValues = Object.values(roles);
 
-const userModel = ( sequelize ) => {
+const userModel = (sequelize) => {
 
-  class User extends Model {};
+  class User extends Model { };
 
   User.init({
     // Nombre del usuario

@@ -1,8 +1,11 @@
 import dotenv from 'dotenv';
 import { Sequelize, DataTypes, Model } from 'sequelize';
-import userModel from  './user.js';
-import campaignModel from  './campaign.js';
-import userRegisterModel from  './userRegister.js';
+import userModel from './user.js';
+import campaignModel from './campaign.js';
+import userRegisterModel from './userRegister.js';
+import attendanceModel from './attendance.js';
+import teamModel from './team.js';
+import treeSpeciesModel from './treeSpecies.js';
 
 dotenv.config();
 
@@ -33,21 +36,33 @@ try {
   throw console.error('Unable to connect to the database:', error);
 }
 
-// Modelos
+// MODELS
 const models = {
   force,
   Sequelize,
   sequelize,
   User: userModel(sequelize),
+  Attendance: attendanceModel(sequelize),
   Campaign: campaignModel(sequelize),
   UserRegister: userRegisterModel(sequelize),
+  Team: teamModel(sequelize),
+  TreeSpecies: treeSpeciesModel(sequelize),
 };
 
-// Associations
-models.Campaign.belongsToMany( models.User, { through: models.UserRegister } ); // Relación muchos a muchos entre Campaign y User
-models.User.belongsToMany( models.Campaign, { through: models.UserRegister } ); // Relación muchos a muchos entre User y Campaign
+// ASSOCIATIONS
 
-// Synchronize
+// Usuario N:M Campaña (a través de Registro de Usuario)
+models.Campaign.belongsToMany(models.User, { through: models.UserRegister }); // Una campaña está compuesta por muchos usuarios
+models.User.belongsToMany(models.Campaign, { through: models.UserRegister }); // Un usuario participa en muchas campañas
+// Campaña 1:N Equipo
+models.Campaign.hasMany(models.Team); // Una campaña está compuesta por muchos equipos
+models.Team.belongsTo(models.Campaign); // Un equipo pertenece a una campaña
+// Auto 1:N Equipo
+// Campaña 1:N Foco
+// Foco N:M Manzana (a través de Registro de Manzana)
+// Registro de Manzana N:M Casa (a través de Registro de Casa) TODO: REVISAR
+
+// SYNCHRONIZE
 models.sequelize.sync({ force })
   .then(() => console.log('Database synchronized with models.'))
   .catch(error => console.error('Error synchronizing database with models:', error));

@@ -1,8 +1,8 @@
 import { Model } from 'sequelize';
 
-const userRegisterModel = ( sequelize ) => {
+const userRegisterModel = (sequelize) => {
 
-  class UserRegister extends Model {};
+  class UserRegister extends Model { };
 
   UserRegister.init({}, {
     sequelize,
