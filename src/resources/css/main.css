@@ -83,11 +83,13 @@ hr {
 
 
 h1 {
+  text-align: center;
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 500;
   padding-bottom: 0.2rem;
   border-bottom: 4px solid var(--main-color);
-  margin: 0.5rem 0;
+  margin: 0.5rem auto;
+  width: fit-content;
 }
 
 
@@ -198,6 +200,7 @@ input:disabled, select:disabled {
   width: 40%;
 }
 
+/* CARDS */
 
 .cards {
   margin-top: 0.5rem;
@@ -274,4 +277,70 @@ input:disabled, select:disabled {
   background-repeat: no-repeat;
   background-position: center;
   background-size: 60%;
+}
+
+/* MODAL */
+.modal-backdrop {
+  position: fixed; /* Para que ocupe todo el ancho y alto de la pantalla */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo negro con 50% de opacidad */
+}
+
+.add-modal {
+  position: fixed; /* Para que se mantenga en la misma posición al desplazarse */
+  top: 50%; /* Centra el elemento verticalmente */
+  left: 50%; /* Centra el elemento horizontalmente */
+  transform: translate(-50%, -50%); /* Corrige la posición para que esté completamente centrado */
+
+  border-radius: 8px;
+  background-color: #FAFAFA;
+  width: 90vw;
+}
+
+.modal-items {
+  position: relative;
+  padding: 24px 3vw;
+}
+
+.close-modal {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 3vh;
+  right: 5vw;
+  transform: rotate(45deg);
+  background-image: url('/images/quit.svg');
+}
+
+.green-url-default {
+  all: unset;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  color: var(--main-color);
+  text-decoration: underline;
+}
+
+.button-40, .button-60 {
+  white-space: nowrap;
+  border: none;
+  font-size: 16px;
+}
+
+.button-40 {
+  background: #EBEBEB;
+  border: 1px solid #DEDEDE;
+  border-radius: 4px;
+  max-width: 40%;
+  width: 100%;
+  color: var(--main-color);
+  font-weight: 700;
+}
+
+.button-60 {
+  max-width: 60%;
+  width: 100%;
 }

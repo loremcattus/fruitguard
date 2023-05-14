@@ -14,9 +14,23 @@ window.onload = function() {
   }
 
   const modalID = 'addModal';
-  document.querySelector('[data-target="#'+modalID+'"]').addEventListener("click", openModal);
+  const modal = document.getElementById(modalID);
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalTrigger = document.querySelector('[data-target="#'+modalID+'"]');
+  const closeButton = modal.querySelector('[data-dismiss="modal"]');
+
+  modalTrigger.addEventListener('click', openModal);
+  modalBackdrop.addEventListener('click', closeModal);
+  closeButton.addEventListener('click', closeModal);
+
   function openModal() {
-    document.getElementById(modalID).style.display = 'block';
+    modal.style.display = 'block';
+    modalBackdrop.style.display = 'block';
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    modalBackdrop.style.display = 'none';
   }
 
 };
