@@ -3,6 +3,9 @@ import { Sequelize, DataTypes, Model } from 'sequelize';
 import userModel from  './user.js';
 import campaignModel from  './campaign.js';
 import userRegisterModel from  './userRegister.js';
+import prospectusModel from './prospectus.js';
+import carModel from './car.js';
+import houseRegistrationModel from './house_registration.js';
 
 dotenv.config();
 
@@ -41,6 +44,9 @@ const models = {
   User: userModel(sequelize),
   Campaign: campaignModel(sequelize),
   UserRegister: userRegisterModel(sequelize),
+  prospectus: prospectusModel(sequelize),
+  car: carModel(sequelize),
+  house_registration: houseRegistrationModel(sequelize),
 };
 
 // Associations
