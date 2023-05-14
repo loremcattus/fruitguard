@@ -5,3 +5,16 @@ export const roles = {
   PROSPECTOR: 'prospector',
   ANALYST:    'analista',
 };
+
+export const areas = {
+  200: '100',
+  400: '400',
+  800: '800',
+};
+
+export const states = {
+  REFUSE: 'se niega',
+  UNINHABITED: 'sin moradores',
+  OPEN: 'abierta',
+  CLOSE: 'cerrada',
+};

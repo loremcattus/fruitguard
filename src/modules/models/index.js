@@ -1,8 +1,11 @@
 import dotenv from 'dotenv';
 import { Sequelize, DataTypes, Model } from 'sequelize';
-import userModel from './user.js';
-import campaignModel from './campaign.js';
-import userRegisterModel from './userRegister.js';
+import userModel from  './user.js';
+import campaignModel from  './campaign.js';
+import userRegisterModel from  './userRegister.js';
+import prospectusModel from './prospectus.js';
+import carModel from './car.js';
+import houseRegistrationModel from './house_registration.js';
 import attendanceModel from './attendance.js';
 import teamModel from './team.js';
 import treeSpeciesModel from './treeSpecies.js';
@@ -45,8 +48,6 @@ const models = {
   Attendance: attendanceModel(sequelize),
   Campaign: campaignModel(sequelize),
   UserRegister: userRegisterModel(sequelize),
-  Team: teamModel(sequelize),
-  TreeSpecies: treeSpeciesModel(sequelize),
 };
 
 // ASSOCIATIONS
