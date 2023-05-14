@@ -25,7 +25,9 @@ const prospectusModel = ( sequelize ) => {
     }, {
         sequelize,
         paranoid: true,
-        modelName: 'Prospectus'
+        modelName: 'Prospectus',
+        timestamps: true,
+        createdAt: false,
     });
 
     return Prospectus;

@@ -1,8 +1,8 @@
 import { DataTypes, Model } from 'sequelize';
 
-import { state } from '../../helpers/enums.js';
+import { states, areas } from '../../helpers/enums.js';
 
-const statesValues = Object.values(state);
+const statesValues = Object.values(states);
 const areasValues = Object.values(areas);
 
 const houseRegistrationModel = ( sequelize ) => {
@@ -44,7 +44,8 @@ const houseRegistrationModel = ( sequelize ) => {
     }, {
         sequelize,
         paranoid: true,
-        modelName: 'HouseRegistration'
+        modelName: 'HouseRegistration',
+        tableName: 'house_registrations',
     });
 
     return HouseRegistration;

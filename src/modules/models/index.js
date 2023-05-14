@@ -2,13 +2,13 @@ import dotenv from 'dotenv';
 import { Sequelize, DataTypes, Model } from 'sequelize';
 import userModel from  './user.js';
 import campaignModel from  './campaign.js';
-import userRegisterModel from  './userRegister.js';
-import prospectusModel from './prospectus.js';
-import carModel from './car.js';
-import houseRegistrationModel from './house_registration.js';
+import userRegistrationModel from  './userRegistration.js';
 import attendanceModel from './attendance.js';
 import teamModel from './team.js';
 import treeSpeciesModel from './treeSpecies.js';
+import prospectusModel from './prospectus.js';
+import carModel from './car.js';
+import houseRegistrationModel from './houseRegistration.js';
 
 dotenv.config();
 
@@ -47,19 +47,28 @@ const models = {
   User: userModel(sequelize),
   Attendance: attendanceModel(sequelize),
   Campaign: campaignModel(sequelize),
-  UserRegister: userRegisterModel(sequelize),
+  UserRegistration: userRegistrationModel(sequelize),
+  Car: carModel(sequelize),
+  Team: teamModel(sequelize),
+  HouseRegistration: houseRegistrationModel(sequelize),
+  TreeSpecies: treeSpeciesModel(sequelize),
+  Prospectus: prospectusModel(sequelize),
 };
 
 // ASSOCIATIONS
 
 // Usuario N:M Campaña (a través de Registro de Usuario)
-models.Campaign.belongsToMany(models.User, { through: models.UserRegister }); // Una campaña está compuesta por muchos usuarios
-models.User.belongsToMany(models.Campaign, { through: models.UserRegister }); // Un usuario participa en muchas campañas
+models.Campaign.belongsToMany(models.User, { through: models.UserRegistration }); // Una campaña está compuesta por muchos usuarios
+models.User.belongsToMany(models.Campaign, { through: models.UserRegistration }); // Un usuario participa en muchas campañas
 // Campaña 1:N Equipo
 models.Campaign.hasMany(models.Team); // Una campaña está compuesta por muchos equipos
 models.Team.belongsTo(models.Campaign); // Un equipo pertenece a una campaña
 // Auto 1:N Equipo
+models.Car.hasMany(models.Team); // Un auto puede ser utilizado por un equipo
+models.Team.belongsTo(models.Car); // Un equipo utiliza un auto
 // Campaña 1:N Foco
+// models.Campaign.hasMany(models.Focus); // Una campaña está compuesta por uno o varios focos
+// models.Focus.belongsTo(models.Campaign); // Un foco pertenece a una campaña
 // Foco N:M Manzana (a través de Registro de Manzana)
 // Registro de Manzana N:M Casa (a través de Registro de Casa) TODO: REVISAR
 

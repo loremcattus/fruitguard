@@ -19,7 +19,8 @@ const carModel = ( sequelize ) => {
         }
     }, {
         sequelize,
-        modelName: 'Car'
+        modelName: 'Car',
+        timestamps: false,
     });
 
     return Car;
