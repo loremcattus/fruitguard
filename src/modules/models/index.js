@@ -9,6 +9,10 @@ import treeSpeciesModel from './treeSpecies.js';
 import prospectusModel from './prospectus.js';
 import carModel from './car.js';
 import houseRegistrationModel from './houseRegistration.js';
+import focusModel from './focus.js';
+import blockModel from './block.js';
+import blockRegistrationModel from './blockRegistration.js';
+import houseModel from './house.js';
 
 dotenv.config();
 
@@ -53,6 +57,10 @@ const models = {
   HouseRegistration: houseRegistrationModel(sequelize),
   TreeSpecies: treeSpeciesModel(sequelize),
   Prospectus: prospectusModel(sequelize),
+  Focus: focusModel(sequelize),
+  Block: blockModel(sequelize),
+  BlockRegistration: blockRegistrationModel(sequelize),
+  House: houseModel(sequelize),
 };
 
 // ASSOCIATIONS
@@ -67,8 +75,8 @@ models.Team.belongsTo(models.Campaign); // Un equipo pertenece a una campaña
 models.Car.hasMany(models.Team); // Un auto puede ser utilizado por un equipo
 models.Team.belongsTo(models.Car); // Un equipo utiliza un auto
 // Campaña 1:N Foco
-// models.Campaign.hasMany(models.Focus); // Una campaña está compuesta por uno o varios focos
-// models.Focus.belongsTo(models.Campaign); // Un foco pertenece a una campaña
+models.Campaign.hasMany(models.Focus); // Una campaña está compuesta por uno o varios focos
+models.Focus.belongsTo(models.Campaign); // Un foco pertenece a una campaña
 // Foco N:M Manzana (a través de Registro de Manzana)
 // Registro de Manzana N:M Casa (a través de Registro de Casa) TODO: REVISAR
 
