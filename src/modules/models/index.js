@@ -31,7 +31,7 @@ let force = false
 // Verifica si el valor de force existe y no está vacío
 if (db_force && db_force === "true") {
   force = true;
-}
+};
 
 // Crear la conexión de Sequelize
 const sequelize = new Sequelize(database, user, password, { host, dialect, logging: false });
@@ -41,7 +41,7 @@ try {
   console.log('Database connection has been established successfully.');
 } catch (error) {
   throw console.error('Unable to connect to the database:', error);
-}
+};
 
 // MODELS
 const models = {

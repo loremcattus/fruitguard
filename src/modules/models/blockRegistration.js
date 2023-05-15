@@ -1,22 +1,18 @@
 import { DataTypes, Model } from "sequelize";
 
 
-const blockRegistrationModel = ( sequelize ) =>{
+const blockRegistrationModel = (sequelize) => {
 
-    class BlockRegistration extends Model{ };
+  class BlockRegistration extends Model { };
 
-    BlockRegistration.init({
-        //Id de las manzanas
-    id_block: DataTypes.INTEGER,
+  BlockRegistration.init({}, {
+    sequelize,
+    paranoid: true,
+    modelName: 'BlockRegistration',
+    tableName: 'block_registration',
+  });
 
-    },{
-        sequelize,
-        paranoid:true,
-        modelName: 'BlockRegistration',
-        tableName: 'block_registration',
-    });
-
-    return BlockRegistration;
+  return BlockRegistration;
 
 };
 

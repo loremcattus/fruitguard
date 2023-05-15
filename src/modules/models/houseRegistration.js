@@ -18,7 +18,15 @@ const houseRegistrationModel = ( sequelize ) => {
             defaultValue: null,
         },
         // area en que se encuentra
-        area_id: DataTypes.INTEGER,
+        area_id: {
+            type: DataTypes.ENUM(...areasValues),
+            validate: {
+                isIn: {
+                    args: [areasValues],
+                    msg: `Invalid role. Valid roles are: ${areasValues.join(', ')}`,
+                },
+            },
+        },
         // estado de la casa
         state_id: {
             type: DataTypes.ENUM(...statesValues),
@@ -30,17 +38,6 @@ const houseRegistrationModel = ( sequelize ) => {
                 },
             },
         },
-        house_id: {
-            type: DataTypes.ENUM(...areasValues),
-            validate: {
-                isIn: {
-                    args: [areasValues],
-                    msg: `Invalid role. Valid roles are: ${areasValues.join(', ')}`,
-                },
-            },
-        },
-        block_registration: DataTypes.INTEGER,
-        team_id: DataTypes.INTEGER
     }, {
         sequelize,
         paranoid: true,

@@ -24,7 +24,6 @@ const prospectusModel = ( sequelize ) => {
         }
     }, {
         sequelize,
-        paranoid: true,
         modelName: 'Prospectus',
         timestamps: true,
         createdAt: false,

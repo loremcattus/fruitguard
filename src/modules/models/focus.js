@@ -2,23 +2,22 @@ import { DataTypes, Model } from 'sequelize';
 
 const focusModel = (sequelize) => {
 
-    class Focus extends Model { };
+  class Focus extends Model { };
 
-    Focus.init({
+  Focus.init({
     //Dirección de donde se encuentra el foco
     addres: DataTypes.STRING(50),
-    //Indica si el foco está activo o no(?)
-    active:{
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
+    //Indica si el foco está activo o inactivo
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
-    },{
-        sequelize,
-        paranoid: true,
-        modelName: 'Focus'
-    });
-    
-    return Focus;   
+  }, {
+    sequelize,
+    modelName: 'Focus'
+  });
+
+  return Focus;
 
 };
 

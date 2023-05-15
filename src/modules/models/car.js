@@ -6,7 +6,7 @@ const carModel = ( sequelize ) => {
 
     Car.init({
         // Patente del auto
-        patent: DataTypes.STRING(6),
+        patent: DataTypes.CHAR(6),
         //	Capacidad de personas que caben en el auto por defecto caben 2 personas
         capacity: {
             type: DataTypes.INTEGER,
