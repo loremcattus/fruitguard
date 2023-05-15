@@ -13,6 +13,7 @@ import focusModel from './focus.js';
 import blockModel from './block.js';
 import blockRegistrationModel from './blockRegistration.js';
 import houseModel from './house.js';
+import treeSpeciesRegistration from './treeSpeciesRegistration.js';
 
 dotenv.config();
 
@@ -61,6 +62,7 @@ const models = {
   Block: blockModel(sequelize),
   BlockRegistration: blockRegistrationModel(sequelize),
   House: houseModel(sequelize),
+  TreeSpeciesRegistratioon: treeSpeciesRegistration(sequelize),
 };
 
 // ASSOCIATIONS

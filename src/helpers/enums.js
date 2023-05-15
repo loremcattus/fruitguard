@@ -18,3 +18,10 @@ export const states = {
   OPEN: 'abierta',
   CLOSE: 'cerrada',
 };
+
+export const treeStates = {
+  RIPE: 'fruta madura',
+  UNRIPE: 'fruta verde',
+  FRUITLESS: 'sin fruta',
+  SAPLING: 'arból nuevo'
+}
