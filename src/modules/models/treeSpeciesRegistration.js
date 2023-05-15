@@ -4,41 +4,38 @@ import { treeStates } from '../../helpers/enums.js';
 
 const treeStatesValues = Object.values(treeStates);
 
-const treeSpeciesRegistration = ( sequelize ) => {
+const treeSpeciesRegistrationModel = (sequelize) => {
 
-    class TreeSpeciesRegistration extends Model {};
+  class TreeSpeciesRegistration extends Model { };
 
-    TreeSpeciesRegistration.init({
-      // Cantidad de árboles de la especie en concreto encontrados en el registro de la casa
-      tree_number: DataTypes.INTEGER,
-			// Especie del árbol a registrar
-			tree_species_id: DataTypes.INTEGER,
-			// Estado del árbol, se considera el árbol en peor estado (con fruta madura) hacia abajo (árbol nuevo)
-			tree_state_id: {
-				type: DataTypes.ENUM(...treeStatesValues),
-				validate: {
-					isIn: {
-						args: [treeStatesValues],
-						msg: `Invalid role, Valid tree states are: ${treeStatesValues.join(', ')}`,
-					},
-				},
-			},
-			// Registro de casa asociado
-			house_registration_id: DataTypes.INTEGER,
-			// Prospecto asociado en caso de tener como estado: con fruta madura
-			prospectus_id: DataTypes.INTEGER,
-			// Foto opcional para evidenciar el estado del árbol
-			tree_evidence_id: DataTypes.INTEGER,
+  TreeSpeciesRegistration.init({
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true // Automatically gets converted to SERIAL for postgres
+    },
+    // Cantidad de árboles de la especie en concreto encontrados en el registro de la casa
+    tree_number: DataTypes.INTEGER,
+    // Estado del árbol, se considera el árbol en peor estado (con fruta madura) hacia abajo (árbol nuevo)
+    tree_state_id: {
+      type: DataTypes.ENUM(...treeStatesValues),
+      validate: {
+        isIn: {
+          args: [treeStatesValues],
+          msg: `Invalid role, Valid tree states are: ${treeStatesValues.join(', ')}`,
+        },
+      },
+    },
+    tree_evidence_id: DataTypes.INTEGER,
+  }, {
+    sequelize,
+    modelName: 'TreeSpeciesRegistration',
+    tableName: 'treespecies_registrations',
+    timestamps: false,
+  });
 
-    }, {
-			sequelize,
-			modelName: 'TreeSpeciesRegistration',
-			tableName: 'tree_species_registration',
-			timestamps: false,
-	});
-
-	return TreeSpeciesRegistration;
+  return TreeSpeciesRegistration;
 
 };
 
-export default treeSpeciesRegistration;
+export default treeSpeciesRegistrationModel;

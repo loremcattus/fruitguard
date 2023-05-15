@@ -5,11 +5,17 @@ const blockRegistrationModel = (sequelize) => {
 
   class BlockRegistration extends Model { };
 
-  BlockRegistration.init({}, {
+  BlockRegistration.init({
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true // Automatically gets converted to SERIAL for postgres
+    }
+  }, {
     sequelize,
     paranoid: true,
     modelName: 'BlockRegistration',
-    tableName: 'block_registration',
+    tableName: 'block_registrations',
   });
 
   return BlockRegistration;
