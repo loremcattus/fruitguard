@@ -5,7 +5,7 @@
     </section>
     <hr>
     <h1>Buscar campaña</h1>
-    <form action="">
+    <form action="" method="get">
         <select class="half">
             <option selected>Región</option>
                 <% for (let i=0; i <=5; i++ ) { %>
@@ -51,21 +51,12 @@
     <div class="modal-items">
         <div class="close-modal" data-dismiss="modal"></div>
         <h1>Añadir campaña</h1>
-        <form action="">
-            <select class="half">
-                <option selected>Región</option>
-                    <% for (let i=0; i <=5; i++ ) { %>
-                        <option>Opción <%= i+1 %></option>
-                    <% } %>
-            </select>
-            <select class="half" disabled>
-                <option selected>Comuna</option>
-                    <% for (let i=0; i <=5; i++ ) { %>
-                        <option>Opción <%= i+1 %></option>
-                    <% } %>
-            </select>
+        <form action="" id="addPost" method="post" enctype="multipart/form-data">
+            <select class="half" id="regiones"></select>
+            <select class="half" id="comunas" disabled></select>
             <input class="full" type="text" placeholder="Nombre de la campaña">
-            <a href="#" class="green-url-default">Añadir mapa de la zona</a>
+            <label class="green-url-default" for="file-upload" id="file-label">Añadir mapa de la zona</label>
+            <input type="file" id="file-upload" name="archivo" style="display: none;">
             <hr>
             <div class="bottom-crud">
                 <button type="reset" class="button-40">Cancelar</button>
@@ -74,3 +65,4 @@
         </form>
     </div>
 </div>
+<script src="/js/locations.js"></script>

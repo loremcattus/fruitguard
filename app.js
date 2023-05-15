@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import morgan from 'morgan';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import { renderFile } from 'ejs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
@@ -14,11 +15,21 @@ const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 3000; // Obtener el puerto del sistema operativo o establecer 3000 como predeterminado
 const VIEWS_PATH = path.join(__dirname, '/src/resources/views/layouts'); // Ruta para la carpeta de vistas
 
+// Configura el proxy para redirigir las solicitudes a la API de regiones de Chile
+const apiProxy = createProxyMiddleware('/dpa', {
+  target: 'https://apis.digital.gob.cl',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/dpa': '/dpa'
+  }
+});
+
 const app = express()
   .set('port', PORT) // Configuración de la aplicación
   .engine('html', renderFile)
   .set('views', VIEWS_PATH)
   .use(morgan('dev')) // Middleware para registrar solicitudes de entrada en la consola
+  .use(apiProxy)
   .use(express.urlencoded({ extended: false })) // Middleware para manejar datos de formularios
   .use(express.json()) // Middleware para manejar datos JSON
   .use(router) // Agregar rutas
