@@ -344,3 +344,33 @@ input:disabled, select:disabled {
   max-width: 60%;
   width: 100%;
 }
+
+/* ALERTAS */
+.alert {
+  position: fixed;
+  border-radius: 8px;
+  top: 5vh;
+  left: 5vw;
+  right: 5vw;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  display: none;
+  transition: opacity 0.5s ease-in-out;
+  opacity: 0;
+}
+
+.alert.show {
+  opacity: 1;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}

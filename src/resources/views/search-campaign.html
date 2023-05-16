@@ -5,42 +5,38 @@
     </section>
     <hr>
     <h1>Buscar campaña</h1>
-    <form action="" method="get">
-        <select class="half">
-            <option selected>Región</option>
-                <% for (let i=0; i <=5; i++ ) { %>
-                    <option>Opción <%= i+1 %></option>
-                <% } %>
+    <form id="searchPost">
+        <select class="half region-select" id="regionSearch">
+            <option value="">Región</option>
         </select>
-        <select class="half" disabled>
-            <option selected>Comuna</option>
-                <% for (let i=0; i <=5; i++ ) { %>
-                    <option>Opción <%= i+1 %></option>
-                <% } %>
+        <select class="half commune-select" id="communeSearch" disabled>
+            <option value="">Comuna</option>
         </select>
-        <input class="full" type="text" placeholder="ID o nombre de la campaña">
+        <input class="full" type="text" id="nameSearch" placeholder="Nombre de la campaña">
         <div class="bottom-crud">
             <div class="check-container">
-                <label for="close">Mostrar cerradas</label>
-                <input id="close" type="checkbox">
+                <label for="openSearch">Mostrar cerradas</label>
+                <input id="openSearch" type="checkbox">
             </div>
             <button type="submit" class="button-green-crud">Buscar</button>
         </div>
     </form>
     <hr>
     <section class="cards">
-        <% for (let i=0; i <=5; i++ ) { %>
-            <a href="#">
-                <div class="card-left-side">
-                    <p class="card-left-side-top">ID | <span class="card-left-side-top-highlight">Nombre
-                            campaña</span>
-                    </p>
-                    <p class="card-left-side-bottom">Región > Comuna</p>
-                </div>
-                <div class="card-right-side">
-                    <p>Estado</p>
-                </div>
-            </a>
+        <% if (Array.isArray(formattedCampaigns) && formattedCampaigns.length > 0) { %>
+            <% for (let i = 0; i < formattedCampaigns.length; i++) { %>
+                <a href="#">
+                    <div class="card-left-side">
+                        <p class="card-left-side-top"><%= formattedCampaigns[i].id %> | <span class="card-left-side-top-highlight"><%= formattedCampaigns[i].name %></span></p>
+                        <p class="card-left-side-bottom"><%= formattedCampaigns[i].region %> > <%= formattedCampaigns[i].commune %></p>
+                    </div>
+                    <div class="card-right-side">
+                        <p><%= formattedCampaigns[i].open ? 'Abierta' : 'Cerrada' %></p>
+                    </div>
+                </a>
+            <% } %>
+        <% } else { %>
+            <p><%= formattedCampaigns %></p>
         <% } %>
     </section>
     <button type="button" class="add-button" data-toggle="modal" data-target="#addModal"
@@ -51,12 +47,16 @@
     <div class="modal-items">
         <div class="close-modal" data-dismiss="modal"></div>
         <h1>Añadir campaña</h1>
-        <form action="" id="addPost" method="post" enctype="multipart/form-data">
-            <select class="half" id="regiones"></select>
-            <select class="half" id="comunas" disabled></select>
-            <input class="full" type="text" placeholder="Nombre de la campaña">
+        <form id="addPost">
+            <select class="half region-select" id="regionAdd">
+                <option value="">Región</option>
+            </select>
+            <select class="half commune-select" id="communeAdd" disabled>
+                <option value="">Comuna</option>
+            </select>
+            <input class="full" type="text" id="nameAdd" placeholder="Nombre de la campaña">
             <label class="green-url-default" for="file-upload" id="file-label">Añadir mapa de la zona</label>
-            <input type="file" id="file-upload" name="archivo" style="display: none;">
+            <input type="file" id="file-upload" style="display: none;">
             <hr>
             <div class="bottom-crud">
                 <button type="reset" class="button-40">Cancelar</button>
@@ -65,4 +65,6 @@
         </form>
     </div>
 </div>
+<div id="message" class="alert" role="alert"></div>
 <script src="/js/locations.js"></script>
+<script src="/js/campaigns.js" type="module"></script>

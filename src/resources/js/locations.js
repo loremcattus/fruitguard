@@ -1,5 +1,5 @@
-const regionesSelect = document.getElementById('regiones');
-const comunasSelect = document.getElementById('comunas');
+const regionesSelects = document.querySelectorAll('.region-select');
+const comunasSelects = document.querySelectorAll('.commune-select');
 
 // Función para crear opciones de select
 const crearOption = (code, text) => {
@@ -13,9 +13,18 @@ const crearOption = (code, text) => {
 // Función para habilitar o deshabilitar select
 const setSelectDisabled = (select, disabled) => {
   select.disabled = disabled;
-  select.innerHTML = '';
-  if (disabled) {
-    select.add(crearOption('', 'Comuna'));
+
+  // Conservar la primera opción existente
+  const firstOption = select.options[0];
+
+  // Eliminar todas las opciones excepto la primera
+  while (select.options.length > 1) {
+    select.remove(1);
+  }
+
+  // Volver a agregar la primera opción si está definida
+  if (firstOption) {
+    select.add(firstOption);
   }
 };
 
@@ -36,29 +45,46 @@ const cargarOpcionesDesdeURL = (url, select, transform) => {
     });
 };
 
-// Cargar regiones
-cargarOpcionesDesdeURL(
-  'http://localhost:8000/dpa/regiones',
-  regionesSelect,
-  region => crearOption(region.codigo, region.nombre)
-);
+regionesSelects.forEach(regionesSelect => {
+  // Agregar observador de intersección
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // El select es visible, cargar las regiones
+        cargarOpcionesDesdeURL(
+          'http://localhost:8000/dpa/regiones',
+          regionesSelect,
+          region => crearOption(region.codigo, region.nombre)
+        );
+        // Dejar de observar el select
+        observer.unobserve(regionesSelect);
+      }
+    });
+  });
+  observer.observe(regionesSelect);
 
-// Evento para cargar comunas al seleccionar una región
-regionesSelect.addEventListener('change', () => {
-  const regionId = regionesSelect.selectedOptions[0].getAttribute('code');
-  if (!regionId) {
+  // Agregar evento para cargar comunas al seleccionar una región
+  const comunasSelect = regionesSelect.parentNode.querySelector('.commune-select');
+  regionesSelect.addEventListener('change', () => {
+    const regionId = regionesSelect.selectedOptions[0].getAttribute('code');
+    if (!regionId) {
+      setSelectDisabled(comunasSelect, true);
+      return;
+    }
+    const url = `http://localhost:8000/dpa/regiones/${regionId}/comunas`;
+    cargarOpcionesDesdeURL(
+      url,
+      comunasSelect,
+      comuna => crearOption(comuna.codigo, comuna.nombre)
+    );
     setSelectDisabled(comunasSelect, true);
-    return;
-  }
-  const url = `http://localhost:8000/dpa/regiones/${regionId}/comunas`;
-  cargarOpcionesDesdeURL(
-    url,
-    comunasSelect,
-    comuna => crearOption(comuna.codigo, comuna.nombre)
-  );
-  setSelectDisabled(comunasSelect, true);
+  });
+
+  // Deshabilitar select al inicio
+  setSelectDisabled(regionesSelect, true);
 });
 
-// Deshabilitar selects al inicio
-setSelectDisabled(regionesSelect, true);
-setSelectDisabled(comunasSelect, true);
+comunasSelects.forEach(comunasSelect => {
+  // Deshabilitar select al inicio
+  setSelectDisabled(comunasSelect, true);
+});

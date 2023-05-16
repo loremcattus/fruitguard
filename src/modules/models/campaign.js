@@ -13,11 +13,14 @@ const campaignModel = (sequelize) => {
       defaultValue: true,
     },
     // Región a la que pertenece la campaña
-    region: DataTypes.STRING(75),
+    region: DataTypes.STRING(50),
     // Comuna a la que pertenece la campaña
     commune: DataTypes.STRING(50),
     // Identificador y nombre del archivo que contiene la imagen del mapa asociado a la campaña
-    mapId: DataTypes.INTEGER,
+    mapId: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
   }, {
     sequelize,
     paranoid: true,
