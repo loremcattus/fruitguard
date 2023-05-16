@@ -30,19 +30,23 @@ const setSelectDisabled = (select, disabled) => {
 
 // Función para cargar opciones de select desde una URL
 const cargarOpcionesDesdeURL = (url, select, transform) => {
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      setSelectDisabled(select, false);
-      data.forEach(item => {
-        const option = transform(item);
-        select.add(option);
-      });
-    })
-    .catch(error => {
-      console.error(`Error al cargar opciones desde ${url}:`, error);
-      setSelectDisabled(select, true);
+  const script = document.createElement('script');
+  script.src = `${url}?callback=handleResponse`;
+
+  window.handleResponse = data => {
+    setSelectDisabled(select, false);
+    data.forEach(item => {
+      const option = transform(item);
+      select.add(option);
     });
+  };
+
+  script.onerror = error => {
+    console.error(`Error al cargar opciones desde ${url}:`, error);
+    setSelectDisabled(select, true);
+  };
+
+  document.body.appendChild(script);
 };
 
 regionesSelects.forEach(regionesSelect => {
@@ -52,7 +56,7 @@ regionesSelects.forEach(regionesSelect => {
       if (entry.isIntersecting) {
         // El select es visible, cargar las regiones
         cargarOpcionesDesdeURL(
-          'http://localhost:8000/dpa/regiones',
+          'https://apis.digital.gob.cl/dpa/regiones',
           regionesSelect,
           region => crearOption(region.codigo, region.nombre)
         );
@@ -71,7 +75,7 @@ regionesSelects.forEach(regionesSelect => {
       setSelectDisabled(comunasSelect, true);
       return;
     }
-    const url = `http://localhost:8000/dpa/regiones/${regionId}/comunas`;
+    const url = `https://apis.digital.gob.cl/dpa/regiones/${regionId}/comunas`;
     cargarOpcionesDesdeURL(
       url,
       comunasSelect,

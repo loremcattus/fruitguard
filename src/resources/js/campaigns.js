@@ -34,8 +34,18 @@ formAdd.addEventListener('submit', async (event) => {
       file
     };
 
+    // Obtener el host y el puerto del servidor actual
+    const host = window.location.hostname;
+    const port = window.location.port;
+
+    // Construir la URL base
+    const baseUrl = `http://${host}:${port}`;
+
+    // Componer la URL completa para la solicitud
+    const url = `${baseUrl}/api/campaigns`;
+
     // Enviar el objeto al servidor
-    const response = await fetch('http://localhost:8000/api/campaigns', {
+    const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(object),
       headers: {
