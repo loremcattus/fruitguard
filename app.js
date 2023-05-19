@@ -6,23 +6,45 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { router } from './src/routes/index.js';
 
-dotenv.config(); // Cargar variables de entorno de archivo .env
+// Cargar variables de entorno desde el archivo .env
+dotenv.config();
 
+// Obtener el nombre actual del archivo y del directorio
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = process.env.PORT || 3000; // Obtener el puerto del sistema operativo o establecer 3000 como predeterminado
-const VIEWS_PATH = path.join(__dirname, '/src/resources/views/layouts'); // Ruta para la carpeta de vistas
+// Obtener el puerto del entorno o establecerlo en 3000 por defecto
+const PORT = process.env.PORT || 3000;
 
-const app = express()
-  .set('port', PORT) // Configuración de la aplicación
-  .engine('html', renderFile)
-  .set('views', VIEWS_PATH)
-  .use(morgan('dev')) // Middleware para registrar solicitudes de entrada en la consola
-  .use(express.urlencoded({ extended: false })) // Middleware para manejar datos de formularios
-  .use(express.json()) // Middleware para manejar datos JSON
-  .use(router) // Agregar rutas
-  .use(express.static(path.join(__dirname, 'src/resources'))) // Middleware para servir archivos estáticos
-  .listen(PORT, () => { // Iniciar el servidor
-    console.log(`Server on port ${PORT}`); // Mostrar un mensaje en la consola
-  });
+// Obtener la ruta a la carpeta de vistas
+const VIEWS_PATH = path.join(__dirname, '/src/resources/views/layouts');
+
+// Crear una aplicación Express
+const app = express();
+
+// Establecer el puerto y la carpeta de vistas
+app.set('port', PORT);
+app.set('views', VIEWS_PATH);
+
+// Establecer el motor de HTML como EJS
+app.engine('html', renderFile);
+
+// Configurar el middleware morgan para registrar las solicitudes en la consola
+app.use(morgan('dev'));
+
+// Configurar el middleware express.urlencoded para manejar datos de formularios
+app.use(express.urlencoded({ extended: false }));
+
+// Configurar el middleware express.json para manejar datos JSON
+app.use(express.json());
+
+// Agregar el enrutador a la aplicación
+app.use(router);
+
+// Servir archivos estáticos desde la carpeta src/resources
+app.use(express.static(path.join(__dirname, 'src/resources')));
+
+// Escuchar en el puerto especificado y registrar un mensaje en la consola
+app.listen(PORT, () => {
+  console.log(`Server on port ${PORT}`);
+});

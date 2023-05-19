@@ -14,20 +14,17 @@
 </head>
 
 <body>
-  <% fileHTML = fileHTML || 404 %>
-
   
-  <% if (fileHTML !== 404) { %>
-    <header>
-      <%- include('../partials/header.html') %>
-    </header>
-  <% } %>  
+  <header>
+    <%- include('../partials/header.html') %>
+  </header>
 
   <section>
     <%- include('../' + fileHTML + '.html' ) %>
   </section>
 
   <script src="/js/main.js"></script>
+
 </body>
 
 </html>
