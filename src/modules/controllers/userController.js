@@ -61,14 +61,14 @@ export const addUser = async (req, res) => {
     }
 
     // Filtrar y validar el cuerpo de la solicitud
-    const filteredObject = await validateRequestBody(req.body, User);
+    const validatedObject = await validateRequestBody(req.body, User);
     // Comprobar errores de validación
-    if (filteredObject.error) {
-      return res.status(400).json(filteredObject);
+    if (validatedObject.error) {
+      return res.status(400).json(validatedObject);
     }
 
     // Obtener el valor del campo run y dvRun del objeto validado
-    const { run, dvRun } = filteredObject;
+    const { run, dvRun } = validatedObject;
     // Validar el RUT
     if (!validateRUT(`${run}-${dvRun}`)) {
       return res.status(400).json({ errors: `El RUT '${run}-${dvRun}' es inválido` });
@@ -81,7 +81,7 @@ export const addUser = async (req, res) => {
     }
 
     // Crear un nuevo usuario en la base de datos y devolverlo como respuesta
-    const user = await User.create(filteredObject);
+    const user = await User.create(validatedObject);
     return res.status(201).json(user.toJSON());
   } catch (error) {
     console.error('Error al insertar usuario', error);

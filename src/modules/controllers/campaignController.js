@@ -52,14 +52,14 @@ export const addCampaign = async (req, res) => {
     }
 
     // Filtrar y validar el cuerpo de la solicitud
-    const filteredObject = await validateRequestBody(req.body, Campaign);
+    const validatedObject = await validateRequestBody(req.body, Campaign);
     // Comprobar errores de validación
-    if (filteredObject.error) {
-      return res.status(400).json(filteredObject);
+    if (validatedObject.error) {
+      return res.status(400).json(validatedObject);
     }
 
     // Crear una nueva campaña en la base de datos y devolverla como respuesta
-    const campaign = await Campaign.create(filteredObject);
+    const campaign = await Campaign.create(validatedObject);
     return res.status(201).json(campaign.toJSON());
   } catch (error) {
     console.error('Error al insertar una campaña', error);
