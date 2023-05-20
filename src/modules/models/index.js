@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
+import { seed } from '../../../data/seed.js';
 import userModel from './user.js';
 import campaignModel from './campaign.js';
 import userRegistrationModel from './userRegistration.js';
@@ -98,6 +99,7 @@ models.Prospectus.belongsTo(models.TreeSpeciesRegistration, { foreignKey: 'treeS
 // SYNCHRONIZE
 models.sequelize.sync({ force })
   .then(() => console.log('Database synchronized with models.'))
-  .catch(error => console.error('Error synchronizing database with models:', error));
+  .catch(error => console.error('Error synchronizing database with models:', error))
+  .then(() => seed(models));
 
 export default models;

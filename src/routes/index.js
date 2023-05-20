@@ -1,7 +1,6 @@
 import express from 'express';
 import { getUsers, getUser, addUser, updateUser, deleteUser } from '../modules/controllers/userController.js';
-import { getCampaigns } from '../modules/controllers/campaignController.js';
-import { addCampaign } from '../modules/controllers/campaignController.js';
+import { getCampaigns, addCampaign } from '../modules/controllers/campaignController.js';
 
 export const router = express.Router();
 
