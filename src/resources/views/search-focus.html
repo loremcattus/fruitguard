@@ -1,0 +1,58 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <p href="#">Ver campañas</p>
+        <p>Ver focos</p>
+    </section>
+    <hr>
+    <h1>Buscar foco</h1>
+    <form id="searchPost">
+        <input class="full" type="text" id="addressSearch" placeholder="Nombre del foco">
+        <div class="bottom-crud">
+            <div class="check-container">
+                <label for="activeSearch">Mostrar desactivadas</label>
+                <input id="activeSearch" type="checkbox">
+            </div>
+            <button type="submit" class="button-green-crud">Buscar</button>
+        </div>
+    </form>
+    <hr>
+    <section class="cards">
+        <% if (Array.isArray(formattedFocused) && formattedFocused.length > 0) { %>
+            <% for (let i = 0; i < formattedFocused.length; i++) { %>
+                <a href="/focused/<%= formattedFocused[i].id %>">
+                    <div class="card-left-side">
+                        <p class="card-left-side-top"><%= formattedFocused[i].id %> | <span class="card-left-side-top-highlight"><%= formattedFocused[i].address %></span></p>
+                    </div>
+                    <div class="card-right-side">
+                        <p><%= formattedFocused[i].active ? 'Activo' : 'Inactivo' %></p>
+                    </div>
+                </a>
+            <% } %>
+        <% } else { %>
+            <p><%= formattedFocused %></p>
+        <% } %>
+    </section>
+    <button type="button" class="add-button" data-toggle="modal" data-target="#addModal"
+        aria-label="addButton"></button>
+</main>
+<div class="modal-backdrop" style="display: none;" id="modalBackdrop"></div>
+<div class="add-modal" style="display: none;" id="addModal" role="form" aria-labelledby="addModalLabel">
+    <div class="modal-items">
+        <div class="close-modal" data-dismiss="modal"></div>
+        <h1>Añadir foco</h1>
+        <form id="addPost">
+            <input class="full" type="text" id="addressAdd" placeholder="Nombre del foco">
+            <!-- <label class="green-url-default" for="file-upload" id="file-label">Añadir mapa de la zona</label> -->
+            <input type="file" id="file-upload" style="display: none;">
+            <hr>
+            <div class="bottom-crud">
+                <button type="reset" class="button-40">Cancelar</button>
+                <button type="submit" class="button-green-default button-60">Añadir foco</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="message" class="alert" role="alert"></div>
+<script src="/js/locations.js"></script>
+<script src="/js/focused.js" type="module"></script>
