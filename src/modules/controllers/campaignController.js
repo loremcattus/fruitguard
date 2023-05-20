@@ -30,12 +30,7 @@ export const getCampaigns = async (req, res) => {
       where: searchOptions
     });
 
-    const formattedCampaigns = campaigns.map((campaign) => {
-      const { id, name, region, commune, open } = campaign;
-      return { id, name, region, commune, open };
-    });
-
-    const data = campaigns.length > 0 ? formattedCampaigns : 'No hay campañas registradas o que coincidan con tu búsqueda';
+    const data = campaigns.length > 0 ? campaigns : 'No hay campañas registradas o que coincidan con tu búsqueda';
 
     return res.render('index.html', { formattedCampaigns: data, fileHTML, title });
   } catch (error) {

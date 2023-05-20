@@ -69,7 +69,7 @@ formAdd.addEventListener('submit', async (event) => {
 
       // Crear un nuevo elemento de campaña con los datos recibidos
       const newCampaignElement = document.createElement('a');
-      newCampaignElement.href = '#';
+      newCampaignElement.href = `/campaigns/${data.id}`;
       newCampaignElement.insertAdjacentHTML('beforeend', `
         <div class="card-left-side">
           <p class="card-left-side-top">${data.id} | <span class="card-left-side-top-highlight">${data.name}</span></p>

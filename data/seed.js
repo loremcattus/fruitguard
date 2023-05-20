@@ -2,13 +2,13 @@ export const seed = async (models) => {
   const campaign1 = await models.Campaign.create({
     name: 'Mosquitas al ataque',
     region: 'Metropolitana de Santiago',
-    comuna: 'Paine'
+    commune: 'Paine'
   });
 
   const campaign2 = await models.Campaign.create({
     name: 'Mosquitas y furiosas',
     region: 'Metropolitana de Santiago',
-    comuna: 'Recoleta'
+    commune: 'Recoleta'
   });
 
   const [focus1_campaign1, focus2_campaign1] = await Promise.all([
