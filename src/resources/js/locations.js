@@ -68,7 +68,11 @@ regionesSelects.forEach(regionesSelect => {
   observer.observe(regionesSelect);
 
   // Agregar evento para cargar comunas al seleccionar una región
-  const comunasSelect = regionesSelect.parentNode.querySelector('.commune-select');
+  let comunasSelect = regionesSelect.parentNode.querySelector('.commune-select');
+  if(!comunasSelect) {
+    comunasSelect = document.getElementById('commune');
+  }
+
   regionesSelect.addEventListener('change', () => {
     const regionId = regionesSelect.selectedOptions[0].getAttribute('code');
     if (!regionId) {

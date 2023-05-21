@@ -6,7 +6,7 @@ const focusModel = (sequelize) => {
 
   Focus.init({
     //Dirección de donde se encuentra el foco
-    addres: DataTypes.STRING(50),
+    address: DataTypes.STRING(50),
     //Indica si el foco está activo o inactivo
     active: {
       type: DataTypes.BOOLEAN,

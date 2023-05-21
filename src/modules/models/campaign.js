@@ -21,6 +21,8 @@ const campaignModel = (sequelize) => {
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
+    // Identificador del Jefe de Campaña encargado
+    managerId: DataTypes.INTEGER
   }, {
     sequelize,
     paranoid: true,

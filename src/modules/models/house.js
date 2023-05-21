@@ -6,7 +6,7 @@ const houseModel = (sequelize) => {
 
   House.init({
     //Dirección de la casa
-    addres: DataTypes.STRING(50),
+    address: DataTypes.STRING(50),
   }, {
     sequelize,
     modelName: 'House',

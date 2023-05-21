@@ -6,7 +6,7 @@ const treeSpeciesModel = (sequelize) => {
 
   TreeSpecies.init({
     // Nombre de la especie de árbol
-    species: DataTypes.STRING(50),
+    species: DataTypes.STRING(30),
   }, {
     sequelize,
     modelName: 'TreeSpecies',

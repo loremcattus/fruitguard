@@ -17,16 +17,19 @@ const treeSpeciesRegistrationModel = (sequelize) => {
     // Cantidad de árboles de la especie en concreto encontrados en el registro de la casa
     tree_number: DataTypes.INTEGER,
     // Estado del árbol, se considera el árbol en peor estado (con fruta madura) hacia abajo (árbol nuevo)
-    tree_state_id: {
+    tree_state: {
       type: DataTypes.ENUM(...treeStatesValues),
       validate: {
         isIn: {
           args: [treeStatesValues],
-          msg: `Invalid role, Valid tree states are: ${treeStatesValues.join(', ')}`,
+          msg: `Invalid tree state, Valid tree states are: ${treeStatesValues.join(', ')}`,
         },
       },
     },
-    tree_evidence_id: DataTypes.INTEGER,
+    tree_evidence_id: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
   }, {
     sequelize,
     modelName: 'TreeSpeciesRegistration',
