@@ -1,7 +1,7 @@
 <main>
     <section class="breadcrumbs">
         <a href="#">Inicio</a>
-        <p href="#">Ver campañas</p>
+        <a href="#">Ver campañas</a>
         <p>Ver focos</p>
     </section>
     <hr>
@@ -10,7 +10,7 @@
         <input class="full" type="text" id="addressSearch" placeholder="Nombre del foco">
         <div class="bottom-crud">
             <div class="check-container">
-                <label for="activeSearch">Mostrar desactivadas</label>
+                <label for="activeSearch">Mostrar inactivos</label>
                 <input id="activeSearch" type="checkbox">
             </div>
             <button type="submit" class="button-green-crud">Buscar</button>
@@ -20,7 +20,7 @@
     <section class="cards">
         <% if (Array.isArray(formattedFocused) && formattedFocused.length > 0) { %>
             <% for (let i = 0; i < formattedFocused.length; i++) { %>
-                <a href="/focused/<%= formattedFocused[i].id %>">
+                <a href="/focuses/<%= formattedFocused[i].id %>">
                     <div class="card-left-side">
                         <p class="card-left-side-top"><%= formattedFocused[i].id %> | <span class="card-left-side-top-highlight"><%= formattedFocused[i].address %></span></p>
                     </div>
@@ -54,5 +54,4 @@
     </div>
 </div>
 <div id="message" class="alert" role="alert"></div>
-<script src="/js/locations.js"></script>
-<script src="/js/focused.js" type="module"></script>
+<script src="/js/focuses.js" type="module"></script>

@@ -5,23 +5,24 @@ import { validateRequestBody } from '../../helpers/validators.js';
 const { Focus } = models;
 
 // Obtener todos los focos 
-export const getFocused = async (req,res) => {
+export const getFocuses = async (req,res) => {
     const fileHTML = 'search-focus';
     const title = 'Focos';
 
     try {
         const{ address, active = true } = req.query;// Obtener los parámetros de bùsqueda de la URL
+        const { CampaignId } = req.params;
 
         // Convertir el valor openString a booleano (?)
         const activeBoolean = active === true;
 
-        // Construir el objeto d ebúsqueda dinámicamente 
+        // Construir el objeto de búsqueda dinámicamente 
         const searchOptions = {
             ...(address && {address: { [Sequelize.Op.substring]: address} }),
             active: activeBoolean,
-        };
-        // Obtener todos los focos con las propiedades 
-        //LAS CONSTANTES NO DEBERIAN SER LLAMADAS FOCUS A MENOS Q ESTEN LLAMADOS EN JS
+            CampaignId
+        }
+        // Obtener todos los focos con las propiedades
         const focused = await Focus.findAll({
             order:[['id','DESC']],
             attributes: ['id', 'address', 'active'],
@@ -40,13 +41,24 @@ export const getFocused = async (req,res) => {
 export const addFocus = async (req, res) => {
     try{
         // Valida que vengan datos en el cuerpo
-        if (Object.keys(req,body).length === 0 ){
+        if (Object.keys(req.body).length === 0 ){
             return res.status(400).json({ error:'El cuerpo de la solicitud esta vacío'});
+        }
+
+        const { address } = req.body;
+        // const { CampaignId } = req.params;
+        const CampaignId = parseInt(req.params.CampaignId, 10);
+
+        const object = {
+            address,
+            CampaignId
         }
         
         // Filtrar y validar el cuerpo de la solicitud
-        const validatedObject = await validateRequestBody(req.body, Focus);
+        const validatedObject = await validateRequestBody(object, Focus);
+        
 
+        console.log(validatedObject);
         // Comprobar errores de validacion
         if (validatedObject.error){
             return res.status(400).json(validatedObject);
