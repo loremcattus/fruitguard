@@ -3,7 +3,7 @@ import { getUsers, getUser, addUser, updateUser, deleteUser } from '../modules/c
 import { getCampaigns, getCampaign, addCampaign } from '../modules/controllers/campaignController.js';
 import { getBlocks, addBlock } from '../modules/controllers/blockController.js';
 import { addHouses, getHouses } from '../modules/controllers/houseController.js';
-import { addHouseRegistration, getHouseRegistration } from '../modules/controllers/house_registrationController.js';
+import { addHouseRegistration, getHouseRegistrations } from '../modules/controllers/house_registrationController.js';
 
 export const router = express.Router();
 
@@ -28,5 +28,5 @@ router.get('/api/houses', getHouses);
 router.post('/api/houses', addHouses);
 
 // Registro de casas
-router.get('/houses', getHouseRegistration);
+router.get('/houses', getHouseRegistrations);
 router.post('/api/housesRegistrations', addHouseRegistration);
