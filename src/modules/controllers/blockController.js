@@ -1,42 +1,73 @@
 import models from '../models/index.js';
-import { validateRequestBody, validateFieldsDataType } from '../../helpers/validators.js';
+import { validateRequestBody } from '../../helpers/validators.js';
+import { Sequelize } from 'sequelize';
 
-const { Block, force } = models;
+const { BlockRegistration, Block } = models;
 
-const blockProp = [ 'id', 'streets' ];
+export const getBlocks = async (req,res) => {
+  const fileHTML = 'search-block';
+  const title = 'Manzanas';
 
-
-export const getBlocks = async (__, res) => {
     try {
-      const blocks = await Block.findAll({ attributes: blockProp });
+      const{ streets } = req.query;
+
+      const FocusId = parseInt(req.params.FocusId,10);
+
+      const searchOptions = {
+        ...(streets && {streets: {[Sequelize.Op.substring]: streets}}),
+        FocuId: FocusId
+      }
+      // Obtener todas las Manzanas con las propiedades
+      const blockRegistrations = await BlockRegistration.findAll({
+        order: [['id','DESC']],
+        where: searchOptions,
+      });
       
-      if (!blocks[0]) throw new Error('No hay manzanas registradas');
+      console.log(blockRegistrations);
+
+      const data = blockRegistrations.length > 0 ? blockRegistrations : 'No hay focos registrados o que coincidan con tu búsqueda';
       
-      return res.status(200).json(blocks);
-    } catch (error) {
-      return res.status(404).send({ error: error.massage });
+      return res.render('index.html',{ formattedBlocks: data , fileHTML, title });
+    } catch (error){
+      console.log(error);
+      return res.render('error.html', {error: 404});
     }
 };
 
-
-
-
+// Agregar una Manzana 
 export const addBlock = async (req, res) => {
   try {
-    if (Object.keys(req.body).length === 0) {
+
+    // Valida que vengan datos en el cuerpo
+    if (Object.keys(req.body).length === 0 ) {
       return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío.' });
     }
 
-    const validatedObject = await validateRequestBody(req.body, Block);
+    const { streets } = req.body;
+    
+    const CampaignId = parseInt(req.params.CampaignId, 10);
+    const FocusId = parseInt(req.params.FocusId,10);
 
+    const object ={
+      streets,
+      CampaignId,
+      FocusId
+    }
+
+
+    // Filtrar y validar el cuerpo de la solicitud
+    const validatedObject = await validateRequestBody(object, Block);
+
+    console.log(validatedObject);
+
+    // Comprobar errores de validacion
     if (validatedObject.error) {
       return res.status(400).json(validatedObject);
     }
 
-    // Comprobar si la manzana existe
-
-    const user = await Block.create(validatedObject);
-    return res.status(201).json(user.toJSON());
+    // Crear un nuevo foco en la BBDD y vpñverña como respuesta 
+    const block = await Block.create(validatedObject);
+    return res.status(201).json(block.toJSON());
   } catch (error) {
     console.error('Error al insertar usuario', error);
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });

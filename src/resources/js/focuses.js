@@ -72,19 +72,6 @@ formAdd.addEventListener('submit', async (event) => {
           <p>${data.active ? 'Activo' : 'Inactivo'}</p>
         </div>
     `);
-
-      // cardWrapper.innerHTML = `
-      //     <div class="card-left-side">
-      //       <p class="card-left-side-top">${data.id} | <span class="card-left-side-top-highlight">${data.address}</span></p>
-      //     </div>
-      //     <div class="card-right-side">
-      //       <p>${data.active ? 'Activo' : 'Inactivo'}</p>
-      //     </div>
-      // `;
-
-      // newFocusElement.insertAdjacentElement('beforeend', cardWrapper);
-
-      // Agregar el nuevo elemento de foco al contenedor existente
       focusedContainer.prepend(newFocusElement);
 
     } else {

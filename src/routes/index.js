@@ -22,5 +22,5 @@ router.get('/campaigns/:CampaignId/focuses', getFocuses);
 router.post('/api/campaigns/:CampaignId/focuses', addFocus);
 
 // Manzanas
-router.get('/api/blocks', getBlocks);
-router.post('/api/blocks', addBlock);
+router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks', getBlocks);
+router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks', addBlock);

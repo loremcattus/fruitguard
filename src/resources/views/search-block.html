@@ -1,0 +1,56 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <a href="#">Ver campañas</a>
+        <a href="#">Ver focos</a>
+        <p>Ver manzanas</p>
+    </section>
+    <hr>
+    <h1>Buscar manzanas</h1>
+    <form id="searchPost">
+        <input class="full" type="text" id="streetsSearch" placeholder="Nombre de las calles">
+        <div class="bottom-crud">
+            <div class="check-container">
+                <!-- <label for="activeSearch">Mostrar inactivos</label> -->
+                <!-- <input id="activeSearch" type="checkbox"> -->
+            </div>
+            <button type="submit" class="button-green-crud">Buscar</button>
+        </div>
+    </form>
+    <hr>
+    <section class="cards">
+        <% if (Array.isArray(formattedBlocks) && formattedBlocks.length > 0) { %>
+            <% for (let i = 0; i < formattedBlocks.length; i++) { %>
+                <a href="/blocks/<%= formattedBlocks[i].id %>">
+                    <div class="card-left-side">
+                        <p class="card-left-side-top"><%= formattedBlocks[i].id %></p>
+                        <p class="card-left-side-bottom"><%= formattedBlocks[i].streets %></p>
+                    </div>
+                </a>
+            <% } %>
+        <% } else { %>
+            <p><%= formattedBlocks %></p>
+        <% } %>
+    </section>
+    <button type="button" class="add-button" data-toggle="modal" data-target="#addModal"
+        aria-label="addButton"></button>
+</main>
+<div class="modal-backdrop" style="display: none;" id="modalBackdrop"></div>
+<div class="add-modal" style="display: none;" id="addModal" role="form" aria-labelledby="addModalLabel">
+    <div class="modal-items">
+        <div class="close-modal" data-dismiss="modal"></div>
+        <h1>Añadir manzana</h1>
+        <form id="addPost">
+            <input class="full" type="text" id="streetsAdd" placeholder="Nombre de la manzana">
+            <!-- <label class="green-url-default" for="file-upload" id="file-label">Añadir mapa de la zona</label> -->
+            <input type="file" id="file-upload" style="display: none;">
+            <hr>
+            <div class="bottom-crud">
+                <button type="reset" class="button-40">Cancelar</button>
+                <button type="submit" class="button-green-default button-60">Añadir manzana</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="message" class="alert" role="alert"></div>
+<script src="/js/blocks.js" type="module"></script>
