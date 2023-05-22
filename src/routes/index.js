@@ -2,8 +2,6 @@ import express from 'express';
 import { getUsers, getUser, addUser, updateUser, deleteUser } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign } from '../modules/controllers/campaignController.js';
 import { getBlocks, addBlock } from '../modules/controllers/blockController.js';
-import { getCampaigns } from '../modules/controllers/campaignController.js';
-import { addCampaign } from '../modules/controllers/campaignController.js';
 import { addHouses, getHouses } from '../modules/controllers/houseController.js';
 import { addHouseRegistration, getHouseRegistration } from '../modules/controllers/house_registrationController.js';
 
