@@ -246,7 +246,7 @@ export const seed = async (models) => {
       hasLicense: false,
       role: roles.PROSPECTOR
     },
-    { // 26
+    { // 27
       name: 'Isabel López',
       run: 98989898,
       dvRun: '7',
@@ -273,9 +273,15 @@ export const seed = async (models) => {
   ]);
 
   await Promise.all([
-    campaigns[0].addUser([users[6]]),
+    campaigns[0].addUser([
+      users[6],
+      users[8], users[9], users[10], users[11], users[12], users[13], users[14], users[15], users[16], users[17]
+    ]),
 
-    campaigns[1].addUser([users[7]]),
+    campaigns[1].addUser([
+      users[7],
+      users[18], users[19], users[20], users[21], users[22], users[23], users[24], users[25], users[26], users[27]
+    ]),
   ]);
 
   const focuses = await models.Focus.bulkCreate([
@@ -323,7 +329,8 @@ export const seed = async (models) => {
     blocks[1].addHouse([houses[2], houses[3]]),
     blocks[2].addHouse([houses[4], houses[5]]),
     blocks[3].addHouse([houses[6], houses[7]]),
-
+  ]);
+  await Promise.all([
     campaigns[1].addFocus([focuses[2], focuses[3]]),
     focuses[2].addBlock([blocks[4], blocks[5]]),
     focuses[3].addBlock([blocks[6], blocks[7]]),
@@ -332,6 +339,69 @@ export const seed = async (models) => {
     blocks[6].addHouse([houses[12], houses[13]]),
     blocks[7].addHouse([houses[14], houses[15]]),
   ]);
+
+  const cars = await models.Car.bulkCreate([
+    { patent: 'ABC123', capacity: 4, available: true },
+    { patent: 'DEF456', capacity: 2, available: true },
+    { patent: 'GHI789', capacity: 4, available: false },
+    { patent: 'JKL012', capacity: 3, available: true },
+    { patent: 'MNO345', capacity: 2, available: false },
+    { patent: 'PQR678', capacity: 4, available: true },
+    { patent: 'STU901', capacity: 2, available: true },
+    { patent: 'VWX234', capacity: 3, available: false },
+    { patent: 'YZA567', capacity: 4, available: true },
+    { patent: 'BCD890', capacity: 2, available: true },
+  ]);
+
+  const teams = await models.Team.bulkCreate([
+    {
+      CampaignId: campaigns[0].dataValues.id,
+      tasks: blocks[0].dataValues.id+','+blocks[1].dataValues.id,
+      users: users[8].dataValues.id+','+users[11].dataValues.id+','+users[12].dataValues.id+','+users[14].dataValues.id,
+      CarId: cars[0].dataValues.id
+    },
+    {
+      CampaignId: campaigns[0].dataValues.id,
+      tasks: blocks[2].dataValues.id,
+      users: users[9].dataValues.id+','+users[13].dataValues.id,
+      CarId: cars[1].dataValues.id
+    },
+    {
+      CampaignId: campaigns[0].dataValues.id,
+      tasks: blocks[3].dataValues.id,
+      users: users[10].dataValues.id+','+users[15].dataValues.id+','+users[16].dataValues.id,
+      CarId: cars[3].dataValues.id
+    },
+    {
+      CampaignId: campaigns[1].dataValues.id,
+      tasks: blocks[4].dataValues.id,
+      users: users[18].dataValues.id+','+users[23].dataValues.id,
+      CarId: cars[6].dataValues.id
+    },
+    {
+      CampaignId: campaigns[1].dataValues.id,
+      tasks: blocks[5].dataValues.id+','+blocks[6].dataValues.id,
+      users: users[19].dataValues.id+','+users[24].dataValues.id+','+users[25].dataValues.id+','+users[26].dataValues.id,
+      CarId: cars[5].dataValues.id
+    },
+    {
+      CampaignId: campaigns[1].dataValues.id,
+      tasks: blocks[7].dataValues.id,
+      users: users[20].dataValues.id+','+users[27].dataValues.id,
+      CarId: cars[9].dataValues.id
+    },
+  ]);
+
+  const attendances = [];
+  for (let i = 0; i < 28; i++) {
+    const isPresent = !(i === 17 || i === 21 || i === 22);
+    
+    attendances.push({
+      userId: users[i].dataValues.id,
+      isPresent: isPresent,
+    });
+  }
+  await models.Attendance.bulkCreate(attendances);
 
   const houseRegistrations = await models.HouseRegistration.bulkCreate([
     {
