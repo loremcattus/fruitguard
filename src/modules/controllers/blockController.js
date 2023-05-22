@@ -10,7 +10,6 @@ export const getBlocks = async (req,res) => {
 
     try {
       const{ streets } = req.query;
-
       const FocusId = parseInt(req.params.FocusId,10);
 
       const searchOptions = {
@@ -33,8 +32,7 @@ export const getBlocks = async (req,res) => {
       return res.render('error.html', {error: 404});
     }
 };
-
-// Agregar una Manzana 
+// Agregar una Manzanas
 export const addBlock = async (req, res) => {
   try {
 
@@ -44,19 +42,16 @@ export const addBlock = async (req, res) => {
     }
 
     const { streets } = req.body;
-    
-    const CampaignId = parseInt(req.params.CampaignId, 10);
     const FocusId = parseInt(req.params.FocusId,10);
 
     const object ={
       streets,
-      CampaignId,
-      FocusId
+      FocuId: FocusId
     }
 
 
     // Filtrar y validar el cuerpo de la solicitud
-    const validatedObject = await validateRequestBody(object, Block);
+    const validatedObject = await validateRequestBody(object, Block, BlockRegistration);
 
     console.log(validatedObject);
 

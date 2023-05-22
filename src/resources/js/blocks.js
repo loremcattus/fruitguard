@@ -1,5 +1,5 @@
 
-import { showMessage } from "./helpers";
+import { showMessage } from "./helpers.js";
 // CREATE
 
 // Obtener referencias a los elementos del formulario 
@@ -62,7 +62,7 @@ formAdd.addEventListener('submit',async (event) => {
             console.log(data);
             //Crear un nuevo elemento de campaña con los datos recibidos
             const newBlocksElement = document.createElement('a');
-            newBlocksElement.href = `/campaigns/${data.CampaignId}/focuses/${data.FocusId}/blocks/${data.id}`;
+            newBlocksElement.href = `/focuses/${data.FocusId}/blocks/${data.id}`;
             newBlocksElement.insertAdjacentHTML('beforeend',`
               <div class="card-left-side">
                 <p class="card-left-side-top">${data.id}</p>
