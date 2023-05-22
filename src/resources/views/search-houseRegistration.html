@@ -1,0 +1,83 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <p>Ver Casas</p>
+    </section>
+    <hr>
+    <h1>Buscar casa</h1>
+    <form id="searchPost">
+        <input class="full" type="text" id="idOrAddressSearch" placeholder="ID o dirección de la casa">
+        <input class="full" type="text" id="gridSearch" placeholder="Grilla">
+        <!-- <select class="half" id="areaSearch">
+            <option value="">Area</option>
+        </select>
+        <select class="half" id="stateSearch">
+            <option value="">Estado</option>
+        </select> -->
+        <select class="half" id="stateSearch">
+            <option value="" disabled selected>Estado</option>
+          <% Object.entries(areas).forEach(([key, value]) => { %>
+            <option value="<%= key %>"><%= value.charAt(0).toUpperCase() + value.slice(1) %></option>
+          <% }); %>
+        </select>
+        <select class="half" id="stateSearch">
+            <option value="" disabled selected>Area</option>
+          <% Object.entries(states).forEach(([key, value]) => { %>
+            <option value="<%= key %>"><%= value.charAt(0).toUpperCase() + value.slice(1) %></option>
+          <% }); %>
+        </select>
+        <div class="bottom-crud">
+            <div class="check-container">
+                <label for="openSearch">Mostrar casas sin remuestrear</label>
+                <input id="openSearch" type="checkbox">
+            </div>
+            <button type="submit" class="button-green-crud">Buscar</button>
+        </div>
+    </form>
+    <hr>
+    <section class="cards">
+        <% if (Array.isArray(formattedHouseRegistration) && formattedHouseRegistration.length > 0) { %>
+            <% for (let i = 0; i < formattedHouseRegistration.length; i++) { %>
+                <a href="#">
+                    <div class="card-left-side">
+                        <p class="card-left-side-top"><%= formattedHouseRegistration[i].id %> | <span class="card-left-side-top-highlight"><%= formattedHouseRegistration[i].grid %></span></p>
+                        <p class="card-left-side-bottom"><%= formattedHouseRegistration[i].area_id %> > <%= formattedHouseRegistration[i].state_id %></p>
+                    </div>
+                    <!-- <div class="card-right-side">
+                        <p><%=// formattedHouseRegistration[i].open ? 'Abierta' : 'Cerrada' %></p>
+                    </div> -->
+                </a>
+            <% } %>
+        <% } else { %>
+            <p><%= formattedHouseRegistration %></p>
+        <% } %>
+    </section>
+    <button type="button" class="add-button" data-toggle="modal" data-target="#addModal"
+        aria-label="addButton"></button>
+</main>
+<div class="modal-backdrop" style="display: none;" id="modalBackdrop"></div>
+<div class="add-modal" style="display: none;" id="addModal" role="form" aria-labelledby="addModalLabel">
+    <div class="modal-items">
+        <div class="close-modal" data-dismiss="modal"></div>
+        <h1>Añadir casa</h1>
+        <form id="addPost">
+            <input class="full" type="text" id="addressAdd" placeholder="Dirección">
+            <input class="full" type="text" id="gridAdd" placeholder="Grilla">
+            <select class="half" id="areaAdd">
+                <option value="">Area</option>
+            </select>
+            <select class="half" id="stateAdd">
+                <option value="">Estado</option>
+            </select>
+            <textarea class="full" type="text" name="" id="" cols="30" rows="10" id="commentAdd" placeholder="Comentario" ></textarea>
+            <hr>
+            <div class="bottom-crud">
+                <button type="reset" class="button-40">Cancelar</button>
+                <button type="submit" class="button-green-default button-60">Añadir casa</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="message" class="alert" role="alert"></div>
+<script src="/js/locations.js"></script>
+<script src="/js/campaigns.js" type="module"></script>

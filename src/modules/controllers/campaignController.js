@@ -1,13 +1,13 @@
 import { Sequelize } from 'sequelize';
 import models from '../models/index.js';
-import { validateRequestBody } from '../../helpers/validators.js';
+import { validateRequestBody, formatDate } from '../../helpers/validators.js';
 
 const { Campaign } = models;
 
 // Obtener todas las campañas
 export const getCampaigns = async (req, res) => {
-  const fileHTML = 'search-campaign';
-  const title = 'Campañas';
+  const fileHTML = 'list-campaigns';
+  const title = 'Listar Campañas';
 
   try {
     const { name, open = true, region, commune } = req.query; // Obtener los parámetros de búsqueda de la URL
@@ -34,7 +34,34 @@ export const getCampaigns = async (req, res) => {
 
     return res.render('index.html', { formattedCampaigns: data, fileHTML, title });
   } catch (error) {
-    return res.render('error.html', { error: 404 });
+    return res.render('error.html', { error: 500 });
+  }
+};
+
+// Obtener una campaña en específico
+export const getCampaign = async (req, res) => {
+  const fileHTML = 'view-campaign';
+  const title = 'Ver Campaña';
+  const single = true;
+
+  try {
+    // Obtener todas las campañas con las propiedades definidas
+    const campaign = await Campaign.findByPk( req.params.CampaignId, {
+      attributes: ['id', 'name', 'region', 'commune', 'open', 'mapId', 'createdAt', 'updatedAt']
+    });
+
+    if (campaign) {
+      const { createdAt, updatedAt, ...data } = campaign.dataValues;
+      data.createdAt = formatDate(createdAt);
+      data.updatedAt = formatDate(updatedAt);
+      return res.render('index.html', { formattedCampaign: data, fileHTML, title, single });
+    } else {
+      return res.render('error.html', { error: 404 });
+    }
+
+  } catch (error) {
+    console.log(error);
+    return res.render('error.html', { error: 500 });
   }
 };
 

@@ -1,0 +1,85 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <a href="/campaigns/">Listar campañas</a>
+        <p>Ver campaña</p>
+    </section>
+    <hr>
+    <h1>Información de la campaña</h1>
+    <form id="edit-post" class="info-post">
+        <div class="item-post">
+            <p class="key-post">ID</p>
+            <div class="value-post">
+                <p><%= formattedCampaign.id %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Nombre campaña</p>
+            <div class="value-post">
+                <p><%= formattedCampaign.name %></p>
+                <input placeholder="<%= formattedCampaign.name %>" type="text" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Estado</p>
+            <div class="value-post">
+                <p><%= formattedCampaign.open ? 'Abierta' : 'Cerrada' %></p>
+                <input type="checkbox" <%= formattedCampaign.open ? 'checked' : '' %> name="" id="" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Fecha de creación</p>
+            <div class="value-post">
+                <p><%= formattedCampaign.createdAt %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Fecha de modificación</p>
+            <div class="value-post">
+                <p><%= formattedCampaign.updatedAt %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Region</p>
+            <div class="value-post">
+                <p><%= formattedCampaign.region %></p>
+                <select class="region-select" id="region" style="display: none;">
+                    <option value=""><%= formattedCampaign.region %></option>
+                </select>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Comuna</p>
+            <div class="value-post">
+                <p><%= formattedCampaign.commune %></p>
+                <select class="commune-select" id="commune" style="display: none;">
+                    <option value=""><%= formattedCampaign.commune %></option>
+                </select>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Mapa de la zona</p>
+            <div class="value-post">
+                <p><a href=""><%= formattedCampaign.mapId ? 'Mapa de'+formattedCampaign.commune : 'No hay mapa asignado' %></a></p>
+                <label class="green-url-default" id="file-label" style="display: none;">
+                    Añadir mapa de la zona
+                    <input type="file" id="file-upload">
+                </label>
+            </div>
+        </div>
+        <hr>
+        <button id="edit" class="button-green-default button-60">Editar</button>
+        <div class="buttons-edit" style="display: none;">
+            <button type="submit" class="button-40">Guardar</button>
+            <button id="cancel-edit" class="button-green-default button-60">Cancelar</button>
+        </div>
+    </form>
+    <hr>
+    <div class="buttons-options">
+        <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
+        <a href="<%= formattedCampaign.id %>/focuses" class="button-green-default option-button">VER FOCOS</a>
+    </div>
+    <hr>
+    <h2>Usuarios</h2>
+</main>
+<script src="/js/locations.js"></script>

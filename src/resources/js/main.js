@@ -1,6 +1,6 @@
-// This function is called when the window loads.
-window.onload = function() {
+import { singleJS } from "./single.js";
 
+window.onload = () => {
   // Obtener el elemento breadcrumbs.
   const breadcrumbs = document.querySelector(".breadcrumbs");
 
@@ -112,4 +112,27 @@ window.onload = function() {
       fileLabel.innerText = 'Añadir mapa de la zona';
     });
   }
+
+  const commentTextarea = document.getElementById('comment');
+
+  if (commentTextarea) {
+    commentTextarea.addEventListener('input', function() {
+      this.style.height = 'auto'; // Restablecer la altura a "auto" para calcular correctamente el nuevo tamaño
+      
+      // Ajustar la altura del textarea para ajustarse al contenido
+      this.style.height = this.scrollHeight + 'px';
+
+      // Establecer un límite máximo de altura de 5rem (80px)
+      if (this.offsetHeight > 80) {
+        this.style.height = '80px';
+        this.style.overflowY = 'scroll';
+      } else {
+        this.style.overflowY = 'hidden';
+      }
+    });
+  }
+
+
+  singleJS();
+
 };

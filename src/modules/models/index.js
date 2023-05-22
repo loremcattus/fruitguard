@@ -100,6 +100,10 @@ models.Prospectus.belongsTo(models.TreeSpeciesRegistration, { foreignKey: 'treeS
 models.sequelize.sync({ force })
   .then(() => console.log('Database synchronized with models.'))
   .catch(error => console.error('Error synchronizing database with models:', error))
-  .then(() => seed(models));
+  .then(() => {
+    if (force) {
+      seed(models);
+    }
+  });
 
 export default models;

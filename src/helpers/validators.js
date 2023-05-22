@@ -1,3 +1,7 @@
+import moment from 'moment';
+import 'moment/locale/es.js';
+import 'moment-timezone';
+
 // Un objeto que mapea los tipos de datos de Sequelize a tipos de datos más genéricos
 const dataTypeMap = {
   INTEGER: 'integer',
@@ -207,6 +211,14 @@ export const validateRequestBody = async (body, model) => {
   // Si todo es válido, se devuelve el objeto filtrado sin las propiedades no permitidas.
   return filteredObject;
 };
+
+export const formatDate = (date, format = 'D/MM/YYYY [a las] HH:mm:ss A') => {
+  const timeZoneChile = 'America/Santiago';
+
+  const dateChile = moment(date).tz(timeZoneChile).locale('es').format(format);
+
+  return dateChile;
+}
 
 export const validateRUT = (rut) => {
   let splitRUT = rut.split('-');
