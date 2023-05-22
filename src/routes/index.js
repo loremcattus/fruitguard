@@ -2,6 +2,10 @@ import express from 'express';
 import { getUsers, getUser, addUser, updateUser, deleteUser } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign } from '../modules/controllers/campaignController.js';
 import { getBlocks, addBlock } from '../modules/controllers/blockController.js';
+import { getCampaigns } from '../modules/controllers/campaignController.js';
+import { addCampaign } from '../modules/controllers/campaignController.js';
+import { addHouses, getHouses } from '../modules/controllers/houseController.js';
+import { addHouseRegistration, getHouseRegistration } from '../modules/controllers/house_registrationController.js';
 
 export const router = express.Router();
 
@@ -21,3 +25,10 @@ router.post('/api/campaigns', addCampaign);
 router.get('/api/blocks', getBlocks);
 router.post('/api/blocks', addBlock);
 
+// Casas
+router.get('/api/houses', getHouses);
+router.post('/api/houses', addHouses);
+
+// Registro de casas
+router.get('/houses', getHouseRegistration);
+router.post('/api/housesRegistrations', addHouseRegistration);
