@@ -2,31 +2,79 @@ import models from '../models/index.js';
 import { validateRequestBody } from '../../helpers/validators.js';
 import { Sequelize } from 'sequelize';
 
-const { BlockRegistration, Block } = models;
+const { Focus, Block, BlockRegistration } = models;
 
 export const getBlocks = async (req,res) => {
   const fileHTML = 'search-block';
   const title = 'Manzanas';
 
     try {
-      const{ streets } = req.query;
+      const { streets } = req.query;
       const FocusId = parseInt(req.params.FocusId,10);
 
       const searchOptions = {
         ...(streets && {streets: {[Sequelize.Op.substring]: streets}}),
-        FocuId: FocusId
       }
-      // Obtener todas las Manzanas con las propiedades
-      const blockRegistrations = await BlockRegistration.findAll({
-        order: [['id','DESC']],
+      // Obtener todas las Manzanas que han sido registradas en el Foco
+      const blocks = await Block.findAll({
+        order: [['id', 'DESC']],
+        attributes: ['id'],
+        include: [
+          {
+            model: Focus,
+            where: { id: FocusId },
+            required: false
+          },
+        ],
         where: searchOptions,
       });
-      
+      // Obtener una lista de IDs
+      const blockIds = blocks.map(block => block.id);
+      // console.log(blockIds);
+
+      const blockRegistrations = await BlockRegistration.findAll({
+        order: [['id', 'DESC']],
+        where: {
+          BlockId: {
+            [Sequelize.Op.in]: blockIds
+          }
+        }
+      });
+
       console.log(blockRegistrations);
 
-      const data = blockRegistrations.length > 0 ? blockRegistrations : 'No hay focos registrados o que coincidan con tu búsqueda';
+      // const { streets } = req.query;
+      // const FocusId = parseInt(req.params.FocusId, 10);
+
+      // const blockRegistrations = await BlockRegistration.findAll({
+      //   order: [['id', 'DESC']],
+      //   include: [
+      //     {
+      //       model: Block,
+      //       attributes: ['id'],
+      //       include: [
+      //         {
+      //           model: Focus,
+      //           where: { id: FocusId, active: true },
+      //           required: false
+      //         }
+      //       ],
+      //       where: streets ? { streets: { [Sequelize.Op.substring]: streets } } : {}
+      //     }
+      //   ]
+      // });
+
+      // console.log(blockRegistrations);
+
+
+
+      // console.log(blockRegistrations);
       
-      return res.render('index.html',{ formattedBlocks: data , fileHTML, title });
+      // console.log(blockRegistrations);
+
+      // const data = blockRegistrations.length > 0 ? blockRegistrations : 'No hay focos registrados o que coincidan con tu búsqueda';
+      
+      // return res.render('index.html',{ formattedBlocks: data , fileHTML, title });
     } catch (error){
       console.log(error);
       return res.render('error.html', {error: 404});
