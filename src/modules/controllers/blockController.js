@@ -10,67 +10,29 @@ export const getBlocks = async (req,res) => {
 
     try {
       const { streets } = req.query;
-      const FocusId = parseInt(req.params.FocusId,10);
+      const FocusId = parseInt(req.params.FocusId, 10);
 
       const searchOptions = {
         ...(streets && {streets: {[Sequelize.Op.substring]: streets}}),
       }
+
       // Obtener todas las Manzanas que han sido registradas en el Foco
-      const blocks = await Block.findAll({
+      const focus = await Focus.findOne({
         order: [['id', 'DESC']],
         attributes: ['id'],
-        include: [
+        include:
           {
-            model: Focus,
-            where: { id: FocusId },
-            required: false
+            model: Block,
+            where: searchOptions
           },
-        ],
-        where: searchOptions,
-      });
-      // Obtener una lista de IDs
-      const blockIds = blocks.map(block => block.id);
-      // console.log(blockIds);
-
-      const blockRegistrations = await BlockRegistration.findAll({
-        order: [['id', 'DESC']],
-        where: {
-          BlockId: {
-            [Sequelize.Op.in]: blockIds
-          }
-        }
+        where: { id: FocusId },
       });
 
-      console.log(blockRegistrations);
-
-      // const { streets } = req.query;
-      // const FocusId = parseInt(req.params.FocusId, 10);
-
-      // const blockRegistrations = await BlockRegistration.findAll({
-      //   order: [['id', 'DESC']],
-      //   include: [
-      //     {
-      //       model: Block,
-      //       attributes: ['id'],
-      //       include: [
-      //         {
-      //           model: Focus,
-      //           where: { id: FocusId, active: true },
-      //           required: false
-      //         }
-      //       ],
-      //       where: streets ? { streets: { [Sequelize.Op.substring]: streets } } : {}
-      //     }
-      //   ]
-      // });
-
-      // console.log(blockRegistrations);
-
-
-
-      // console.log(blockRegistrations);
-      
-      // console.log(blockRegistrations);
+      // TODO: Crear un objeto block y guardarlo en blockRegistrations con las calles y el id,
+      //       en el front separar las calles para imprimirlas en el card.
+      //       Recuerda validar previamente si foco tiene alguna manzana
+      console.log(focus.Blocks[0].dataValues.streets);
+      console.log(focus.Blocks[0].BlockRegistration.dataValues.id);
 
       // const data = blockRegistrations.length > 0 ? blockRegistrations : 'No hay focos registrados o que coincidan con tu búsqueda';
       
