@@ -6,7 +6,7 @@ const { Focus } = models;
 
 // Obtener todos los focos 
 export const getFocuses = async (req,res) => {
-    const fileHTML = 'search-focus';
+    const fileHTML = 'list-focus';
     const title = 'Focos';
 
     try {

@@ -5,7 +5,7 @@ import { Sequelize } from 'sequelize';
 const { Focus, Block, BlockRegistration } = models;
 
 export const getBlocks = async (req,res) => {
-  const fileHTML = 'search-block';
+  const fileHTML = 'list-block';
   const title = 'Manzanas';
 
     try {
@@ -18,25 +18,26 @@ export const getBlocks = async (req,res) => {
 
       // Obtener todas las Manzanas que han sido registradas en el Foco
       const focus = await Focus.findOne({
-        order: [['id', 'DESC']],
         attributes: ['id'],
         include:
           {
             model: Block,
-            where: searchOptions
+            where: searchOptions,
           },
         where: { id: FocusId },
       });
 
-      // TODO: Crear un objeto block y guardarlo en blockRegistrations con las calles y el id,
-      //       en el front separar las calles para imprimirlas en el card.
-      //       Recuerda validar previamente si foco tiene alguna manzana
-      console.log(focus.Blocks[0].dataValues.streets);
-      console.log(focus.Blocks[0].BlockRegistration.dataValues.id);
+      const data = [];
+      if (focus && "Blocks" in focus){
+        for (let i = 0; i < focus.Blocks.length; i++) {
+          let streets = focus.Blocks[i].dataValues.streets.split("@");
+          let blockRegistrationId = focus.Blocks[i].BlockRegistration.dataValues.id;
+          data[i] = {streets, blockRegistrationId};
+        }
+      };
+      data.reverse();
 
-      // const data = blockRegistrations.length > 0 ? blockRegistrations : 'No hay focos registrados o que coincidan con tu búsqueda';
-      
-      // return res.render('index.html',{ formattedBlocks: data , fileHTML, title });
+      return res.render('index.html',{ formattedBlocks: data , fileHTML, title });
     } catch (error){
       console.log(error);
       return res.render('error.html', {error: 404});
@@ -45,7 +46,6 @@ export const getBlocks = async (req,res) => {
 // Agregar una Manzanas
 export const addBlock = async (req, res) => {
   try {
-
     // Valida que vengan datos en el cuerpo
     if (Object.keys(req.body).length === 0 ) {
       return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío.' });
@@ -56,22 +56,40 @@ export const addBlock = async (req, res) => {
 
     const object ={
       streets,
-      FocuId: FocusId
+      FocusId: FocusId
     }
 
 
     // Filtrar y validar el cuerpo de la solicitud
-    const validatedObject = await validateRequestBody(object, Block, BlockRegistration);
-
-    console.log(validatedObject);
+    const validatedObject = await validateRequestBody(object, Block);
 
     // Comprobar errores de validacion
     if (validatedObject.error) {
       return res.status(400).json(validatedObject);
     }
 
-    // Crear un nuevo foco en la BBDD y vpñverña como respuesta 
-    const block = await Block.create(validatedObject);
+    const focus = await Focus.findOne({
+      attributes: ['id'],
+      where: { id: FocusId },
+    });
+    
+    // TODO: Buscar un bloque existente con los mismos valores dentro del enfoque
+    // const existingBlock = await focus.getBlocks({
+    //   where: validatedObject,
+    // });
+
+    // if (existingBlock) {
+      // Buscar un bloque existente con los mismos valores o crear uno nuevo si no existe
+      const [block, created] = await Block.findOrCreate({
+        where: validatedObject,
+      });
+      
+      // Añadir el bloque al enfoque si fue creado
+      if (created) {
+        await focus.addBlock(block);
+      }
+    // }
+
     return res.status(201).json(block.toJSON());
   } catch (error) {
     console.error('Error al insertar usuario', error);
