@@ -1,0 +1,52 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <a href="#">Ver campañas</a>
+        <a href="#">Ver focos</a>
+        <p>Ver manzanas</p>
+    </section>
+    <hr>
+    <h1>Buscar manzanas</h1>
+    <form id="searchPost">
+        <input class="half" type="text" id="streetsSearch" placeholder="Nombre de la calle">
+        <button type="submit" class="button-green-crud">Buscar</button>
+    </form>
+    <hr>
+    <section class="cards">
+        <% if (formattedBlocks.length > 0) { %>
+            <% for (let i = 0; i < formattedBlocks.length; i++) { %>
+                <a href="<%= formattedBlocks[i].blockRegistrationId %>">
+                    <div class="card-left-side">
+                        <p class="card-left-side-top"><%= formattedBlocks[i].blockRegistrationId %></p>
+                        <% for (let j = 0; j < formattedBlocks[i].streets.length; j++) { %>
+                            <p class="card-left-side-bottom">
+                                <%= formattedBlocks[i].streets[j] %>
+                            </p>
+                        <% } %>
+                    </div>
+                </a>
+            <% } %>
+        <% } else { %>
+            <p>No hay manzanas registradas en el foco o que coincidan con tu búsqueda</p>
+        <% } %>
+    </section>
+    <button type="button" class="add-button" data-toggle="modal" data-target="#addModal"
+        aria-label="addButton"></button>
+</main>
+<div class="modal-backdrop" style="display: none;" id="modalBackdrop"></div>
+<div class="add-modal" style="display: none;" id="addModal" role="form" aria-labelledby="addModalLabel">
+    <div class="modal-items">
+        <div class="close-modal" data-dismiss="modal"></div>
+        <h1>Añadir manzana</h1>
+        <form id="addPost">
+            <input class="full" type="text" id="streetsAdd" placeholder="Nombre de la manzana">
+            <hr>
+            <div class="bottom-crud">
+                <button type="reset" class="button-40">Cancelar</button>
+                <button type="submit" class="button-green-default button-60">Añadir manzana</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="message" class="alert" role="alert"></div>
+<script src="/js/blocks.js" type="module"></script>
