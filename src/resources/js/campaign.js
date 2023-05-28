@@ -1,10 +1,10 @@
 import { showMessage } from './helpers.js';
 
-const urlParams = new URLSearchParams(window.location.search);
-const message = urlParams.get('message');
-
+const message = localStorage.getItem('message');
 if (message) {
   showMessage(message);
+  // Limpiar el mensaje almacenado después de mostrarlo
+  localStorage.removeItem('message');
 }
 
 // UPDATE
@@ -65,11 +65,10 @@ formEdit.addEventListener('submit', async (event) => {
     })
 
     if (response.status === 200) {
-      // Agregar parámetro de consulta a la URL de la página recargada
-      const url = new URL(location.href);
-      url.searchParams.set('message', 'Campaña actualizada con éxito');
-      // Recargar la página con la URL actualizada
-      location.href = url.toString();
+      // Guardar el mensaje en el almacenamiento local
+      localStorage.setItem('message', 'Campaña actualizada con éxito');
+      // Recargar la página
+      location.reload();
     } else if (response.status === 400) {
       return response.text().then(errorMessage => {
         showMessage(errorMessage, 'error');
@@ -123,12 +122,12 @@ function handleConfirm() {
       'Content-Type': 'application/json'
     }
   })
-  .then(response => {
-    // Manejar la respuesta del servidor
-  })
-  .catch(error => {
-    // Manejar el error
-  });
+    .then(response => {
+      // Manejar la respuesta del servidor
+    })
+    .catch(error => {
+      // Manejar el error
+    });
 }
 
 // Agregar eventos de clic a los botones de eliminación
