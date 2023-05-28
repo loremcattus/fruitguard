@@ -33,4 +33,4 @@ router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks', addBlock);
 
 // Registro de casas
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses', getHouseRegistrations);
-router.post('/api/housesRegistrations', addHouseRegistration);
+router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses', addHouseRegistration);

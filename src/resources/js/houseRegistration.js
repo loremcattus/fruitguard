@@ -23,29 +23,31 @@ formAdd.addEventListener('submit', async (event) => {
   try {
     // Obtener los valores de los campos del formulario
     const address = addressInputAdd.value;
-    const grid = gridInputAdd.value;
-    const area = areaInputAdd.value;
+    const grid = Number(gridInputAdd.value);
+    const area = Number(areaInputAdd.value);
     const state = stateInputAdd.value;
     const comment = commentInputAdd.value;
 
     // Crear el objeto con los valores del formulario
     const object = {
-        address,
-        grid,
-        area,
-        state,
-        comment
+      grid,
+      comment,
+      area,
+      state,  
+      address,    
     };
 
     // Obtener el host y el puerto del servidor actual
     const host = window.location.hostname;
     const port = window.location.port;
+    const pathName = window.location.pathname;
 
     // Construir la URL base
     const baseUrl = `http://${host}:${port}`;
 
     // Componer la URL completa para la solicitud
-    const url = `${baseUrl}/api/campaigns`;
+    const url = `${baseUrl}/api${pathName}`;
+    //campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses
 
     // Enviar el objeto al servidor
     const response = await fetch(url, {

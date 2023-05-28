@@ -1,7 +1,7 @@
 import models from '../models/index.js';
 import { areas, states } from '../../helpers/enums.js';
 import { Sequelize } from 'sequelize';
-//import { validateRequestBody } from '../../helpers/validators.js';
+import { validateRequestBody } from '../../helpers/validators.js';
 
 const { HouseRegistration, BlockRegistration, House } = models;
 
@@ -134,16 +134,24 @@ export const getHouseRegistration = async (req, res) => {
 
 // Agregar una campaña
 export const addHouseRegistration = async (req, res) => {
+  console.log("post ");
   try {
     // Valida que vengan datos en el cuerpo
     if (Object.keys(req.body).length === 0) {
       return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío.' });
     }
 
+    //Rescatar address del object
+
+    //codear el find or craete de sequelize buscando por la address rescatada
+
     // Filtrar y validar el cuerpo de la solicitud
     const validatedObject = await validateRequestBody(req.body, HouseRegistration);
+    console.log(HouseRegistration);
+    console.log(req.body);
     // Comprobar errores de validación
     if (validatedObject.error) {
+      console.log(validatedObject.error);
       return res.status(400).json(validatedObject);
     }
 

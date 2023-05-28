@@ -55,12 +55,18 @@
             <input class="full" type="text" id="addressAdd" placeholder="Dirección">
             <input class="full" type="text" id="gridAdd" placeholder="Grilla">
             <select class="half" id="areaAdd">
-                <option value="">Area</option>
+                <option value="" disabled selected>Area</option>
+              <% Object.entries(areas).forEach(([key, value]) => { %>
+                <option value="<%= value %>"><%= value %></option>
+              <% }); %>
             </select>
             <select class="half" id="stateAdd">
-                <option value="">Estado</option>
+                <option value="" disabled selected>Estado</option>
+              <% Object.entries(states).forEach(([key, value]) => { %>
+                <option value="<%= value %>"><%= value %></option>
+              <% }); %>
             </select>
-            <textarea class="full" type="text" name="" id="" cols="30" rows="10" id="commentAdd" placeholder="Comentario" ></textarea>
+            <textarea class="full" type="text" cols="30" rows="10" id="commentAdd" placeholder="Comentario" ></textarea>
             <hr>
             <div class="bottom-crud">
                 <button type="reset" class="button-40">Cancelar</button>
