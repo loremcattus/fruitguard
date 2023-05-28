@@ -1,0 +1,52 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <a href="/campaigns/">Listar campañas</a>
+        <a href="#">Ver campaña</a> <!--Puede ser FormattedCampaign.id-->
+        <a href="/focuses/">Listar focos</a>
+        <p>Ver foco</p>
+    </section>
+    <hr>
+    <h1>Información de el foco</h1>
+    <form id="edit-post" class="info-post">
+        <div class="item-post">
+            <p class="key-post">Dirección del foco</p>
+            <div class="value-post">
+                <p><%= formattedFocus.address %></p>
+                <input placeholder="<%= formattedFocus.address %>" type="text" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Actividad</p>
+            <div class="value-post">
+                <p><%= formattedFocus.active ? 'Activo' : 'Inactivo' %></p>
+                <input type="checkbox" <%= formattedFocus.active ? 'checked' : '' %> name="" id="" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post"> Fecha de creación</p>
+            <div class="value-post">
+                <p><%= formattedFocus.createdAt %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Fecha de modificación</p>
+            <div class="value-post">
+                <p><%= formattedFocus.updatedAt %></p>
+            </div>
+        </div>
+        <!--FALTARIA AGREGAR MAPAS TANTO EN EL CONTROLADOR COMO EN EL FRONT-->
+        <hr>
+        <button id="edit" class="button-green-default button-60">Editar</button>
+        <div class="buttons-edit" style="display: none;">
+            <button type="submit" class="button-40">Guardar</button>
+            <button id="cancel-edit" class=" button-green-default button-60">Cancelar</button>
+        </div>
+    </form>
+    <hr>
+    <div class="buttons-options">
+        <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
+        <a href="<%= formattedFocus.id %>/blocks" class="button-green-default option-button">VER FOCOS</a>
+    </div>
+</main>
+  

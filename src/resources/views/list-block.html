@@ -1,9 +1,11 @@
 <main>
     <section class="breadcrumbs">
         <a href="#">Inicio</a>
-        <a href="#">Ver campañas</a>
-        <a href="#">Ver focos</a>
-        <p>Ver manzanas</p>
+        <a href="/campaigns/">Listar campañas</a>
+        <a href="#">Ver campaña</a>
+        <a href="/focuses/">Listar focos</a>
+        <a href="#">Ver foco</a>
+        <p>Listar manzanas</p>
     </section>
     <hr>
     <h1>Buscar manzanas</h1>
@@ -15,7 +17,7 @@
     <section class="cards">
         <% if (formattedBlocks.length > 0) { %>
             <% for (let i = 0; i < formattedBlocks.length; i++) { %>
-                <a href="<%= formattedBlocks[i].blockRegistrationId %>">
+                <a href="blocks/<%= formattedBlocks[i].blockRegistrationId %>">
                     <div class="card-left-side">
                         <p class="card-left-side-top"><%= formattedBlocks[i].blockRegistrationId %></p>
                         <% for (let j = 0; j < formattedBlocks[i].streets.length; j++) { %>

@@ -43,6 +43,38 @@ export const getBlocks = async (req, res) => {
     return res.render('error.html', { error: 404 });
   }
 };
+
+// Obtener una manzana en especifico 
+export const getBlock = async (req, res) => {
+  const fileHTML = 'view-block';
+  const title = 'Ver Manzana';
+  const single = true;
+
+  try{
+    // Obtener todas las manzanas con propiedades definidas 
+    const block = await Block.findByPk( req.params.BlockId,{
+        attributes: ['id', 'streets'] //'createdAt', 'updatedAt'// FALTA
+    });
+
+    if (block) {
+        const { ...data } = block.dataValues;// createdAt, updatedAt,
+        // data.createdAt = formatDate(createdAt);
+        // data.updatedAt = formatDate(updatedAt);
+        return res.render('index.html',{formattedBlock: data, fileHTML, title, single });
+    } else {
+        return res.render('error.html',{ error: 404 });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.render('error.html',{ error: 500 });
+  }
+};
+
+
+
+
+
+
 // Agregar una Manzanas
 export const addBlock = async (req, res) => {
   try {
@@ -80,24 +112,11 @@ export const addBlock = async (req, res) => {
       where: validatedObject,
     });
 
-    // Añade el bloque al enfoque si fue creado
-    if (created) {
+    // Añade el bloque al enfoque si fue creado Y Verifica si el enfoque ya tiene el bloque asociado
+      if (created || !(await focus.hasBlock(block))) {
       await focus.addBlock(block);
     } else {
-      // Verifica si el enfoque ya tiene el bloque asociado
-      const focusHasBlock = await Focus.findOne({
-        attributes: ['id'],
-        include: {
-          model: Block,
-          where: { id: block.dataValues.id },
-        },
-        where: { id: FocusId },
-      });
-      if (focusHasBlock) {
-        return res.status(409).json('La manzana ya existe en el foco');
-      } else {
-        focus.addBlock(block);
-      }
+      return res.status(409).json('La manzana ya existe en el foco');
     }
 
     // Retorna el bloque como una respuesta JSON con estado 201 (creado)

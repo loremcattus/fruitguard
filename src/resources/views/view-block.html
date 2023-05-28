@@ -1,0 +1,34 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <a href="/campaigns/">Listar campañas</a>
+        <a href="#">Ver campaña</a> <!--Puede ser FormattedCampaign.id-->
+        <a href="/focuses/">Listar focos</a>
+        <a href="#">Ver foco</a>
+        <a href="/blocks/">Listar manzanas</a>
+        <p>Ver manzana</p>
+    </section>
+    <hr>
+    <h1>Información de la manzana</h1>
+    <form id="edit-post" class="info-post">
+        <div class="item-post">
+            <p class="key-post">ID</p>
+            <div class="value-post">
+                <p><%= formattedBlock.id %></p>
+                <input placeholder="<%= formattedBlock.id %>" type="text" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Todas las calles</p>
+            <div class="value-post">
+                <p><%= formattedBlock.streets %></p>
+                <input placeholder="<%= formattedBlock.streets %>" type="text" style="display: none;">
+            </div>
+        </div>
+        <hr>
+        <div class="buttons-options">
+            <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
+            <a href="<%= formattedBlock.id %>/houses" class="button-green-default option-button">VER FOCOS</a>
+        </div>
+    </main>
+    
