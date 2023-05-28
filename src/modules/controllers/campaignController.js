@@ -6,16 +6,21 @@ const { Campaign } = models;
 
 // Obtener todas las campañas
 export const getCampaigns = async (req, res) => {
-  const fileHTML = 'list-treeRegistration';
-  const title = 'Listar Registro de Árboles';
+  const fileHTML = 'list-campaigns';
+  const title = 'Listar Campañas';
 
   try {
-    const { tree_state, TreeSpecyId } = req.query; // Obtener los parámetros de búsqueda de la URL
+    const { name, open = true, region, commune } = req.query; // Obtener los parámetros de búsqueda de la URL
+
+    // Convertir el valor de openString a booleano
+    const openBoolean = open === true;
 
     // Construir el objeto de búsqueda dinámicamente
     const searchOptions = {
-      ...(tree_state && { tree_state }),
-      ...(TreeSpecyId && { TreeSpecyId })
+      ...(name && { name: { [Sequelize.Op.substring]: name } }),
+      open: openBoolean,
+      ...(region && { region }),
+      ...(commune && { commune })
     };
 
     // Obtener todas las campañas con las propiedades definidas
@@ -33,7 +38,32 @@ export const getCampaigns = async (req, res) => {
   }
 };
 
+// Obtener una campaña en específico
+export const getCampaign = async (req, res) => {
+  const fileHTML = 'view-campaign';
+  const title = 'Ver Campaña';
+  const single = true;
 
+  try {
+    // Obtener todas las campañas con las propiedades definidas
+    const campaign = await Campaign.findByPk( req.params.CampaignId, {
+      attributes: ['id', 'name', 'region', 'commune', 'open', 'mapId', 'createdAt', 'updatedAt']
+    });
+
+    if (campaign) {
+      const { createdAt, updatedAt, ...data } = campaign.dataValues;
+      data.createdAt = formatDate(createdAt);
+      data.updatedAt = formatDate(updatedAt);
+      return res.render('index.html', { formattedCampaign: data, fileHTML, title, single });
+    } else {
+      return res.render('error.html', { error: 404 });
+    }
+
+  } catch (error) {
+    console.log(error);
+    return res.render('error.html', { error: 500 });
+  }
+};
 
 // Agregar una campaña
 export const addCampaign = async (req, res) => {

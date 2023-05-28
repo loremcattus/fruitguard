@@ -81,5 +81,140 @@
     </div>
     <hr>
     <h2>Usuarios</h2>
+    <form id="search-post">
+        <input id="nameRutRemove" type="text" class="full" placeholder="Nombre o RUT del usuario">
+        <select id="rolRemove" class="half">
+            <option value="">Rol</option>
+        </select>
+        <button type="submit" class="button-green-crud">Buscar</button>
+    </form>
+    <hr>
+
+    <section class="cards">
+        <% for (let i = 0; i < 5; i++) { %>
+        <a>
+            <div class="card-left-side">
+                <p class="card-left-side-top"><%= i %></p>
+                <p class="card-left-side-bottom">Rol | RUT</p>
+            </div>
+            <div user-id="<%= i %>" class="card-right-side removeBtn">
+                <div class="remove-user" data-dismiss="modal"></div>
+            </div>
+        </a>
+        <% } %>
+    </section>
+    <button type="button" class="add-button" data-toggle="modal" data-target="#addModal" aria-label="addButton"></button>
 </main>
+
+<div class="modal-backdrop" style="display: none;" id="modalBackdrop"></div>
+<div class="add-modal add-users-modal" style="display: none;" id="addModal" role="form" aria-labelledby="addModalLabel">
+    <div class="modal-items modal-items-add-users">
+        <div class="close-modal" data-dismiss="modal"></div>
+        <h1 class="addUsersTitle">Añadir usuarios</h1>
+        <form id="addPost" class="add-users-form">
+            <section class="cards add-users-cards">
+                <a>
+                    <div class="card-left-side">
+                        <p class="card-left-side-top">Juan</p>
+                        <p class="card-left-side-bottom">Rol | RUT</p>
+                    </div>
+                    <div user-id="1" class="card-right-side check-button">
+                        <input type="checkbox" class="add-user-checkbox">
+                    </div>
+                </a>
+                <a>
+                    <div class="card-left-side">
+                        <p class="card-left-side-top">Carlos</p>
+                        <p class="card-left-side-bottom">Rol | RUT</p>
+                    </div>
+                    <div user-id="2" class="card-right-side check-button">
+                        <input type="checkbox" class="add-user-checkbox">
+                    </div>
+                </a>
+                <a>
+                    <div class="card-left-side">
+                        <p class="card-left-side-top">Ana</p>
+                        <p class="card-left-side-bottom">Rol | RUT</p>
+                    </div>
+                    <div user-id="3" class="card-right-side check-button">
+                        <input type="checkbox" class="add-user-checkbox">
+                    </div>
+                </a>
+                <a>
+                    <div class="card-left-side">
+                        <p class="card-left-side-top">Pedro</p>
+                        <p class="card-left-side-bottom">Rol | RUT</p>
+                    </div>
+                    <div user-id="4" class="card-right-side check-button">
+                        <input type="checkbox" class="add-user-checkbox">
+                    </div>
+                </a>
+                <a>
+                    <div class="card-left-side">
+                        <p class="card-left-side-top">Pepe</p>
+                        <p class="card-left-side-bottom">Rol | RUT</p>
+                    </div>
+                    <div user-id="5" class="card-right-side check-button">
+                        <input type="checkbox" class="add-user-checkbox">
+                    </div>
+                </a>
+                <a>
+                    <div class="card-left-side">
+                        <p class="card-left-side-top">Miguel</p>
+                        <p class="card-left-side-bottom">Rol | RUT</p>
+                    </div>
+                    <div user-id="6" class="card-right-side check-button">
+                        <input type="checkbox" class="add-user-checkbox">
+                    </div>
+                </a>
+                <a>
+                    <div class="card-left-side">
+                        <p class="card-left-side-top">Jhon</p>
+                        <p class="card-left-side-bottom">Rol | RUT</p>
+                    </div>
+                    <div user-id="7" class="card-right-side check-button">
+                        <input type="checkbox" class="add-user-checkbox">
+                    </div>
+                </a>
+                <a>
+                    <div class="card-left-side">
+                        <p class="card-left-side-top">Marco</p>
+                        <p class="card-left-side-bottom">Rol | RUT</p>
+                    </div>
+                    <div user-id="8" class="card-right-side check-button">
+                        <input type="checkbox" class="add-user-checkbox">
+                    </div>
+                </a>
+                <a>
+                    <div class="card-left-side">
+                        <p class="card-left-side-top">Benja</p>
+                        <p class="card-left-side-bottom">Rol | RUT</p>
+                    </div>
+                    <div user-id="9" class="card-right-side check-button">
+                        <input type="checkbox" class="add-user-checkbox">
+                    </div>
+                </a>
+            </section>
+            <div class="bottom-crud bottom-crud-add-users">
+                <button type="reset" class="button-40">Cancelar</button>
+                <button type="submit" class="button-green-default button-60">Añadir usuario/s</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-backdrop" style="display: none;" id="modalBackdropRemove"></div>
+<div class="add-modal" style="display: none;" id="removeModal" role="form" aria-labelledby="removeModalLabel">
+    <div class="modal-items">
+        <div class="close-modal" data-dismiss="modalRemoveUser"></div>
+        <p id="modal-message" class="modal-message">¿Seguro que deseas eliminar al usuario?</p>
+        <div class="bottom-crud">
+            <button class="button-40" id="confirmRemoveUser">Confirmar</button>
+            <button class="button-green-default button-60" id="cancelRemoveUser">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<div id="message" class="alert" role="alert"></div>
+
 <script src="/js/locations.js"></script>
