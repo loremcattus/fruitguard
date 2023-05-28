@@ -6,7 +6,7 @@
     </section>
     <hr>
     <h1>Información de la campaña</h1>
-    <form id="edit-post" class="info-post">
+    <form id="editPost" class="info-post">
         <div class="item-post">
             <p class="key-post">ID</p>
             <div class="value-post">
@@ -17,14 +17,14 @@
             <p class="key-post">Nombre campaña</p>
             <div class="value-post">
                 <p><%= formattedCampaign.name %></p>
-                <input placeholder="<%= formattedCampaign.name %>" type="text" style="display: none;">
+                <input placeholder="<%= formattedCampaign.name %>" id="name" type="text" style="display: none;">
             </div>
         </div>
         <div class="item-post">
             <p class="key-post">Estado</p>
             <div class="value-post">
                 <p><%= formattedCampaign.open ? 'Abierta' : 'Cerrada' %></p>
-                <input type="checkbox" <%= formattedCampaign.open ? 'checked' : '' %> name="" id="" style="display: none;">
+                <input type="checkbox" <%= formattedCampaign.open ? 'checked' : '' %> name="" id="open" style="display: none;">
             </div>
         </div>
         <div class="item-post">
@@ -218,3 +218,4 @@
 <div id="message" class="alert" role="alert"></div>
 
 <script src="/js/locations.js"></script>
+<script src="/js/campaign.js" type="module"></script>

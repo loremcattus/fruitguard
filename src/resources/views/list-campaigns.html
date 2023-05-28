@@ -25,7 +25,7 @@
     <section class="cards">
         <% if (Array.isArray(formattedCampaigns) && formattedCampaigns.length > 0) { %>
             <% for (let i = 0; i < formattedCampaigns.length; i++) { %>
-                <a href="<%= formattedCampaigns[i].id %>">
+                <a href="/campaigns/<%= formattedCampaigns[i].id %>">
                     <div class="card-left-side">
                         <p class="card-left-side-top"><%= formattedCampaigns[i].id %> | <span class="card-left-side-top-highlight"><%= formattedCampaigns[i].name %></span></p>
                         <p class="card-left-side-bottom"><%= formattedCampaigns[i].region %> > <%= formattedCampaigns[i].commune %></p>

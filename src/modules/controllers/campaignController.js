@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize';
 import models from '../models/index.js';
-import { validateRequestBody, formatDate } from '../../helpers/validators.js';
+import { validateRequestBody, formatDate, validateFieldsDataType } from '../../helpers/validators.js';
 
 const { Campaign } = models;
 
@@ -77,7 +77,7 @@ export const addCampaign = async (req, res) => {
     const validatedObject = await validateRequestBody(req.body, Campaign);
     // Comprobar errores de validación
     if (validatedObject.error) {
-      return res.status(400).json(validatedObject);
+      return res.status(400).json(validatedObject.error);
     }
 
     // Crear una nueva campaña en la base de datos y devolverla como respuesta
@@ -88,3 +88,34 @@ export const addCampaign = async (req, res) => {
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
   }
 };
+
+// Editar campaña
+export const updateCampaign = async (req, res) => {
+  try {
+    // Valida que vengan datos en el cuerpo
+    if (Object.keys(req.body).length === 0) {
+      return res.status(400).json('El cuerpo de la solicitud está vacío.');
+    }
+
+    // Validar el cuerpo de la solicitud
+    const validatedFields = await validateFieldsDataType(req.body, Campaign);
+    // Comprobar errores de validación
+    if (validatedFields.errors) {
+      return res.status(400).json(validatedFields.errors);
+    }
+    // console.log(req.body);
+    let campaign = await Campaign.update(req.body, {
+      where: {
+        id: req.params.CampaignId
+      }
+    });
+
+    console.log(campaign);
+
+    return res.status(200).json(campaign);
+  } catch (error) {
+    console.error('Error al actualizar la campaña', error);
+    return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
+  }
+}
+
