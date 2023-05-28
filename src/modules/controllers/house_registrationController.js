@@ -1,5 +1,6 @@
 import models from '../models/index.js';
 import { areas, states } from '../../helpers/enums.js';
+import { Sequelize } from 'sequelize';
 //import { validateRequestBody } from '../../helpers/validators.js';
 
 const { HouseRegistration, BlockRegistration, House } = models;
@@ -15,99 +16,110 @@ const isStringAddress = (data) => {
 };
 
 export const getHouseRegistrations = async (req, res) => {
+  try {
   const fileHTML = 'list-houseRegistration';
   const title = 'Registro de Casas';
-  let formattedHouseRegistration;
-  let data = 'No hay casas registradas o que coincidan con tu búsqueda';
+  let blockRegistration;
   let searchOptions = {};
+  const BlockRegistrationId = parseInt(req.params.BlockRegistrationId, 10);
   try {
-    const { idOrAddress, grid, area_id, state_id } = req.query;
+    const { idOrAddress, grid, area, state } = req.query;
 
-    console.log(req.query);
+    // console.log(req.query);
 
     if (isNumericId(idOrAddress)) {
+
       // Realizar la consulta utilizando la ID
-      console.log('Es un numero');
-      try {
-        // Construir el objeto de búsqueda dinámicamente
-        searchOptions = {
-          ...(idOrAddress && { id: idOrAddress }),
-          ...(grid && { grid }),
-          ...(area_id && { area_id }),
-          ...(state_id && { state_id })
-        };
-      } catch (error) {
-        console.log(error);
-        return res.render('error.html', { error: 404 });
-      }
-
+      console.log("Buscando id");
+      blockRegistration = await BlockRegistration.findOne({
+        order: [['id', 'DESC']],
+        attributes: ['id'],
+        include: {
+          model: House
+        },
+        where: { id: BlockRegistrationId },
+      }); 
+      const id = idOrAddress;
+      searchOptions = {
+        ...(id && { id }),
+        ...(grid && { grid }),
+        ...(area && { area }),
+        ...(state && { state })
+      };
     } else if (isStringAddress(idOrAddress)) {
+      console.log(idOrAddress);
+      let address ={ [Sequelize.Op.substring]: idOrAddress };
       // Realizar la consulta utilizando la dirección
-      console.log('Es una direccion');
-      try {
-        // Construigridarea_idr el objeto de búsqueda dinámicamente
-        searchOptions = {
-          //...(idOrAddress &&  { idOrAddress }),
-          ...(grid && { grid }),
-          ...(area_id && { area_id }),
-          ...(state_id && { state_id })
-          //...(sampled !== undefined && { sampled })
-        };
-
-
-      } catch (error) {
-        console.log(error);
-        return res.render('error.html', { error: 404 });
-      }
-    } else {
-
-      // Construigridarea_idr el objeto de búsqueda dinámicamente
+      blockRegistration = await BlockRegistration.findOne({
+        order: [['id', 'DESC']],
+        attributes: ['id'],
+        include: {
+          model: House,
+          where: {address: address},
+        },
+        where: { id: BlockRegistrationId },
+      });
+      console.log(blockRegistration);
       searchOptions = {
         ...(grid && { grid }),
-        ...(area_id && { area_id }),
-        ...(state_id && { state_id })
-        //...(sampled !== undefined && { sampled })
+        ...(area && { area }),
+        ...(state && { state })
       };
+    } else {
+
+      blockRegistration = await BlockRegistration.findOne({
+        order: [['id', 'DESC']],
+        attributes: ['id'],
+        include: {
+          model: House,
+        },
+        where: { id: BlockRegistrationId },
+      });
+      searchOptions = {
+        ...(grid && { grid }),
+        ...(area && { area }),
+        ...(state && { state })
+      };
+
     }
   } catch (error) {
+    console.log(error);
     return res.render('error.html', { error: 500 });
   }
 
-  const BlockRegistrationId = parseInt(req.params.BlockRegistrationId, 10);
-
-  // Obtener todas las campañas con las propiedades definidas
-  const houses = await BlockRegistration.findOne({
-    order: [['id', 'DESC']],
-    attributes: ['id'],
-    include: {
-      model: House,
-      where: address,
-    },
-    where: { id: BlockRegistrationId },
+  let i = 0;
+  const formatedHouseRegistrations = []
+  blockRegistration.Houses.filter(house => {
+    const address = house.dataValues.address;
+    const id = house.HouseRegistration.id;
+    const { grid, area, state } = house.HouseRegistration;
+    const params = { address, grid, area, state, id };
+    // Verificar si al menos una opción de búsqueda está presente
+    if (Object.keys(searchOptions).length > 0) {
+      // Verificar cada criterio de búsqueda si está presente y coincide con el valor correspondiente
+      if (
+        (!searchOptions.grid || grid == searchOptions.grid) &&
+        (!searchOptions.area || area === searchOptions.area) &&
+        (!searchOptions.state || state === searchOptions.state) &&
+        (!searchOptions.id || id == searchOptions.id) 
+      ) {
+        formatedHouseRegistrations[i] = params;
+        i++;
+        return true;
+      };
+    } else {
+      formatedHouseRegistrations[i] = params;
+      i++;
+      // Si no hay opciones de búsqueda, devolver todas las casas sin filtrar
+      return true;
+    }
   });
+   return res.render('index.html', { formattedHouseRegistration: formatedHouseRegistrations, fileHTML, title, areas, states });
 
-  // console.log(houses.Houses[1].HouseRegistration);
-  const filteredRegistrations = houses.Houses.filter(house => {
-    const { grid, area_id, state_id } = house.HouseRegistration;
-
-    // const { id, grid, area_id, state_id } = houseRegistration;
-    // return { id, grid, area_id, state_id };
-
-    // Aquí puedes agregar las condiciones que desees para filtrar los registros
-    return grid === 'valor_deseado' && area_id === 'valor_deseado' && state_id === 'valor_deseado';
-  });
-  
-  console.log(filteredRegistrations);
-
-  // formattedHouseRegistration = houseRegistration.map((houseRegistration) => {
-  //   const { id, grid, area_id, state_id } = houseRegistration;
-  //   return { id, grid, area_id, state_id };
-  // });
-
-  // data = houseRegistration.length > 0 ? formattedHouseRegistration : 'No hay casas registradas o que coincidan con tu búsqueda';
-
-  // return res.render('index.html', { formattedHouseRegistration: data, fileHTML, title, areas, states });
-
+  } catch (error){
+    console.log(error);
+    return res.render('error.html', { error: 404 });
+  }
 };
 
 
@@ -135,7 +147,7 @@ export const getHouseRegistration = async (req, res) => {
   //   }
 
   // } catch (error) {
-  //   console.log(error);
+  // //   console.log(error);
   //   return res.render('error.html', { error: 500 });
   // }
 };

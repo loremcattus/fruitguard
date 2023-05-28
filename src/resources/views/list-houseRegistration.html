@@ -11,13 +11,13 @@
         <select class="half" id="areaSearch">
             <option value="" disabled selected>Area</option>
           <% Object.entries(areas).forEach(([key, value]) => { %>
-            <option value="<%= value %>"><%= value.charAt(0).toUpperCase() + value.slice(1) %></option>
+            <option value="<%= value %>"><%= value %></option>
           <% }); %>
         </select>
         <select class="half" id="stateSearch">
             <option value="" disabled selected>Estado</option>
           <% Object.entries(states).forEach(([key, value]) => { %>
-            <option value="<%= value %>"><%= value.charAt(0).toUpperCase() + value.slice(1) %></option>
+            <option value="<%= value %>"><%= value %></option>
           <% }); %>
         </select>
         <div class="bottom-crud">
@@ -30,17 +30,17 @@
     </form>
     <hr>
     <section class="cards">
-        <% if (Array.isArray(formattedHouseRegistration) && formattedHouseRegistration.length > 0) { %>
+        <% if (formattedHouseRegistration.length > 0) { %>
             <% for (let i = 0; i < formattedHouseRegistration.length; i++) { %>
                 <a href="#">
                     <div class="card-left-side">
-                        <p class="card-left-side-top"><%= formattedHouseRegistration[i].id %> | <span class="card-left-side-top-highlight"><%= formattedHouseRegistration[i].state_id.charAt(0).toUpperCase() + formattedHouseRegistration[i].state_id.slice(1) %></span></p>
-                        <p class="card-left-side-bottom"> Grilla <%= formattedHouseRegistration[i].grid %> > Area <%= formattedHouseRegistration[i].area_id %></p>
+                        <p class="card-left-side-top"><%= formattedHouseRegistration[i].id %> | <span class="card-left-side-top-highlight"><%= formattedHouseRegistration[i].address %></span></p>
+                        <p class="card-left-side-bottom"> Grilla <%= formattedHouseRegistration[i].grid %> > Area <%= formattedHouseRegistration[i].area %></p>
                     </div>
                 </a>
             <% } %>
         <% } else { %>
-            <p><%= formattedHouseRegistration %></p>
+            <p>No hay casas registradas o que coincidan con tu búsqueda</p>
         <% } %>
     </section>
     <button type="button" class="add-button" data-toggle="modal" data-target="#addModal"

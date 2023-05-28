@@ -23,7 +23,7 @@ const houseRegistrationModel = (sequelize) => {
       defaultValue: null,
     },
     // area en que se encuentra
-    area_id: {
+    area: {
       type: DataTypes.ENUM(...areasValues),
       validate: {
         isIn: {
@@ -33,7 +33,7 @@ const houseRegistrationModel = (sequelize) => {
       },
     },
     // estado de la casa
-    state_id: {
+    state: {
       type: DataTypes.ENUM(...statesValues),
       defaultValue: states.STATE,
       validate: {

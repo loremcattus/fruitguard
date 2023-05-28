@@ -24,16 +24,16 @@ formAdd.addEventListener('submit', async (event) => {
     // Obtener los valores de los campos del formulario
     const address = addressInputAdd.value;
     const grid = gridInputAdd.value;
-    const area_id = areaInputAdd.value;
-    const state_id = stateInputAdd.value;
+    const area = areaInputAdd.value;
+    const state = stateInputAdd.value;
     const comment = commentInputAdd.value;
 
     // Crear el objeto con los valores del formulario
     const object = {
         address,
         grid,
-        area_id,
-        state_id,
+        area,
+        state,
         comment
     };
 
@@ -75,9 +75,9 @@ formAdd.addEventListener('submit', async (event) => {
       newHouseElement.href = `/houses/${data.id}`;
       newHouseElement.insertAdjacentHTML('beforeend', `
         <div class="card-left-side">
-            <p class="card-left-side-top"><%= formattedHouseRegistration[i].id %> | <span class="card-left-side-top-highlight"><%= formattedHouseRegistration[i].state_id.charAt(0).toUpperCase() + formattedHouseRegistration[i].state_id.slice(1) %></span></p>
-            <p class="card-left-side-bottom"> Grilla <%= formattedHouseRegistration[i].grid %> > Area <%= formattedHouseRegistration[i].area_id %></p>
-        </div>
+          <p class="card-left-side-top"><%= formattedHouseRegistration[i].id %> | <span class="card-left-side-top-highlight"><%= formattedHouseRegistration[i].address %></span></p>
+          <p class="card-left-side-bottom"> Grilla <%= formattedHouseRegistration[i].grid %> > Area <%= formattedHouseRegistration[i].area %></p>
+        /div>
       `);
 
       // Agregar el nuevo elemento de campaña al contenedor existente
@@ -112,16 +112,16 @@ formSearch.addEventListener('submit', async (event) => {
     // Obtener los valores de los campos del formulario
     const idOrAddress = idOrAddressInputSearch.value;
     const grid = gridInputSearch.value;
-    const state_id = stateInputSearch.value;
-    const area_id = areaInputSearch.value;
+    const state = stateInputSearch.value;
+    const area = areaInputSearch.value;
     //const sampled = sampledInputSearch.checked ? false : undefined;
 
     // Crear el objeto con los valores del formulario
     const object = {
       ...(idOrAddress && { idOrAddress }),
       ...(grid && { grid }),
-      ...(state_id && { state_id }),
-      ...(area_id && { area_id }),
+      ...(state && { state }),
+      ...(area && { area }),
       //...(sampled !== undefined && { sampled })
     };
 
