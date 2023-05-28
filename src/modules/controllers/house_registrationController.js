@@ -17,106 +17,84 @@ const isStringAddress = (data) => {
 
 export const getHouseRegistrations = async (req, res) => {
   try {
-  const fileHTML = 'list-houseRegistration';
-  const title = 'Registro de Casas';
-  let blockRegistration;
-  let searchOptions = {};
-  const BlockRegistrationId = parseInt(req.params.BlockRegistrationId, 10);
-  try {
-    const { idOrAddress, grid, area, state } = req.query;
+    const fileHTML = 'list-houseRegistration';
+    const title = 'Registro de Casas';
+    let blockRegistration;
+    let searchOptions = {};
+    const BlockRegistrationId = parseInt(req.params.BlockRegistrationId, 10);
+    try {
+      const { idOrAddress, grid, area, state } = req.query;
 
-    // console.log(req.query);
-
-    if (isNumericId(idOrAddress)) {
-
-      // Realizar la consulta utilizando la ID
-      console.log("Buscando id");
-      blockRegistration = await BlockRegistration.findOne({
-        order: [['id', 'DESC']],
-        attributes: ['id'],
-        include: {
-          model: House
-        },
-        where: { id: BlockRegistrationId },
-      }); 
-      const id = idOrAddress;
-      searchOptions = {
-        ...(id && { id }),
-        ...(grid && { grid }),
-        ...(area && { area }),
-        ...(state && { state })
-      };
-    } else if (isStringAddress(idOrAddress)) {
-      console.log(idOrAddress);
-      let address ={ [Sequelize.Op.substring]: idOrAddress };
+      let id = ""
+      let address = "";
+      if (isNumericId(idOrAddress)) {
+        id = { id: idOrAddress };
+      } else if (isStringAddress(idOrAddress)) {
+        address = { address: { [Sequelize.Op.substring]: idOrAddress } };
+      }
       // Realizar la consulta utilizando la dirección
+      console.log(BlockRegistrationId);
       blockRegistration = await BlockRegistration.findOne({
         order: [['id', 'DESC']],
         attributes: ['id'],
         include: {
           model: House,
-          where: {address: address},
+          where: address,
         },
-        where: { id: BlockRegistrationId },
+        where: {id: BlockRegistrationId},
       });
-      console.log(blockRegistration);
-      searchOptions = {
-        ...(grid && { grid }),
-        ...(area && { area }),
-        ...(state && { state })
-      };
-    } else {
 
-      blockRegistration = await BlockRegistration.findOne({
-        order: [['id', 'DESC']],
-        attributes: ['id'],
-        include: {
-          model: House,
-        },
-        where: { id: BlockRegistrationId },
-      });
-      searchOptions = {
-        ...(grid && { grid }),
-        ...(area && { area }),
-        ...(state && { state })
-      };
+      if (id) {
+        searchOptions = {
+          ...({ id }),
+          ...(grid && { grid }),
+          ...(area && { area }),
+          ...(state && { state })
+        };
+      } else {
+        searchOptions = {
+          ...(grid && { grid }),
+          ...(area && { area }),
+          ...(state && { state })
+        };
+      }
 
+    } catch (error) {
+      console.log(error);
+      return res.render('error.html', { error: 500 });
     }
-  } catch (error) {
-    console.log(error);
-    return res.render('error.html', { error: 500 });
-  }
 
-  let i = 0;
-  const formatedHouseRegistrations = []
-  blockRegistration.Houses.filter(house => {
-    const address = house.dataValues.address;
-    const id = house.HouseRegistration.id;
-    const { grid, area, state } = house.HouseRegistration;
-    const params = { address, grid, area, state, id };
-    // Verificar si al menos una opción de búsqueda está presente
-    if (Object.keys(searchOptions).length > 0) {
-      // Verificar cada criterio de búsqueda si está presente y coincide con el valor correspondiente
-      if (
-        (!searchOptions.grid || grid == searchOptions.grid) &&
-        (!searchOptions.area || area === searchOptions.area) &&
-        (!searchOptions.state || state === searchOptions.state) &&
-        (!searchOptions.id || id == searchOptions.id) 
-      ) {
+    let i = 0;
+    const formatedHouseRegistrations = []
+    blockRegistration.Houses.filter(house => {
+      const address = house.dataValues.address;
+      const id = house.HouseRegistration.id;
+      console.log("id houseRegistration " + id);
+      const { grid, area, state } = house.HouseRegistration;
+      const params = { address, grid, area, state, id };
+      // Verificar si al menos una opción de búsqueda está presente
+      if (Object.keys(searchOptions).length > 0) {
+        // Verificar cada criterio de búsqueda si está presente y coincide con el valor correspondiente
+        if (
+          (!searchOptions.grid || grid == searchOptions.grid) &&
+          (!searchOptions.area || area === searchOptions.area) &&
+          (!searchOptions.state || state === searchOptions.state) &&
+          (!searchOptions.id || id == searchOptions.id)
+        ) {
+          formatedHouseRegistrations[i] = params;
+          i++;
+          return true;
+        };
+      } else {
         formatedHouseRegistrations[i] = params;
         i++;
+        // Si no hay opciones de búsqueda, devolver todas las casas sin filtrar
         return true;
-      };
-    } else {
-      formatedHouseRegistrations[i] = params;
-      i++;
-      // Si no hay opciones de búsqueda, devolver todas las casas sin filtrar
-      return true;
-    }
-  });
-   return res.render('index.html', { formattedHouseRegistration: formatedHouseRegistrations, fileHTML, title, areas, states });
+      }
+    });
+    return res.render('index.html', { formattedHouseRegistration: formatedHouseRegistrations, fileHTML, title, areas, states });
 
-  } catch (error){
+  } catch (error) {
     console.log(error);
     return res.render('error.html', { error: 404 });
   }
