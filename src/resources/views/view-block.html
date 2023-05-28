@@ -18,6 +18,24 @@
                 <input placeholder="<%= formattedBlock.id %>" type="text" style="display: none;">
             </div>
         </div>
+        
+
+        <div class="item-post">
+            <p class="key-post">Todas las calles</p>
+            <div class="value-post">
+                <% let streetArray = formattedBlock.streets.split("@") %>
+                <% let street = "" %>
+                <p><% console.log(streetArray); %></p>
+                <% for (i = 0; i < streetArray.length; i++){ %>
+                   <% let street = streetArray[i].value %>
+                   <% console.log( street ); %>
+                <% } %>
+                <input placeholder="<%= formattedBlock.streets %>" type="text" style="display: none;">
+            </div>
+        </div>
+
+
+        
         <div class="item-post">
             <p class="key-post">Todas las calles</p>
             <div class="value-post">
@@ -25,6 +43,8 @@
                 <input placeholder="<%= formattedBlock.streets %>" type="text" style="display: none;">
             </div>
         </div>
+        
+        
         <hr>
         <div class="buttons-options">
             <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
