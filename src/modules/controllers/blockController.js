@@ -1,5 +1,5 @@
 import models from '../models/index.js';
-import { validateRequestBody } from '../../helpers/validators.js';
+import { validateRequestBody, formatDate } from '../../helpers/validators.js';
 import { Sequelize } from 'sequelize';
 
 const { Focus, Block, BlockRegistration } = models;
@@ -31,6 +31,7 @@ export const getBlocks = async (req, res) => {
     if (focus && "Blocks" in focus) {
       for (let i = 0; i < focus.Blocks.length; i++) {
         let streets = focus.Blocks[i].dataValues.streets.split("@");
+        console.log(focus.Blocks[i].BlockRegistration.dataValues);
         let blockRegistrationId = focus.Blocks[i].BlockRegistration.dataValues.id;
         data[i] = { streets, blockRegistrationId };
       }
@@ -50,30 +51,43 @@ export const getBlock = async (req, res) => {
   const title = 'Ver Manzana';
   const single = true;
 
-  try{
-    // Obtener todas las manzanas con propiedades definidas 
-    const block = await Block.findByPk( req.params.BlockId,{
-        attributes: ['id', 'streets'] //'createdAt', 'updatedAt'// FALTA
+  try {
+    // const block = await BlockRegistration.findByPk(req.params.BlockId, {
+    //   attributes: ['id', 'createdAt', 'updatedAt'],
+    //   include: {
+    //     model: Block,
+    //     attributes: ['streets']
+    //   }
+    // })
+    const blockRegistration = await BlockRegistration.findByPk(req.params.BlockId, {
+      attributes: ['id', 'BlockId', 'createdAt', 'updatedAt']
+    })
+    const blockStreets = await Block.findByPk(blockRegistration.dataValues.BlockId, {
+      attributes: ['streets']
     });
+    
+    const block = {
+      id: blockRegistration.dataValues.id,
+      streets: blockStreets.dataValues.streets,
+      createdAt: blockRegistration.dataValues.createdAt,
+      updatedAt: blockRegistration.dataValues.updatedAt,
+    }
+    // attributes: ['id'] //'createdAt', 'updatedAt'// FALTA
+    // console.log(block.dataValues.BlockId);
 
     if (block) {
-        const { ...data } = block.dataValues;// createdAt, updatedAt,
-        // data.createdAt = formatDate(createdAt);
-        // data.updatedAt = formatDate(updatedAt);
-        return res.render('index.html',{formattedBlock: data, fileHTML, title, single });
+      const { createdAt, updatedAt, ...data } = block;// createdAt, updatedAt,
+      data.createdAt = formatDate(createdAt);
+      data.updatedAt = formatDate(updatedAt);
+      return res.render('index.html', { formattedBlock: data, fileHTML, title, single });
     } else {
-        return res.render('error.html',{ error: 404 });
+      return res.render('error.html', { error: 404 });
     }
   } catch (error) {
     console.log(error);
-    return res.render('error.html',{ error: 500 });
+    return res.render('error.html', { error: 500 });
   }
 };
-
-
-
-
-
 
 // Agregar una Manzanas
 export const addBlock = async (req, res) => {
@@ -113,7 +127,7 @@ export const addBlock = async (req, res) => {
     });
 
     // Añade el bloque al enfoque si fue creado Y Verifica si el enfoque ya tiene el bloque asociado
-      if (created || !(await focus.hasBlock(block))) {
+    if (created || !(await focus.hasBlock(block))) {
       await focus.addBlock(block);
     } else {
       return res.status(409).json('La manzana ya existe en el foco');
