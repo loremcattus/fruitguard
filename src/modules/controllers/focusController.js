@@ -1,12 +1,12 @@
 import { Sequelize } from "sequelize";
 import models from "../models/index.js";
-import { validateRequestBody } from '../../helpers/validators.js';
+import { formatDate, validateRequestBody } from '../../helpers/validators.js';
 
 const { Focus } = models;
 
 // Obtener todos los focos 
 export const getFocuses = async (req,res) => {
-    const fileHTML = 'list-focus';
+    const fileHTML = 'list-focuses';
     const title = 'Focos';
 
     try {
@@ -36,6 +36,33 @@ export const getFocuses = async (req,res) => {
         return res.render('error.html',{error: 404 });
     }
 };
+
+// Obtener un foco en específico
+export const getFocus = async (req, res) => {
+    const fileHTML = 'view-focus';
+    const title = 'Ver Foco';
+    const single = true;
+
+    try{
+        // Obtener todas los focos con propiedades definidas 
+        const focus = await Focus.findByPk( req.params.FocusId,{
+            attributes: ['id', 'address', 'active', 'createdAt', 'updatedAt']
+        });
+
+        if (focus) {
+            const { createdAt, updatedAt, ...data } = focus.dataValues;
+            data.createdAt = formatDate(createdAt);
+            data.updatedAt = formatDate(updatedAt);
+            return res.render('index.html',{formattedFocus: data, fileHTML, title, single });
+        } else {
+            return res.render('error.html',{ error: 404 });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.render('error.html',{ error: 500 });
+    }
+};
+
 
 //Agregar un foco 
 export const addFocus = async (req, res) => {
