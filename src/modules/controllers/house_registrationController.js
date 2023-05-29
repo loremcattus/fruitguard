@@ -142,22 +142,43 @@ export const addHouseRegistration = async (req, res) => {
     }
 
     //Rescatar address del object
+    const addressHouse = req.body.address;
 
-    //codear el find or craete de sequelize buscando por la address rescatada
+    const BlockRegistrationId = parseInt(req.params.BlockRegistrationId, 10);
 
-    // Filtrar y validar el cuerpo de la solicitud
-    const validatedObject = await validateRequestBody(req.body, HouseRegistration);
-    console.log(HouseRegistration);
-    console.log(req.body);
-    // Comprobar errores de validación
-    if (validatedObject.error) {
-      console.log(validatedObject.error);
-      return res.status(400).json(validatedObject);
+    // Busca un enfoque (focus) utilizando el FocusId proporcionado
+    const BlockRegistration = await BlockRegistration.findOne({
+      attributes: ['id'],
+      where: { id: BlockRegistrationId },
+    });
+
+
+    // Busca o crea una casa (house) utilizando la dirección
+    const [house, created] = await House.findOrCreate({
+      where: { adress: addressHouse},
+    });
+
+    // Añade el bloque al enfoque si fue creado Y Verifica si el enfoque ya tiene el bloque asociado
+    if (created || !(await BlockRegistration.hasHouse(house))) {
+      await BlockRegistration.addHouse(house);
+    } else {
+      console.log('La casa ya existe en el blockregistration');
+      // Filtrar y validar el cuerpo de la solicitud
+      const validatedObject = await validateRequestBody(req.body, HouseRegistration);
+
+      // Comprobar errores de validación
+      if (validatedObject.error) {
+        console.log(validatedObject.error);
+        return res.status(400).json(validatedObject);
     }
 
     // Crear una nueva campaña en la base de datos y devolverla como respuesta
     const houseRegistration = await HouseRegistration.create(validatedObject);
     return res.status(201).json(houseRegistration.toJSON());
+
+    }
+
+
   } catch (error) {
     console.error('Error al insertar una casa', error);
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
