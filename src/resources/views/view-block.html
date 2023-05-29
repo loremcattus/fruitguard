@@ -18,37 +18,32 @@
                 <input placeholder="<%= formattedBlock.id %>" type="text" style="display: none;">
             </div>
         </div>
-        
-
+        <% let streetArray = formattedBlock.streets.split("@") %>
+        <% for (i = 0; i < streetArray.length; i++){ %>
+        <% let street = streetArray[i] %>
         <div class="item-post">
-            <p class="key-post">Todas las calles</p>
+            <p class="key-post">calle límite <%= i+1 %>:</p>
             <div class="value-post">
-                <% let streetArray = formattedBlock.streets.split("@") %>
-                <% let street = "" %>
-                <p><% console.log(streetArray); %></p>
-                <% for (i = 0; i < streetArray.length; i++){ %>
-                   <% let street = streetArray[i].value %>
-                   <% console.log( street ); %>
-                <% } %>
-                <input placeholder="<%= formattedBlock.streets %>" type="text" style="display: none;">
+                <p><%= street %></p>
+                <input placeholder="<%= street %>" type="text" style="display: none;">
             </div>
         </div>
-
-
-        
+        <% } %>
         <div class="item-post">
-            <p class="key-post">Todas las calles</p>
+            <p class="key-post">Fecha de creación</p>
             <div class="value-post">
-                <p><%= formattedBlock.streets %></p>
-                <input placeholder="<%= formattedBlock.streets %>" type="text" style="display: none;">
+                <p><%= formattedBlock.createdAt %></p>
             </div>
         </div>
-        
-        
+        <div class="item-post">
+            <p class="key-post">Fecha de modificación</p>
+            <div class="value-post">
+                <p><%= formattedBlock.updatedAt %></p>
+            </div>
+        </div>
         <hr>
         <div class="buttons-options">
             <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
             <a href="<%= formattedBlock.id %>/houses" class="button-green-default option-button">VER FOCOS</a>
         </div>
     </main>
-    
