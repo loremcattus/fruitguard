@@ -134,7 +134,7 @@ export const getHouseRegistration = async (req, res) => {
 
 // Agregar una campaña
 export const addHouseRegistration = async (req, res) => {
-  console.log("post ");
+  console.log("-  - - - - - - - -post- - - - - - -  - ");
   try {
     // Valida que vengan datos en el cuerpo
     if (Object.keys(req.body).length === 0) {
@@ -145,9 +145,10 @@ export const addHouseRegistration = async (req, res) => {
     const addressHouse = req.body.address;
 
     const BlockRegistrationId = parseInt(req.params.BlockRegistrationId, 10);
-
+    console.log("block registration id "+BlockRegistrationId);
+    console.log("address house "+addressHouse);
     // Busca un enfoque (focus) utilizando el FocusId proporcionado
-    const BlockRegistration = await BlockRegistration.findOne({
+    const blockRegistration = await BlockRegistration.findOne({
       attributes: ['id'],
       where: { id: BlockRegistrationId },
     });
@@ -155,12 +156,25 @@ export const addHouseRegistration = async (req, res) => {
 
     // Busca o crea una casa (house) utilizando la dirección
     const [house, created] = await House.findOrCreate({
-      where: { adress: addressHouse},
+      where: { address: addressHouse, BlockId: BlockRegistrationId},
     });
 
     // Añade el bloque al enfoque si fue creado Y Verifica si el enfoque ya tiene el bloque asociado
-    if (created || !(await BlockRegistration.hasHouse(house))) {
-      await BlockRegistration.addHouse(house);
+    if (created || !(await blockRegistration.hasHouse(house))) {
+      console.log('La casa no existe creandola');
+      await blockRegistration.addHouse(house);
+      const validatedObject = await validateRequestBody(req.body, HouseRegistration);
+
+      // Comprobar errores de validación
+      if (validatedObject.error) {
+        console.log(validatedObject.error);
+        return res.status(400).json(validatedObject);
+      }
+
+      // Crear una nueva campaña en la base de datos y devolverla como respuesta
+      const houseRegistration = await HouseRegistration.create(validatedObject);
+      return res.status(201).json(houseRegistration.toJSON());
+      
     } else {
       console.log('La casa ya existe en el blockregistration');
       // Filtrar y validar el cuerpo de la solicitud
@@ -170,14 +184,13 @@ export const addHouseRegistration = async (req, res) => {
       if (validatedObject.error) {
         console.log(validatedObject.error);
         return res.status(400).json(validatedObject);
+      }
+
+      // Crear una nueva campaña en la base de datos y devolverla como respuesta
+      const houseRegistration = await HouseRegistration.create(validatedObject);
+      return res.status(201).json(houseRegistration.toJSON());
+
     }
-
-    // Crear una nueva campaña en la base de datos y devolverla como respuesta
-    const houseRegistration = await HouseRegistration.create(validatedObject);
-    return res.status(201).json(houseRegistration.toJSON());
-
-    }
-
 
   } catch (error) {
     console.error('Error al insertar una casa', error);
