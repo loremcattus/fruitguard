@@ -51,10 +51,13 @@ export const getCampaign = async (req, res) => {
     });
 
     if (campaign) {
-      const { createdAt, updatedAt, ...data } = campaign.dataValues;
-      data.createdAt = formatDate(createdAt);
-      data.updatedAt = formatDate(updatedAt);
-      return res.render('index.html', { formattedCampaign: data, fileHTML, title, single });
+      const { createdAt, updatedAt, ...formattedCampaign } = campaign.dataValues;
+      formattedCampaign.createdAt = formatDate(createdAt);
+      formattedCampaign.updatedAt = formatDate(updatedAt);
+
+      const formattedUsers = "";
+
+      return res.render('index.html', { formattedCampaign, formattedUsers, fileHTML, title, single });
     } else {
       return res.render('error.html', { error: 404 });
     }
