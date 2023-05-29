@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize';
 import models from '../models/index.js';
 import { validateRequestBody, formatDate, validateFieldsDataType } from '../../helpers/validators.js';
 
-const { Campaign } = models;
+const { Campaign, User } = models;
 
 // Obtener todas las campañas
 export const getCampaigns = async (req, res) => {
@@ -55,7 +55,26 @@ export const getCampaign = async (req, res) => {
       formattedCampaign.createdAt = formatDate(createdAt);
       formattedCampaign.updatedAt = formatDate(updatedAt);
 
-      const formattedUsers = "";
+      const users = await Campaign.findOne({
+        attributes: ['id'],
+        include: {
+          model: User,
+          attributes: ['id', 'name', 'run', 'dvRun', 'role'],
+          where: {deletedAt: null},
+        },
+        where: {id: campaign.id}
+      });
+
+      const formattedUsers = [];
+      for (const user of users.dataValues.Users) {
+        // console.log(user);
+        formattedUsers.push({
+          RegistrationId: user.dataValues.UserRegistration.dataValues.id,
+          name: user.name,
+          rut: user.run+'-'+user.dvRun,
+          role: user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase(),
+        });
+      }
 
       return res.render('index.html', { formattedCampaign, formattedUsers, fileHTML, title, single });
     } else {
@@ -122,3 +141,7 @@ export const updateCampaign = async (req, res) => {
   }
 }
 
+// Quitar usuario de la campaña
+export const deleteCampaignUser = async (req, res) => {
+
+}

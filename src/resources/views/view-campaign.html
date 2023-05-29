@@ -82,7 +82,7 @@
     <hr>
     <h2>Usuarios</h2>
     <form id="search-post">
-        <input id="nameRutRemove" type="text" class="full" placeholder="Nombre o RUT del usuario">
+        <input id="nameRutRemove" type="text" class="full" placeholder="Nombre o RUN del usuario">
         <select id="rolRemove" class="half">
             <option value="">Rol</option>
         </select>
@@ -91,13 +91,13 @@
     <hr>
 
     <section class="cards">
-        <% for (let i = 0; i < 5; i++) { %>
+        <% for (let i = 0; i < formattedUsers.length; i++) { %>
         <a>
             <div class="card-left-side">
-                <p class="card-left-side-top"><%= i %></p>
-                <p class="card-left-side-bottom">Rol | RUT</p>
+                <p class="card-left-side-top"><%= formattedUsers[i].name %></p>
+                <p class="card-left-side-bottom"><%= formattedUsers[i].role %> | <%= formattedUsers[i].rut %></p>
             </div>
-            <div user-id="<%= i %>" class="card-right-side removeBtn">
+            <div user-id="<%= formattedUsers[i].RegistrationId %>" class="card-right-side removeBtn">
                 <div class="remove-user" data-dismiss="modal"></div>
             </div>
         </a>
@@ -207,7 +207,7 @@
 <div class="add-modal" style="display: none;" id="removeModal" role="form" aria-labelledby="removeModalLabel">
     <div class="modal-items">
         <div class="close-modal" data-dismiss="modalRemoveUser"></div>
-        <p id="modal-message" class="modal-message">¿Seguro que deseas eliminar al usuario?</p>
+        <p id="modal-message" class="modal-message"></p>
         <div class="bottom-crud">
             <button class="button-40" id="confirmRemoveUser">Confirmar</button>
             <button class="button-green-default button-60" id="cancelRemoveUser">Cancelar</button>
