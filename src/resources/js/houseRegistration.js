@@ -24,7 +24,7 @@ formAdd.addEventListener('submit', async (event) => {
     // Obtener los valores de los campos del formulario
     const address = addressInputAdd.value;
     const grid = Number(gridInputAdd.value);
-    const area = Number(areaInputAdd.value);
+    const area = areaInputAdd.value;
     const state = stateInputAdd.value;
     const comment = commentInputAdd.value;
 
@@ -61,7 +61,7 @@ formAdd.addEventListener('submit', async (event) => {
     if (response.status === 201) {
       // Procesar la respuesta del servidor
       const data = await response.json();
-      showMessage(`Casa "${data.address}" creada correctamente`);
+      showMessage(`Casa "${data.addressHouse}" creada correctamente`);
 
       // Obtener el contenedor de las campañas
       const housesContainer = document.querySelector('.cards');
@@ -74,12 +74,12 @@ formAdd.addEventListener('submit', async (event) => {
 
       // Crear un nuevo elemento de campaña con los datos recibidos
       const newHouseElement = document.createElement('a');
-      newHouseElement.href = `/houses/${data.id}`;
+      newHouseElement.href = `/houses/${data.idHouseRegistration}`;
       newHouseElement.insertAdjacentHTML('beforeend', `
         <div class="card-left-side">
-          <p class="card-left-side-top"><%= formattedHouseRegistration[i].id %> | <span class="card-left-side-top-highlight"><%= formattedHouseRegistration[i].address %></span></p>
-          <p class="card-left-side-bottom"> Grilla <%= formattedHouseRegistration[i].grid %> > Area <%= formattedHouseRegistration[i].area %></p>
-        /div>
+          <p class="card-left-side-top"> ${data.idHouseRegistration} | <span class="card-left-side-top-highlight">${data.addressHouse}</span></p>
+          <p class="card-left-side-bottom"> Grilla ${data.grid}> Area ${data.area}</p>
+        </div>
       `);
 
       // Agregar el nuevo elemento de campaña al contenedor existente

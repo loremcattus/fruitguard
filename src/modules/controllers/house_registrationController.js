@@ -28,7 +28,7 @@ export const getHouseRegistrations = async (req, res) => {
       let id = ""
       let address = "";
       if (isNumericId(idOrAddress)) {
-        id = { id: idOrAddress };
+        id = idOrAddress ;
       } else if (isStringAddress(idOrAddress)) {
         address = { address: { [Sequelize.Op.substring]: idOrAddress } };
       }
@@ -44,19 +44,11 @@ export const getHouseRegistrations = async (req, res) => {
         where: {id: BlockRegistrationId},
       });
 
-      if (id) {
-        searchOptions = {
-          ...({ id }),
-          ...(grid && { grid }),
-          ...(area && { area }),
-          ...(state && { state })
-        };
-      } else {
-        searchOptions = {
-          ...(grid && { grid }),
-          ...(area && { area }),
-          ...(state && { state })
-        };
+      searchOptions = {
+        ...(id && { id }),
+        ...(grid && { grid }),
+        ...(area && { area }),
+        ...(state && { state })
       }
 
     } catch (error) {
@@ -69,7 +61,7 @@ export const getHouseRegistrations = async (req, res) => {
     blockRegistration.Houses.filter(house => {
       const address = house.dataValues.address;
       const id = house.HouseRegistration.id;
-      console.log("id houseRegistration " + id);
+      //console.log("id houseRegistration " + id);
       const { grid, area, state } = house.HouseRegistration;
       const params = { address, grid, area, state, id };
       // Verificar si al menos una opción de búsqueda está presente
@@ -158,23 +150,31 @@ export const addHouseRegistration = async (req, res) => {
     const [house, created] = await House.findOrCreate({
       where: { address: addressHouse, BlockId: BlockRegistrationId},
     });
+    //si la casa existia dame la id de esa casa para crear un house registration con esa id de casa
 
     // Añade el bloque al enfoque si fue creado Y Verifica si el enfoque ya tiene el bloque asociado
     if (created || !(await blockRegistration.hasHouse(house))) {
-      console.log('La casa no existe creandola');
-      await blockRegistration.addHouse(house);
-      const validatedObject = await validateRequestBody(req.body, HouseRegistration);
 
-      // Comprobar errores de validación
-      if (validatedObject.error) {
-        console.log(validatedObject.error);
-        return res.status(400).json(validatedObject);
+      const idHouseRegistration = house.id;
+      const grid  = req.body.grid;
+      const state = req.body.state;
+      const area = req.body.area;
+      const comment = req.body.comment;
+
+      console.log(area)
+      console.log(typeof area);
+
+      if (grid && state && area) {
+        const houseRegistration = await blockRegistration.addHouse(house, {through:{ grid, comment, area, state }});
+
+        let formatedHouseRegistrations = { idHouseRegistration, grid, comment, area, state, BlockRegistrationId, addressHouse }
+        // crear formattedHouseRegistration para mandarle los datos que quiero mostrar en el front 
+        //luego en front houseregistration.js escribir las variables
+        return res.status(201).json(formatedHouseRegistrations);
+      } else {
+        return res.status(400).json({ error: 'Faltan datos del formulario' });
       }
 
-      // Crear una nueva campaña en la base de datos y devolverla como respuesta
-      const houseRegistration = await HouseRegistration.create(validatedObject);
-      return res.status(201).json(houseRegistration.toJSON());
-      
     } else {
       console.log('La casa ya existe en el blockregistration');
       // Filtrar y validar el cuerpo de la solicitud
