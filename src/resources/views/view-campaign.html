@@ -21,6 +21,15 @@
             </div>
         </div>
         <div class="item-post">
+            <p class="key-post">Jefe de campaña</p>
+            <div class="value-post">
+                <p><%= formattedCampaign.manager %></p>
+                <select id="manager" style="display: none;">
+                    <option value="<%= formattedCampaign.managerId %>"><%= formattedCampaign.manager %></option>
+                </select>
+            </div>
+        </div>
+        <div class="item-post">
             <p class="key-post">Estado</p>
             <div class="value-post">
                 <p><%= formattedCampaign.open ? 'Abierta' : 'Cerrada' %></p>

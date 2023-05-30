@@ -1,5 +1,11 @@
 import { showMessage } from './helpers.js';
 
+// Obtener el host y el puerto del servidor actual
+const host = window.location.hostname;
+const port = window.location.port;
+// Construir la URL base
+const baseUrl = `http://${host}:${port}`;
+
 const message = localStorage.getItem('message');
 if (message) {
   showMessage(message);
@@ -15,6 +21,29 @@ const regionsSelectEdit = document.getElementById('region');
 const communesSelectEdit = document.getElementById('commune');
 const openCheckboxEdit = document.getElementById('open');
 const fileInputEdit = document.getElementById('fileUpload');
+const managerSelectEdit = document.getElementById('manager');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const managerSelectEdit = document.getElementById('manager');
+      fetch(`/api/managers/${managerSelectEdit.value}`)
+        .then(response => response.json())
+        .then(data => {
+          data.forEach(manager => {
+            const option = document.createElement('option');
+            option.value = manager.id;
+            option.textContent = manager.name;
+            managerSelectEdit.appendChild(option);
+          });
+        })
+        .catch(error => console.log(error));
+      observer.unobserve(entry.target);
+    }
+  });
+});
+
+observer.observe(managerSelectEdit);
 
 // Evento de envío del formulario
 formEdit.addEventListener('submit', async (event) => {
@@ -26,6 +55,7 @@ formEdit.addEventListener('submit', async (event) => {
   const name = nameInputEdit.value;
   const open = openCheckboxEdit.checked ? true : false;
   const file = fileInputEdit ? fileInputEdit.files[0] : "";
+  const managerId = managerSelectEdit.value;
 
   // Validar los campos del formulario
   if (region && !commune) {
@@ -39,17 +69,11 @@ formEdit.addEventListener('submit', async (event) => {
     ...(commune && { commune }),
     ...(name && { name }),
     ...({ open }),
-    ...(file && { file })
+    ...(file && { file }),
+    ...(managerId && { managerId })
   };
 
   try {
-    // Obtener el host y el puerto del servidor actual
-    const host = window.location.hostname;
-    const port = window.location.port;
-
-    // Construir la URL base
-    const baseUrl = `http://${host}:${port}`;
-
     // Obtener el Id de la campaña
     const CampaignId = window.location.href.split('/').reverse()[0].split('?')[0];
     // Componer la URL completa para la solicitud
@@ -98,8 +122,11 @@ function openRemoveModal() {
   removeModal.style.display = '';
 
   // Obtener el nombre de usuario
+  const userId = this.getAttribute('user-id');
   const username = this.parentNode.querySelector('.card-left-side-top').textContent;
   const modalText = removeModal.querySelector('#modal-message');
+  modalText.setAttribute('user-id-to-remove', userId);
+  modalText.setAttribute('username', username);
   modalText.textContent = `¿Seguro que deseas quitar a ${username} de la campaña?`;
 }
 
@@ -112,22 +139,35 @@ function closeRemoveModal() {
 // Función para manejar el evento de confirmación
 function handleConfirm() {
   // Obtener el user-id del elemento padre del botón
-  const userId = this.parentNode.getAttribute('user-id');
+  const deleteAttributes = this.parentNode.parentNode.querySelector('[user-id-to-remove]');
+  const userId = deleteAttributes.getAttribute('user-id-to-remove');
+  const username = deleteAttributes.getAttribute('username');
+  // Obtener el Id de la campaña
+  const CampaignId = window.location.href.split('/').reverse()[0].split('?')[0];
+  // Componer la URL completa para la solicitud
+  const url = `${baseUrl}/api/campaigns/${CampaignId}/users/${userId}`;
 
   // Realizar el fetch a la URL deseada con el user-id
-  fetch('tu_url', {
+  fetch(url, {
     method: 'DELETE',
-    body: JSON.stringify({ userId }),
     headers: {
       'Content-Type': 'application/json'
     }
   })
-    .then(response => {
-      // Manejar la respuesta del servidor
-    })
-    .catch(error => {
-      // Manejar el error
-    });
+  .then(response => {
+    if (response.ok) {
+      showMessage(`${username} ha sido retirado/a de la campaña`);
+      closeRemoveModal();
+      document.querySelector(`[user-id="${userId}"]`).parentNode.remove();
+    } else if (response.status === 404) {
+      throw new Error(`${username} ya ha sido retirado/a de la campaña`);
+    } else {
+      throw new Error('Error al enviar el formulario');
+    }
+  })
+  .catch(error => {
+    showMessage(error.message, 'error');
+  });
 }
 
 // Agregar eventos de clic a los botones de eliminación

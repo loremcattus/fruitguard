@@ -1,6 +1,6 @@
 import express from 'express';
-import { getUsers, getUser, addUser, updateUser, deleteUser } from '../modules/controllers/userController.js';
-import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteCampaignUser } from '../modules/controllers/campaignController.js';
+import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
+import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers } from '../modules/controllers/campaignController.js';
 import { getBlocks, getBlock, addBlock } from '../modules/controllers/blockController.js';
 import { getFocuses, getFocus, addFocus } from '../modules/controllers/focusController.js';
 import { addHouses, getHouses } from '../modules/controllers/houseController.js';
@@ -14,6 +14,7 @@ router.get('/api/users/:id', getUser);
 router.post('/api/users', addUser);
 router.patch('/api/users/:id', updateUser);
 router.delete('/api/users/:id', deleteUser);
+router.get('/api/managers/:currentManagerId', getOtherManagers);
 
 // Campañas
 router.get('/campaigns', getCampaigns);
@@ -21,7 +22,8 @@ router.get('/campaigns/:CampaignId', getCampaign);
 router.post('/api/campaigns', addCampaign);
 router.patch('/api/campaigns/:CampaignId', updateCampaign);
 // Usuarios de campañas
-router.delete('/api/campaigns/:CampaignId/users/:UserRegistrationId', deleteCampaignUser);
+router.delete('/api/campaigns/:CampaignId/users/:UserRegistrationId', deleteUserFromCampaign);
+router.get('/api/campaigns/:CampaignId/users/not-in/', getNonCampaignUsers);
 
 // Focos 
 router.get('/campaigns/:CampaignId/focuses', getFocuses);

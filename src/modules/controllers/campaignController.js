@@ -1,8 +1,7 @@
-import { Sequelize } from 'sequelize';
 import models from '../models/index.js';
 import { validateRequestBody, formatDate, validateFieldsDataType } from '../../helpers/validators.js';
 
-const { Campaign, User } = models;
+const { Campaign, User, UserRegistration, Sequelize } = models;
 
 // Obtener todas las campañas
 export const getCampaigns = async (req, res) => {
@@ -46,34 +45,40 @@ export const getCampaign = async (req, res) => {
 
   try {
     // Obtener todas las campañas con las propiedades definidas
-    const campaign = await Campaign.findByPk( req.params.CampaignId, {
-      attributes: ['id', 'name', 'region', 'commune', 'open', 'mapId', 'createdAt', 'updatedAt']
+    const campaign = await Campaign.findByPk(req.params.CampaignId, {
+      attributes: ['id', 'name', 'managerId', 'region', 'commune', 'open', 'mapId', 'createdAt', 'updatedAt']
     });
 
     if (campaign) {
-      const { createdAt, updatedAt, ...formattedCampaign } = campaign.dataValues;
+      const { managerId, createdAt, updatedAt, ...formattedCampaign } = campaign.dataValues;
       formattedCampaign.createdAt = formatDate(createdAt);
       formattedCampaign.updatedAt = formatDate(updatedAt);
+      const manager = await User.findByPk(managerId, {
+        attributes: ['name'],
+        paranoid: false
+      });
+      formattedCampaign.managerId = managerId;
+      formattedCampaign.manager = manager.dataValues.name;
 
       const users = await Campaign.findOne({
         attributes: ['id'],
         include: {
           model: User,
           attributes: ['id', 'name', 'run', 'dvRun', 'role'],
-          where: {deletedAt: null},
         },
-        where: {id: campaign.id}
+        where: { id: campaign.id }
       });
 
       const formattedUsers = [];
-      for (const user of users.dataValues.Users) {
-        // console.log(user);
-        formattedUsers.push({
-          RegistrationId: user.dataValues.UserRegistration.dataValues.id,
-          name: user.name,
-          rut: user.run+'-'+user.dvRun,
-          role: user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase(),
-        });
+      if (users) {
+        for (const user of users.dataValues.Users) {
+          formattedUsers.push({
+            RegistrationId: user.dataValues.UserRegistration.dataValues.id,
+            name: user.name,
+            rut: user.run + '-' + user.dvRun,
+            role: user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase(),
+          });
+        }
       }
 
       return res.render('index.html', { formattedCampaign, formattedUsers, fileHTML, title, single });
@@ -125,7 +130,7 @@ export const updateCampaign = async (req, res) => {
     if (validatedFields.errors) {
       return res.status(400).json(validatedFields.errors);
     }
-    // console.log(req.body);
+
     let campaign = await Campaign.update(req.body, {
       where: {
         id: req.params.CampaignId
@@ -142,6 +147,65 @@ export const updateCampaign = async (req, res) => {
 }
 
 // Quitar usuario de la campaña
-export const deleteCampaignUser = async (req, res) => {
+export const deleteUserFromCampaign = async (req, res) => {
+  try {
+    // Valida que vengan datos en el cuerpo
+    const deletedUser = await UserRegistration.destroy({
+      where: {
+        id: req.params.UserRegistrationId
+      }
+    });
 
+    if (deletedUser) {
+      return res.sendStatus(200);
+    } else {
+      return res.sendStatus(404);
+    };
+  } catch (error) {
+    console.error('Error al actualizar la campaña', error);
+    return res.sendStatus(500);
+  }
 }
+
+// Listar usuarios que no pertenecen a la campaña para luego añadirlos
+export const getNonCampaignUsers = async (req, res) => {
+  try {
+    const { IDsList } = req.params;
+    // console.log(IDsList);
+    // Comprobar si IDsList está presente
+    if (!IDsList) {
+      console.log('IDsList no fue enviada correctamente desde el front: ');
+      console.log(IDsList);
+      return res.sendStatus(400);
+    }
+
+    // Obtener usuarios que no están registrados en la campaña
+    const nonCampaignUsers = await User.findAll({
+      where: {
+        id: {
+          [Sequelize.Op.notIn]: IDsList
+        }
+      }
+    });
+    // console.log(nonCampaignUsers);
+    // Comprobar si existen usuarios que no están registrados en la campaña
+    if (!nonCampaignUsers) {
+      return res.sendStatus(404);
+    }
+
+    // Formatear los usuarios para la respuesta
+    const formattedUsers = nonCampaignUsers.map(user => ({
+      id: user.id,
+      name: user.name,
+      rut: `${user.run}-${user.dvRun}`,
+      role: user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()
+    }));
+    // console.log(formattedUsers);
+
+    // Enviar usuarios formateados
+    return res.status(200).json(formattedUsers);
+  } catch (error) {
+    console.error('Error en getNonCampaignUsers: ', error);
+    return res.sendStatus(500);
+  }
+};
