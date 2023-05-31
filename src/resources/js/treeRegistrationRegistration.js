@@ -4,37 +4,28 @@ import { showMessage } from './helpers.js';
 
 // Obtener referencias a los elementos del formulario
 const formAdd = document.getElementById('addPost');
-const addressInputAdd = document.getElementById('addressAdd');
-const gridInputAdd = document.getElementById('gridAdd');
-const areaInputAdd = document.getElementById('areaAdd');
-const stateInputAdd = document.getElementById('stateAdd');
-const commentInputAdd = document.getElementById('commentAdd');
+const speciesInputAdd = document.getElementById('speciesAdd');
+const treeStateInputAdd = document.getElementById('treeStateAdd');
 
 // Evento de envío del formulario
 formAdd.addEventListener('submit', async (event) => {
   event.preventDefault(); // Evitar el envío del formulario por defecto
 
   // Validar los campos del formulario
-  if (!addressInputAdd.value || !gridInputAdd.value || !areaInputAdd.value || !stateInputAdd.value || !commentInputAdd.value) {
+  if (!speciesInputAdd.value || !treeStateInputAdd.value) {
     showMessage('Por favor, complete todos los campos', 'error');
     return;
   }
 
   try {
     // Obtener los valores de los campos del formulario
-    const address = addressInputAdd.value;
-    const grid = Number(gridInputAdd.value);
-    const area = areaInputAdd.value;
-    const state = stateInputAdd.value;
-    const comment = commentInputAdd.value;
+    const species = speciesInputAdd.value;
+    const treeState = treeStateInputAdd.value;
 
     // Crear el objeto con los valores del formulario
     const object = {
-      grid,
-      comment,
-      area,
-      state,  
-      address,    
+      species,
+      treeState, 
     };
 
     // Obtener el host y el puerto del servidor actual
@@ -61,29 +52,29 @@ formAdd.addEventListener('submit', async (event) => {
     if (response.status === 201) {
       // Procesar la respuesta del servidor
       const data = await response.json();
-      showMessage(`Casa "${data.addressHouse}" creada correctamente`);
+      showMessage(`Casa "${data.species}" creada correctamente`);
 
       // Obtener el contenedor de las campañas
-      const housesContainer = document.querySelector('.cards');
+      const treeContainer = document.querySelector('.cards');
 
-      // Verificar si housesContainer contiene una etiqueta 'p' dentro
-      // Si existe un párrafo dentro de housesContainer, limpiar el contenido
-      if (housesContainer.firstElementChild.tagName === 'P') {
-        housesContainer.innerHTML = '';
+      // Verificar si treeContainer contiene una etiqueta 'p' dentro
+      // Si existe un párrafo dentro de treeContainer, limpiar el contenido
+      if (treeContainer.firstElementChild.tagName === 'P') {
+        treeContainer.innerHTML = '';
       }
 
       // Crear un nuevo elemento de campaña con los datos recibidos
-      const newHouseElement = document.createElement('a');
-      newHouseElement.href = `/houses/${data.idHouseRegistration}`;
-      newHouseElement.insertAdjacentHTML('beforeend', `
-        <div class="card-left-side">
-          <p class="card-left-side-top"> ${data.idHouseRegistration} | <span class="card-left-side-top-highlight">${data.addressHouse}</span></p>
-          <p class="card-left-side-bottom"> Grilla ${data.grid}> Area ${data.area}</p>
-        </div>
+      const newTreeElement = document.createElement('a');
+      newTreeElement.href = `/houses/${data.idHouseRegistration}`;
+      newTreeElement.insertAdjacentHTML('beforeend', `
+			<div class="card-left-side">
+				<p class="card-left-side-top">${data.species}</p>
+				<p class="card-left-side-bottom">${data.treeStates}</p>
+			</div>
       `);
 
       // Agregar el nuevo elemento de campaña al contenedor existente
-      housesContainer.prepend(newHouseElement);
+      treeContainer.prepend(newTreeElement);
 
     } else {
       throw new Error('Error al enviar el formulario');
@@ -100,11 +91,8 @@ formAdd.addEventListener('submit', async (event) => {
 
 // Obtener referencias a los elementos del formulario
 const formSearch = document.getElementById('searchPost');
-const idOrAddressInputSearch = document.getElementById('idOrAddressSearch');
-const gridInputSearch = document.getElementById('gridSearch');
-const stateInputSearch = document.getElementById('stateSearch');
-const areaInputSearch = document.getElementById('areaSearch');
-//const sampledInputSearch = document.getElementById('sampledSearch');
+const speciesInputSearch = document.getElementById('speciesSearch');
+const treeStateInputSearch = document.getElementById('treeStateSearch');
 
 // Evento de envío del formulario
 formSearch.addEventListener('submit', async (event) => {
@@ -112,19 +100,13 @@ formSearch.addEventListener('submit', async (event) => {
 
   try {
     // Obtener los valores de los campos del formulario
-    const idOrAddress = idOrAddressInputSearch.value;
-    const grid = gridInputSearch.value;
-    const state = stateInputSearch.value;
-    const area = areaInputSearch.value;
-    //const sampled = sampledInputSearch.checked ? false : undefined;
+    const species = speciesInputSearch.value;
+    const treeState = treeStateInputSearch.value;
 
     // Crear el objeto con los valores del formulario
     const object = {
-      ...(idOrAddress && { idOrAddress }),
-      ...(grid && { grid }),
-      ...(state && { state }),
-      ...(area && { area }),
-      //...(sampled !== undefined && { sampled })
+      ...(species && { species }),
+      ...(treeState && { treeState })
     };
 
     // Serializar el objeto en formato de consulta de URL
