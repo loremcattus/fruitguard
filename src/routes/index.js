@@ -1,8 +1,8 @@
 import express from 'express';
 import { getUsers, getUser, addUser, updateUser, deleteUser } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteCampaignUser } from '../modules/controllers/campaignController.js';
-import { getBlocks, getBlock, addBlock } from '../modules/controllers/blockController.js';
-import { getFocuses, getFocus, addFocus } from '../modules/controllers/focusController.js';
+import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockController.js';
+import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouses, getHouses } from '../modules/controllers/houseController.js';
 import { addHouseRegistration, getHouseRegistrations } from '../modules/controllers/house_registrationController.js';
 
@@ -27,11 +27,13 @@ router.delete('/api/campaigns/:CampaignId/users/:UserRegistrationId', deleteCamp
 router.get('/campaigns/:CampaignId/focuses', getFocuses);
 router.get('/campaigns/:CampaignId/focuses/:FocusId',getFocus);
 router.post('/api/campaigns/:CampaignId/focuses', addFocus);
+router.patch('/api/campaigns/:CampaignId/focuses/:FocusId', updateFocus);
 
 // Manzanas
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks', getBlocks);
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockId', getBlock);
 router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks', addBlock);
+router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockId', updateBlock);
 // Casas
 // router.get('/api/houses', getHouses);
 // router.post('/api/houses', addHouses);

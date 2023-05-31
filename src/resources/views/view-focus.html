@@ -8,19 +8,19 @@
     </section>
     <hr>
     <h1>Información de el foco</h1>
-    <form id="edit-post" class="info-post">
+    <form id="editPost" class="info-post">
         <div class="item-post">
             <p class="key-post">Dirección del foco</p>
             <div class="value-post">
                 <p><%= formattedFocus.address %></p>
-                <input placeholder="<%= formattedFocus.address %>" type="text" style="display: none;">
+                <input placeholder="<%= formattedFocus.address %>" id="address" type="text" style="display: none;">
             </div>
         </div>
         <div class="item-post">
             <p class="key-post">Actividad</p>
             <div class="value-post">
                 <p><%= formattedFocus.active ? 'Activo' : 'Inactivo' %></p>
-                <input type="checkbox" <%= formattedFocus.active ? 'checked' : '' %> name="" id="" style="display: none;">
+                <input type="checkbox" <%= formattedFocus.active ? 'checked' : '' %> name="" id="active" style="display: none;">
             </div>
         </div>
         <div class="item-post">
@@ -49,4 +49,4 @@
         <a href="<%= formattedFocus.id %>/blocks" class="button-green-default option-button">VER FOCOS</a>
     </div>
 </main>
-  
+<script src="/js/focus.js" type="module"></script>

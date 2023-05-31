@@ -1,0 +1,58 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <a href="/campaigns/">Listar campañas</a>
+        <a href="#">Ver campaña</a> <!--Puede ser FormattedCampaign.id-->
+        <a href="/focuses/">Listar focos</a>
+        <a href="#">Ver foco</a>
+    </section>
+    <hr>
+    <h1>Información de la casa</h1>
+    <form id="editPost" class="info-post">
+        <div class="item-post">
+            <p class="key-post">ID</p>
+            <div class="value-post">
+                <p><%= formattedHouseRegistration.id %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Dirección</p>
+            <div class="value-post">
+                <p><%= formattedHouseRegistration.address %></p>
+                <input placeholder="<%= formattedHouseRegistration.address %>" id="address" type="text" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Grilla</p>
+            <div class="value-post">
+                <p><%= formattedHouseRegistration.grid %></p>
+                <input placeholder="<%= formattedHouseRegistration.grid %>" id="address" type="text" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Área</p>
+            <div class="value-post">
+                <p><%= formattedHouseRegistration.area %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Fecha de modificación</p>
+            <div class="value-post">
+                <p><%= formattedHouseRegistration.updatedAt %></p>
+            </div>
+        </div>
+        <!--FALTARIA AGREGAR MAPAS TANTO EN EL CONTROLADOR COMO EN EL FRONT-->
+        <hr>
+        <button id="edit" class="button-green-default button-60">Editar</button>
+        <div class="buttons-edit" style="display: none;">
+            <button type="submit" class="button-40">Guardar</button>
+            <button id="cancel-edit" class=" button-green-default button-60">Cancelar</button>
+        </div>
+    </form>
+    <hr>
+    <div class="buttons-options">
+        <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
+        <a href="<%= formattedHouseRegistration.id %>/blocks" class="button-green-default option-button">VER FOCOS</a>
+    </div>
+</main>
+<script src="/js/focus.js" type="module"></script>

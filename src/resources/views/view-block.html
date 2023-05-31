@@ -10,12 +10,11 @@
     </section>
     <hr>
     <h1>Información de la manzana</h1>
-    <form id="edit-post" class="info-post">
+    <form id="editPost" class="info-post">
         <div class="item-post">
             <p class="key-post">ID</p>
             <div class="value-post">
                 <p><%= formattedBlock.id %></p>
-                <input placeholder="<%= formattedBlock.id %>" type="text" style="display: none;">
             </div>
         </div>
         <% let streetArray = formattedBlock.streets.split("@") %>
@@ -25,10 +24,11 @@
             <p class="key-post">calle límite <%= i+1 %>:</p>
             <div class="value-post">
                 <p><%= street %></p>
-                <input placeholder="<%= street %>" type="text" style="display: none;">
+                <input placeholder="<%= street %>"  class="full street-input" type="text" style="display: none;">
             </div>
         </div>
         <% } %>
+
         <div class="item-post">
             <p class="key-post">Fecha de creación</p>
             <div class="value-post">
@@ -42,8 +42,16 @@
             </div>
         </div>
         <hr>
+        <button id="edit" class="button-green-default button-60">Editar</button>
+        <div class="buttons-edit" style="display: none;">
+            <button type="submit" class="button-40">Guardar</button>
+            <button id="cancel-edit" class=" button-green-default button-60">Cancelar</button>
+        </div>
+    </form>
+        <hr>
         <div class="buttons-options">
             <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
             <a href="<%= formattedBlock.id %>/houses" class="button-green-default option-button">VER FOCOS</a>
         </div>
-    </main>
+</main>
+<script src="/js/block.js" type="module"></script>

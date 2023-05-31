@@ -6,6 +6,7 @@ if (message) {
   // Limpiar el mensaje almacenado después de mostrarlo
   localStorage.removeItem('message');
 }
+console.log(message); 
 
 // UPDATE
 // Obtener referencias a los elementos del formulario
@@ -51,9 +52,10 @@ formEdit.addEventListener('submit', async (event) => {
     const baseUrl = `http://${host}:${port}`;
 
     // Obtener el Id de la campaña
-    const CampaignId = window.location.href.split('/').reverse()[0].split('?')[0];
+    const CampaignId = window.location.pathname
+    // window.location.href.split('/').reverse()[0].split('?')[0];
     // Componer la URL completa para la solicitud
-    const url = `${baseUrl}/api/campaigns/${CampaignId}`;
+    const url = `${baseUrl}/api${CampaignId}`;
 
     // Enviar el objeto al servidor
     const response = await fetch(url, {

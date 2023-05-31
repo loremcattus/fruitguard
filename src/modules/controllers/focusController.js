@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 import models from "../models/index.js";
-import { formatDate, validateRequestBody } from '../../helpers/validators.js';
+import { formatDate, validateFieldsDataType, validateRequestBody } from '../../helpers/validators.js';
 
 const { Focus } = models;
 
@@ -64,7 +64,7 @@ export const getFocus = async (req, res) => {
 };
 
 
-//Agregar un foco 
+// Agregar un foco 
 export const addFocus = async (req, res) => {
     try{
         // Valida que vengan datos en el cuerpo
@@ -99,3 +99,33 @@ export const addFocus = async (req, res) => {
     return res.status(500).json({error: 'Ocurrió un error en el servidor'});
    }
 };
+
+// Editar foco 
+
+export const updateFocus = async (req, res) => {
+    try{
+        // Validar que vengan datos en el cuerpo 
+        if(Object.keys(req.body).length === 0 ){
+            return res.status(400).json('El cuerpo de la solicitud está vacío.');
+        }
+        // Validar el cuerpo de la solicitud 
+        const validatedFields = await validateFieldsDataType(req.body, Focus);
+        // Comprobar errores de validación
+        if (validatedFields.errors){
+            return res.status(400).json(validatedFields.errors);
+        } 
+        console.log( req.body);
+        let focus = await Focus.update(req.body,{
+            where:{
+                id: req.params.FocusId
+            }
+        });
+
+        console.log( focus );
+
+        return res.status(200).json(focus);
+    } catch (error) {
+        console.error('Error al actualizar el foco',error);
+        return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
+    }
+}

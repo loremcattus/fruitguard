@@ -119,3 +119,4 @@ formSearch.addEventListener('submit', async (event) => {
     console.error('Error al realizar la búsqueda:', error);
   };
 });
+

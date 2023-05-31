@@ -1,5 +1,5 @@
 import models from '../models/index.js';
-import { validateRequestBody, formatDate } from '../../helpers/validators.js';
+import { validateRequestBody, validateFieldsDataType, formatDate } from '../../helpers/validators.js';
 import { Sequelize } from 'sequelize';
 
 const { Focus, Block, BlockRegistration } = models;
@@ -140,3 +140,34 @@ export const addBlock = async (req, res) => {
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
   }
 };
+
+
+// Editar foco 
+
+export const updateBlock = async (req, res) => {
+  try{
+      // Validar que vengan datos en el cuerpo 
+      if(Object.keys(req.body).length === 0 ){
+          return res.status(400).json('El cuerpo de la solicitud está vacío.');
+      }
+      // Validar el cuerpo de la solicitud 
+      const validatedFields = await validateFieldsDataType(req.body, Block);
+      // Comprobar errores de validación
+      if (validatedFields.errors){
+          return res.status(400).json(validatedFields.errors);
+      } 
+      console.log( req.body);
+      let block = await Block.update(req.body,{
+          where:{
+              id: req.params.BlockId
+          }
+      });
+
+      console.log( block );
+
+      return res.status(200).json(block);
+  } catch (error) {
+      console.error('Error al actualizar la manzana',error);
+      return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
+  }
+}
