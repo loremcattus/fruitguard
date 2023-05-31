@@ -170,24 +170,24 @@ export const deleteUserFromCampaign = async (req, res) => {
 // Listar usuarios que no pertenecen a la campaña para luego añadirlos
 export const getNonCampaignUsers = async (req, res) => {
   try {
-    const { IDsList } = req.params;
-    // console.log(IDsList);
-    // Comprobar si IDsList está presente
-    if (!IDsList) {
-      console.log('IDsList no fue enviada correctamente desde el front: ');
-      console.log(IDsList);
-      return res.sendStatus(400);
-    }
+    // Obtener usuarios que están registrados en la campaña
+    const campaignUsers = await Campaign.findByPk(req.params.CampaignId, {
+      include: {
+        model: User,
+        attributes: ['id']
+      }
+    });
+    
+    const campaignUserIDs = campaignUsers.Users.map(({ dataValues }) => dataValues.id);
 
-    // Obtener usuarios que no están registrados en la campaña
     const nonCampaignUsers = await User.findAll({
       where: {
         id: {
-          [Sequelize.Op.notIn]: IDsList
+          [Sequelize.Op.notIn]: campaignUserIDs
         }
       }
     });
-    // console.log(nonCampaignUsers);
+
     // Comprobar si existen usuarios que no están registrados en la campaña
     if (!nonCampaignUsers) {
       return res.sendStatus(404);

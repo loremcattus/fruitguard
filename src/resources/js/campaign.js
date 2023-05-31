@@ -5,6 +5,7 @@ const host = window.location.hostname;
 const port = window.location.port;
 // Construir la URL base
 const baseUrl = `http://${host}:${port}`;
+const CampaignId = window.location.href.split('/').reverse()[0].split('?')[0];
 
 const message = localStorage.getItem('message');
 if (message) {
@@ -74,8 +75,6 @@ formEdit.addEventListener('submit', async (event) => {
   };
 
   try {
-    // Obtener el Id de la campaña
-    const CampaignId = window.location.href.split('/').reverse()[0].split('?')[0];
     // Componer la URL completa para la solicitud
     const url = `${baseUrl}/api/campaigns/${CampaignId}`;
 
@@ -106,7 +105,7 @@ formEdit.addEventListener('submit', async (event) => {
   }
 });
 
-// USERS
+// USERS READ
 
 // Obtener referencias a los elementos relevantes
 const removeBtns = document.querySelectorAll('.removeBtn');
@@ -180,3 +179,43 @@ cancelBtn.addEventListener('click', closeRemoveModal);
 confirmBtn.addEventListener('click', handleConfirm);
 closeButton.addEventListener('click', closeRemoveModal);
 modalBackdrop.addEventListener('click', closeRemoveModal);
+
+// USERS ADD
+
+const addModal = document.querySelector('[data-target="#addModal"]');
+addModal.addEventListener('click', getNonCampaignUsers);
+
+function getNonCampaignUsers () {
+  fetch(`/api/campaigns/${CampaignId}/users/not-in/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  })
+  .then(response => response.json())
+  .then(data => {
+    const addUsersSection = document.querySelector('.add-users-cards');
+    
+    // Limpiar contenido existente dentro del section
+    addUsersSection.innerHTML = '';
+
+    // Recorrer los datos y agregarlos como tarjetas dentro del section
+    data.forEach(user => {
+      const card = `
+        <a>
+          <div class="card-left-side">
+            <p class="card-left-side-top">${user.name}</p>
+            <p class="card-left-side-bottom">${user.role} | ${user.rut}</p>
+          </div>
+          <div non-campaign-user-id="${user.id}" class="card-right-side check-button">
+            <input type="checkbox" class="add-user-checkbox">
+          </div>
+        </a>
+      `;
+      addUsersSection.innerHTML += card;
+    });
+  })
+  .catch(error => {
+    console.error('Error en la solicitud fetch: ', error);
+  });
+}
