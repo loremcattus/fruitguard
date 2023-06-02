@@ -1,7 +1,8 @@
 import models from '../models/index.js';
 import { validateRequestBody, validateFieldsDataType, validateRUT } from '../../helpers/validators.js';
+import { roles } from '../../helpers/enums.js';
 
-const { User, force } = models;
+const { User, force, Sequelize } = models;
 
 // Define las propiedades que se van a extraer de los usuarios
 const userProps = ['id', 'role', 'name', 'run', 'dvRun', 'email', 'hasLicense'];
@@ -151,3 +152,32 @@ export const deleteUser = async (req, res) => {
     return res.status(500).json({ error: 'Ha ocurrido un error al intentar eliminar el usuario' });
   }
 };
+
+export const getOtherManagers = async (req, res) => {
+  try {
+    const { currentManagerId } = req.params;
+
+    // Obtener todos los usuarios con las propiedades definidas
+    const managers = await User.findAll({
+      attributes: ['id', 'name'],
+      where: {id: {[Sequelize.Op.ne]: currentManagerId}, role: roles.MANAGER }, 
+    });
+
+    // Si no existen usuarios, lanzar un error para capturarlo en el bloque catch
+    if (!managers[0]) throw new Error('No hay otros managers registrados');
+
+    const formattedManagers = [];
+    for(let i = 0; i < managers.length; i++) {
+      formattedManagers.push({
+        id: managers[i].dataValues.id,
+        name: managers[i].dataValues.name
+      });
+    }
+
+    // Enviar el array con los usuarios formateados
+    return res.status(200).json(formattedManagers);
+  } catch (error) {
+    console.log(error);
+    return res.status(404).send({ error: error.message });
+  }
+}

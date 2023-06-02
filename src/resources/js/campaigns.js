@@ -1,5 +1,12 @@
 import { showMessage } from './helpers.js';
 
+// Obtener el host y el puerto del servidor actual
+const host = window.location.hostname;
+const port = window.location.port;
+
+// Construir la URL base
+const baseUrl = `http://${host}:${port}`;
+
 // CREATE
 
 // Obtener referencias a los elementos del formulario
@@ -25,21 +32,16 @@ formAdd.addEventListener('submit', async (event) => {
     const commune = communesSelectAdd.value;
     const name = nameInputAdd.value;
     const file = fileInputAdd.files[0];
+    const managerId = 2;
 
     // Crear el objeto con los valores del formulario
     const object = {
       region,
       commune,
       name,
-      file
+      file,
+      managerId
     };
-
-    // Obtener el host y el puerto del servidor actual
-    const host = window.location.hostname;
-    const port = window.location.port;
-
-    // Construir la URL base
-    const baseUrl = `http://${host}:${port}`;
 
     // Componer la URL completa para la solicitud
     const url = `${baseUrl}/api/campaigns`;
