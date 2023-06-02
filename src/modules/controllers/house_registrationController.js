@@ -1,7 +1,7 @@
 import models from '../models/index.js';
 import { areas, states } from '../../helpers/enums.js';
 import { Sequelize } from 'sequelize';
-import { validateRequestBody,validateFieldsDataType,formatDate } from '../../helpers/validators.js';
+import { validateRequestBody, formatDate } from '../../helpers/validators.js';
 
 const { HouseRegistration, BlockRegistration, House } = models;
 
@@ -95,41 +95,47 @@ export const getHouseRegistrations = async (req, res) => {
 
 
 
-// Obtener una casa en específico
+// Obtener una campaña en específico
 export const getHouseRegistration = async (req, res) => {
   const fileHTML = 'view-HouseRegistration';
   const title = 'Ver Registro de Casa';
   const single = true;
 
   try {
-    const houseRegistration = await  HouseRegistration.findByPk(req.params.HouseId, {
-      attributes: ['id','grid','comment','area','state','createdAt','updatedAt','HouseId']
+    // Obtener todas las campañas con las propiedades definidas
+    const houseRegistration = await HouseRegistration.findByPk( req.params.HouseId, {
+      attributes: ['id', 'grid', 'comment', 'area', 'state', 'createdAt', 'updatedAt','HouseId']
     });
-    const houseAddress = await House.findByPk( houseRegistration.dataValues.Id, {
-      attributes: ['address']
+    console.log(houseRegistration);
+
+    const houseAddress = await House.findByPk( houseRegistration.dataValues.HouseId, {
+      attributes:['address']
     });
+    console.log(houseAddress);
     
     const house = {
       id: houseRegistration.dataValues.id,
-      address: houseAddress.dataValues.address,
       grid: houseRegistration.dataValues.grid,
+      comment: houseRegistration.dataValues.comment,
       area: houseRegistration.dataValues.area,
+      state: houseRegistration.dataValues.state,
       createdAt: houseRegistration.dataValues.createdAt,
       updatedAt: houseRegistration.dataValues.updatedAt,
-      comment: houseRegistration.dataValues.comment,
-    }
-    
+      address: houseAddress.dataValues.address
+    };
+    console.log( house );
+
     if (house) {
-      const { createdAt, updatedAt, ...data }= house;
+      const { createdAt, updatedAt, ...data } = house;
       data.createdAt = formatDate(createdAt);
       data.updatedAt = formatDate(updatedAt);
-      return res.render('index.html',{formattedHouse: data, fileHTML, title, single });
+      return res.render('index.html', { formattedHouseRegistration: data, fileHTML, title, single });
     } else {
-      return res.render('error.html',{ error: 404 });
+      return res.render('error.html', { error: 404 });
     }
-  } catch ( error ){
+  } catch (error) {
     console.log(error);
-    return res.render('error.html',{ error: 500 });
+    return res.render('error.html', { error: 500 });
   }
 };
 
@@ -148,12 +154,11 @@ export const addHouseRegistration = async (req, res) => {
     const BlockRegistrationId = parseInt(req.params.BlockRegistrationId, 10);
     console.log("block registration id "+BlockRegistrationId);
     console.log("address house "+addressHouse);
-    // Busca un enfoque (focus) utilizando el FocusId proporcionado
+
     const blockRegistration = await BlockRegistration.findOne({
       attributes: ['id'],
       where: { id: BlockRegistrationId },
     });
-
 
     // Busca o crea una casa (house) utilizando la dirección
     const [house, created] = await House.findOrCreate({

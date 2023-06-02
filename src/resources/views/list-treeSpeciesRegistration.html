@@ -52,9 +52,10 @@
         <form id="addPost">
             <select class="half" id="speciesAdd">
                 <option value="" disabled selected>Especie</option>
-              <% Object.entries(formattedTreeSpecies).forEach(([key, value]) => { %>
-                <option value="<%= formattedTreeSpecies.species %>"><%= formattedTreeSpecies.species %></option>
-              <% }); %>
+                <% for (let i = 0; i < formattedTreeSpecies.length; i++) { %>
+                    <option value="<%= formattedTreeSpecies[i].id %>"><%= formattedTreeSpecies[i].species %></option>
+                <% } %>
+            </select>
             </select>
             <select class="half" id="treeStateAdd">
                 <option value="" disabled selected>Estado</option>
@@ -64,7 +65,7 @@
             </select>
             <div class="input-number">
                 <label for="numberTreesAdd">Cantidad de árboles</label>
-                <input type="number" id="numberTreesAdd" min="1" max="999">
+                <input type="number" id="numberTreesAdd" min="1">
             </div>
             <hr>
             <div class="bottom-crud">

@@ -6,13 +6,14 @@ import { showMessage } from './helpers.js';
 const formAdd = document.getElementById('addPost');
 const speciesInputAdd = document.getElementById('speciesAdd');
 const treeStateInputAdd = document.getElementById('treeStateAdd');
+const numberTreesAdd = document.getElementById('numberTreesAdd');
 
 // Evento de envío del formulario
 formAdd.addEventListener('submit', async (event) => {
   event.preventDefault(); // Evitar el envío del formulario por defecto
 
   // Validar los campos del formulario
-  if (!speciesInputAdd.value || !treeStateInputAdd.value) {
+  if (!speciesInputAdd.value || !treeStateInputAdd.value || !numberTreesAdd.value) {
     showMessage('Por favor, complete todos los campos', 'error');
     return;
   }
@@ -21,11 +22,13 @@ formAdd.addEventListener('submit', async (event) => {
     // Obtener los valores de los campos del formulario
     const species = speciesInputAdd.value;
     const treeState = treeStateInputAdd.value;
+    const numberTrees = numberTreesAdd.value;
 
     // Crear el objeto con los valores del formulario
     const object = {
       species,
-      treeState, 
+      treeState,
+      numberTrees
     };
 
     // Obtener el host y el puerto del servidor actual
@@ -38,6 +41,7 @@ formAdd.addEventListener('submit', async (event) => {
 
     // Componer la URL completa para la solicitud
     const url = `${baseUrl}/api${pathName}`;
+
     //campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses
 
     // Enviar el objeto al servidor

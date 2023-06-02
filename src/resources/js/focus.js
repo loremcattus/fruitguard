@@ -1,13 +1,12 @@
 import { showMessage } from "./helpers.js";
 
 const message = localStorage.getItem('message');
-console.log(typeof message);
+
 if (message) {
   showMessage(message);
   // Limpiar el mensaje almacenado después de mostrarlo
   localStorage.removeItem('message');
 }
-console.log(typeof message);
 // UPDATE 
 const formEdit = document.getElementById('editPost');
 const addressInputEdit = document.getElementById('address');
@@ -41,7 +40,7 @@ formEdit.addEventListener('submit', async (event) => {
     // Obtener el Id del Foco 
     const FocusId = window.location.pathname
 
-    // Componer la URL completa para la solicitud 
+    // Componer la URL completa para la solicitud
     const url = `${baseUrl}/api${FocusId}`;
 
     // Enviar el objeto al servidor  

@@ -8,6 +8,7 @@ const baseUrl = `http://${host}:${port}`;
 const CampaignId = window.location.href.split('/').reverse()[0].split('?')[0];
 
 const message = localStorage.getItem('message');
+
 if (message) {
   showMessage(message);
   // Limpiar el mensaje almacenado después de mostrarlo
@@ -207,8 +208,8 @@ function getNonCampaignUsers () {
             <p class="card-left-side-top">${user.name}</p>
             <p class="card-left-side-bottom">${user.role} | ${user.rut}</p>
           </div>
-          <div non-campaign-user-id="${user.id}" class="card-right-side check-button">
-            <input type="checkbox" class="add-user-checkbox">
+          <div class="card-right-side check-button">
+            <input non-campaign-user-id="${user.id}" type="checkbox" class="add-user-checkbox">
           </div>
         </a>
       `;
@@ -219,3 +220,16 @@ function getNonCampaignUsers () {
     console.error('Error en la solicitud fetch: ', error);
   });
 }
+
+// addPost
+// function addUsers () {
+//   let usersToAdd = document.querySelectorAll('[non-campaign-user-id]');
+//   // Recorrer los elementos y obtener sus valores
+//   var valores = [];
+//   elementos.forEach(function(usersToAdd) {
+//     valores.push(elemento.getAttribute('non-campaign-user-id'));
+//   });
+  
+//   console.log(valores);
+// }
+

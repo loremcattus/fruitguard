@@ -2,6 +2,7 @@
     <section class="breadcrumbs">
         <a href="#">Inicio</a>
         <a href="/campaigns/">Listar campañas</a>
+        <!-- <a href="/campaigns/<%= // breadcrumbs.CampaignId %>">Ver campaña</a> Puede ser FormattedCampaign.id -->
         <a href="#">Ver campaña</a> <!--Puede ser FormattedCampaign.id-->
         <a href="/focuses/">Listar focos</a>
         <p>Ver foco</p>
@@ -49,4 +50,7 @@
         <a href="<%= formattedFocus.id %>/blocks" class="button-green-default option-button">VER MANZANAS</a>
     </div>
 </main>
+
+<div id="message" class="alert" role="alert"></div>
+
 <script src="/js/focus.js" type="module"></script>
