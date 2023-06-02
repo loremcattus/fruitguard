@@ -1,8 +1,8 @@
 import express from 'express';
 import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers } from '../modules/controllers/campaignController.js';
-import { getBlocks, getBlock, addBlock } from '../modules/controllers/blockController.js';
-import { getFocuses, getFocus, addFocus } from '../modules/controllers/focusController.js';
+import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockController.js';
+import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouses, getHouses } from '../modules/controllers/houseController.js';
 import { addHouseRegistration, getHouseRegistrations } from '../modules/controllers/house_registrationController.js';
 import { getTreeSpeciesRegistrations } from '../modules/controllers/treeSpeciesRegistrationController.js'

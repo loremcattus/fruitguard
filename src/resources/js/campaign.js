@@ -13,7 +13,6 @@ if (message) {
   // Limpiar el mensaje almacenado después de mostrarlo
   localStorage.removeItem('message');
 }
-console.log(message); 
 
 // UPDATE
 // Obtener referencias a los elementos del formulario
@@ -77,7 +76,7 @@ formEdit.addEventListener('submit', async (event) => {
 
   try {
     // Componer la URL completa para la solicitud
-    const url = `${baseUrl}/api${CampaignId}`;
+    const url = `${baseUrl}/api/campaigns/${CampaignId}`;
 
     // Enviar el objeto al servidor
     const response = await fetch(url, {
