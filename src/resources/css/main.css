@@ -163,6 +163,7 @@ input:disabled, select:disabled {
 
 .check-container > label {
   font-size: 1rem;
+  width: calc(100% - 2rem);
   display: inline-block;
 }
 
@@ -186,6 +187,17 @@ input[type="checkbox" i]:checked {
   background-color: #00A240;
 }
 
+.input-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 1rem;
+}
+.input-number > input[type="number"] {
+  width: 64px;
+  height: 32px;
+}
 
 .button-green-default, .button-green-crud {
   all: unset;

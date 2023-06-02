@@ -62,8 +62,10 @@
                 <option value="<%= value %>"><%= value %></option>
               <% }); %>
             </select>
-            <span class="card-left-side-top-highlight">Cantidad de árboles</span>
-            <input class="full" type="numberTreesAdd" id="">
+            <div class="input-number">
+                <label for="numberTreesAdd">Cantidad de árboles</label>
+                <input type="number" id="numberTreesAdd" min="1" max="999">
+            </div>
             <hr>
             <div class="bottom-crud">
                 <button type="reset" class="button-40">Cancelar</button>
