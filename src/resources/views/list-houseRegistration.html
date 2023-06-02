@@ -32,7 +32,7 @@
     <section class="cards">
         <% if (formattedHouseRegistration.length > 0) { %>
             <% for (let i = 0; i < formattedHouseRegistration.length; i++) { %>
-                <a href="#">
+                <a href="houses/<%= formattedHouseRegistration[i].id %>">
                     <div class="card-left-side">
                         <p class="card-left-side-top"><%= formattedHouseRegistration[i].id %> | <span class="card-left-side-top-highlight"><%= formattedHouseRegistration[i].address %></span></p>
                         <p class="card-left-side-bottom"> Grilla <%= formattedHouseRegistration[i].grid %> > Area <%= formattedHouseRegistration[i].area %></p>

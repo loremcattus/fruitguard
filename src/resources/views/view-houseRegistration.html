@@ -5,6 +5,8 @@
         <a href="#">Ver campaña</a> <!--Puede ser FormattedCampaign.id-->
         <a href="/focuses/">Listar focos</a>
         <a href="#">Ver foco</a>
+        <a href="/house">Listar casas</a>
+        <p>Ver casa</p>
     </section>
     <hr>
     <h1>Información de la casa</h1>
@@ -26,7 +28,7 @@
             <p class="key-post">Grilla</p>
             <div class="value-post">
                 <p><%= formattedHouseRegistration.grid %></p>
-                <input placeholder="<%= formattedHouseRegistration.grid %>" id="address" type="text" style="display: none;">
+                <input placeholder="<%= formattedHouseRegistration.grid %>" id="grid" type="text" style="display: none;">
             </div>
         </div>
         <div class="item-post">
@@ -36,12 +38,24 @@
             </div>
         </div>
         <div class="item-post">
+            <p class="key-post">Fecha de creacion</p>
+            <div class="value-post">
+                <p><%= formattedHouseRegistration.createdAt %></p>
+            </div>
+        </div>
+        <div class="item-post">
             <p class="key-post">Fecha de modificación</p>
             <div class="value-post">
                 <p><%= formattedHouseRegistration.updatedAt %></p>
             </div>
         </div>
-        <!--FALTARIA AGREGAR MAPAS TANTO EN EL CONTROLADOR COMO EN EL FRONT-->
+        <div class="item-post">
+            <p class="key-post">Comentario</p>
+            <div class="value-post">
+                <p><%= formattedHouseRegistration.comment %></p>
+                <input placeholder="<%= formattedHouseRegistration.comment %>" id="grid" type="text" style="display: none;">
+            </div>
+        </div>
         <hr>
         <button id="edit" class="button-green-default button-60">Editar</button>
         <div class="buttons-edit" style="display: none;">
@@ -52,7 +66,10 @@
     <hr>
     <div class="buttons-options">
         <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
+<<<<<<< Updated upstream
         <a href="<%= formattedHouseRegistration.id %>/blocks" class="button-green-default option-button">VER ÁRBOLES</a>
+=======
+        <a href="<%= formattedHouseRegistration.id %>/treeRegistration" class="button-green-default option-button">VER FOCOS</a>
+>>>>>>> Stashed changes
     </div>
 </main>
-<script src="/js/focus.js" type="module"></script>

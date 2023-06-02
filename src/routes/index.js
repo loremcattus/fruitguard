@@ -4,7 +4,7 @@ import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromC
 import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockController.js';
 import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouses, getHouses } from '../modules/controllers/houseController.js';
-import { addHouseRegistration, getHouseRegistrations } from '../modules/controllers/house_registrationController.js';
+import { addHouseRegistration, getHouseRegistrations, getHouseRegistration } from '../modules/controllers/house_registrationController.js';
 import { getTreeSpeciesRegistrations } from '../modules/controllers/treeSpeciesRegistrationController.js'
 
 
@@ -44,6 +44,7 @@ router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockId', upda
 
 // Registro de casas
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses', getHouseRegistrations);
+router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId', getHouseRegistration );
 router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses', addHouseRegistration);
 
 // registro de árbol

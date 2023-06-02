@@ -1,7 +1,7 @@
 import models from '../models/index.js';
 import { areas, states } from '../../helpers/enums.js';
 import { Sequelize } from 'sequelize';
-import { validateRequestBody } from '../../helpers/validators.js';
+import { validateRequestBody,validateFieldsDataType,formatDate } from '../../helpers/validators.js';
 
 const { HouseRegistration, BlockRegistration, House } = models;
 
@@ -95,34 +95,43 @@ export const getHouseRegistrations = async (req, res) => {
 
 
 
-// Obtener una campaña en específico
+// Obtener una casa en específico
 export const getHouseRegistration = async (req, res) => {
   const fileHTML = 'view-HouseRegistration';
   const title = 'Ver Registro de Casa';
   const single = true;
 
-  // try {
-  //   // Obtener todas las campañas con las propiedades definidas
-  //   const campaign = await Campaign.findByPk( req.params.CampaignId, {
-  //     attributes: ['id', 'name', 'region', 'commune', 'open', 'mapId', 'createdAt', 'updatedAt']
-  //   });
-
-  //   if (campaign) {
-  //     const { createdAt, updatedAt, ...data } = campaign.dataValues;
-  //     data.createdAt = formatDate(createdAt);
-  //     data.updatedAt = formatDate(updatedAt);
-  //     return res.render('index.html', { formattedCampaign: data, fileHTML, title, single });
-  //   } else {
-  //     return res.render('error.html', { error: 404 });
-  //   }
-
-  // } catch (error) {
-  // //   console.log(error);
-  //   return res.render('error.html', { error: 500 });
-  // }
+  try {
+    const houseRegistration = await  HouseRegistration.findByPk(req.params.HouseId, {
+      attributes: ['id','grid','comment','area','state','createdAt','updatedAt','HouseId']
+    });
+    const houseAddress = await House.findByPk( houseRegistration.dataValues.Id, {
+      attributes: ['address']
+    });
+    
+    const house = {
+      id: houseRegistration.dataValues.id,
+      address: houseAddress.dataValues.address,
+      grid: houseRegistration.dataValues.grid,
+      area: houseRegistration.dataValues.area,
+      createdAt: houseRegistration.dataValues.createdAt,
+      updatedAt: houseRegistration.dataValues.updatedAt,
+      comment: houseRegistration.dataValues.comment,
+    }
+    
+    if (house) {
+      const { createdAt, updatedAt, ...data }= house;
+      data.createdAt = formatDate(createdAt);
+      data.updatedAt = formatDate(updatedAt);
+      return res.render('index.html',{formattedHouse: data, fileHTML, title, single });
+    } else {
+      return res.render('error.html',{ error: 404 });
+    }
+  } catch ( error ){
+    console.log(error);
+    return res.render('error.html',{ error: 500 });
+  }
 };
-
-
 
 // Agregar una campaña
 export const addHouseRegistration = async (req, res) => {
