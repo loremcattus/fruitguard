@@ -60,7 +60,7 @@ formEdit.addEventListener('submit', async (event) => {
 
   // Validar los campos del formulario
   if (region && !commune) {
-    showMessage('Por favor, seleccione la nueva región', 'error');
+    showMessage('Por favor, seleccione la nueva comuna', 'error');
     return;
   }
 
