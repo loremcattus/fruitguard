@@ -1,7 +1,13 @@
 <main>
     <section class="breadcrumbs">
         <a href="#">Inicio</a>
-        <p>Ver Casas</p>
+        <a href="/campaigns/">Listar campañas</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks">Listar manzanas</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>">Ver manzana</a>
+        <p>Listar casas</p>
     </section>
     <hr>
     <h1>Buscar casa</h1>
@@ -77,4 +83,4 @@
 </div>
 <div id="message" class="alert" role="alert"></div>
 <script src="/js/locations.js"></script>
-<script src="/js/houseRegistration.js" type="module"></script>
+<script src="/js/houseRegistrations.js" type="module"></script>

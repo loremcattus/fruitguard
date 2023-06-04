@@ -1,6 +1,14 @@
 <main>
     <section class="breadcrumbs">
         <a href="#">Inicio</a>
+        <a href="/campaigns/">Listar campañas</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks">Listar manzanas</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>">Ver manzana</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>/houses">Listar casas</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>/houses/<%= breadcrumbs.HouseRegistrationId %>">Ver casa</a>
         <p>Listar árboles</p>
     </section>
     <hr>
@@ -30,7 +38,7 @@
     <section class="cards">
         <% if (formatedTreeSpeciesRegistration.length > 0) { %>
             <% for (let i = 0; i < formatedTreeSpeciesRegistration.length; i++) { %>
-                <a href="#">
+                <a href="trees/<%= formatedTreeSpeciesRegistration[i].id %>">
                     <div class="card-left-side">
                         <p class="card-left-side-top"><%= formatedTreeSpeciesRegistration[i].species %></p>
                         <p class="card-left-side-bottom"><%= formatedTreeSpeciesRegistration[i].tree_state %></p>

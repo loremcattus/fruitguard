@@ -2,10 +2,10 @@
     <section class="breadcrumbs">
         <a href="#">Inicio</a>
         <a href="/campaigns/">Listar campañas</a>
-        <a href="#">Ver campaña</a> <!--Puede ser FormattedCampaign.id-->
-        <a href="/focuses/">Listar focos</a>
-        <a href="#">Ver foco</a>
-        <a href="/blocks/">Listar manzanas</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks">Listar manzanas</a>
         <p>Ver manzana</p>
     </section>
     <hr>
@@ -54,4 +54,5 @@
             <a href="<%= formattedBlock.id %>/houses" class="button-green-default option-button">VER CASAS</a>
         </div>
 </main>
+<div id="message" class="alert" role="alert"></div>
 <script src="/js/block.js" type="module"></script>

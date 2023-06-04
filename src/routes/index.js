@@ -1,10 +1,9 @@
 import express from 'express';
 import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
-import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers } from '../modules/controllers/campaignController.js';
-import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockController.js';
+import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign } from '../modules/controllers/campaignController.js';
+import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockRegistrationController.js';
 import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
-import { addHouses, getHouses } from '../modules/controllers/houseController.js';
-import { addHouseRegistration, getHouseRegistrations, getHouseRegistration } from '../modules/controllers/house_registrationController.js';
+import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
 import { getTreeSpeciesRegistrations, addTreeSpeciesRegistration } from '../modules/controllers/treeSpeciesRegistrationController.js'
 
 
@@ -25,7 +24,8 @@ router.post('/api/campaigns', addCampaign);
 router.patch('/api/campaigns/:CampaignId', updateCampaign);
 // Usuarios de campañas
 router.delete('/api/campaigns/:CampaignId/users/:UserRegistrationId', deleteUserFromCampaign);
-router.get('/api/campaigns/:CampaignId/users/not-in/', getNonCampaignUsers);
+router.get('/api/campaigns/:CampaignId/users/not-in', getNonCampaignUsers);
+router.post('/api/campaigns/:CampaignId/users', addUsersToCampaign);
 
 // Focos 
 router.get('/campaigns/:CampaignId/focuses', getFocuses);
@@ -44,8 +44,9 @@ router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockId', upda
 
 // Registro de casas
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses', getHouseRegistrations);
-router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseId', getHouseRegistration );
+router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId', getHouseRegistration);
 router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses', addHouseRegistration);
+router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId', updateHouseRegistration);
 
 // registro de árbol
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees', getTreeSpeciesRegistrations);

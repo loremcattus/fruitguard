@@ -1,7 +1,7 @@
 import models from '../models/index.js';
 import { areas, states } from '../../helpers/enums.js';
 import { Sequelize } from 'sequelize';
-import { validateRequestBody, formatDate } from '../../helpers/validators.js';
+import { validateRequestBody, validateFieldsDataType, formatDate } from '../../helpers/validators.js';
 
 const { HouseRegistration, BlockRegistration, House } = models;
 
@@ -17,6 +17,12 @@ const isStringAddress = (data) => {
 
 export const getHouseRegistrations = async (req, res) => {
   try {
+    const breadcrumbs = {
+      CampaignId: req.params.CampaignId,
+      FocusId: req.params.FocusId,
+      BlockRegistrationId: req.params.BlockRegistrationId,
+    };
+
     const fileHTML = 'list-houseRegistration';
     const title = 'Registro de Casas';
     let blockRegistration;
@@ -28,12 +34,11 @@ export const getHouseRegistrations = async (req, res) => {
       let id = ""
       let address = "";
       if (isNumericId(idOrAddress)) {
-        id = idOrAddress ;
+        id = idOrAddress;
       } else if (isStringAddress(idOrAddress)) {
         address = { address: { [Sequelize.Op.substring]: idOrAddress } };
       }
       // Realizar la consulta utilizando la dirección
-      console.log(BlockRegistrationId);
       blockRegistration = await BlockRegistration.findOne({
         order: [['id', 'DESC']],
         attributes: ['id'],
@@ -41,7 +46,7 @@ export const getHouseRegistrations = async (req, res) => {
           model: House,
           where: address,
         },
-        where: {id: BlockRegistrationId},
+        where: { id: BlockRegistrationId },
       });
 
       searchOptions = {
@@ -84,7 +89,7 @@ export const getHouseRegistrations = async (req, res) => {
         return true;
       }
     });
-    return res.render('index.html', { formattedHouseRegistration: formatedHouseRegistrations, fileHTML, title, areas, states });
+    return res.render('index.html', { formattedHouseRegistration: formatedHouseRegistrations, fileHTML, title, breadcrumbs, areas, states });
 
   } catch (error) {
     console.log(error);
@@ -101,18 +106,22 @@ export const getHouseRegistration = async (req, res) => {
   const title = 'Ver Registro de Casa';
   const single = true;
 
+  const breadcrumbs = {
+    CampaignId: req.params.CampaignId,
+    FocusId: req.params.FocusId,
+    BlockRegistrationId: req.params.BlockRegistrationId,
+  };
+
   try {
     // Obtener todas las campañas con las propiedades definidas
-    const houseRegistration = await HouseRegistration.findByPk( req.params.HouseId, {
-      attributes: ['id', 'grid', 'comment', 'area', 'state', 'createdAt', 'updatedAt','HouseId']
+    const houseRegistration = await HouseRegistration.findByPk(req.params.HouseRegistrationId, {
+      attributes: ['id', 'grid', 'comment', 'area', 'state', 'createdAt', 'updatedAt', 'HouseId']
     });
-    console.log(houseRegistration);
 
-    const houseAddress = await House.findByPk( houseRegistration.dataValues.HouseId, {
-      attributes:['address']
+    const houseAddress = await House.findByPk(houseRegistration.dataValues.HouseId, {
+      attributes: ['address']
     });
-    console.log(houseAddress);
-    
+
     const house = {
       id: houseRegistration.dataValues.id,
       grid: houseRegistration.dataValues.grid,
@@ -123,13 +132,13 @@ export const getHouseRegistration = async (req, res) => {
       updatedAt: houseRegistration.dataValues.updatedAt,
       address: houseAddress.dataValues.address
     };
-    console.log( house );
+
 
     if (house) {
       const { createdAt, updatedAt, ...data } = house;
       data.createdAt = formatDate(createdAt);
       data.updatedAt = formatDate(updatedAt);
-      return res.render('index.html', { formattedHouseRegistration: data, fileHTML, title, single });
+      return res.render('index.html', { formattedHouseRegistrationns: data, fileHTML, areas, states, title, single, breadcrumbs });
     } else {
       return res.render('error.html', { error: 404 });
     }
@@ -141,7 +150,6 @@ export const getHouseRegistration = async (req, res) => {
 
 // Agregar una campaña
 export const addHouseRegistration = async (req, res) => {
-  console.log("-  - - - - - - - -post- - - - - - -  - ");
   try {
     // Valida que vengan datos en el cuerpo
     if (Object.keys(req.body).length === 0) {
@@ -152,8 +160,6 @@ export const addHouseRegistration = async (req, res) => {
     const addressHouse = req.body.address;
 
     const BlockRegistrationId = parseInt(req.params.BlockRegistrationId, 10);
-    console.log("block registration id "+BlockRegistrationId);
-    console.log("address house "+addressHouse);
 
     const blockRegistration = await BlockRegistration.findOne({
       attributes: ['id'],
@@ -162,7 +168,7 @@ export const addHouseRegistration = async (req, res) => {
 
     // Busca o crea una casa (house) utilizando la dirección
     const [house, created] = await House.findOrCreate({
-      where: { address: addressHouse, BlockId: BlockRegistrationId},
+      where: { address: addressHouse, BlockId: BlockRegistrationId },
     });
     //si la casa existia dame la id de esa casa para crear un house registration con esa id de casa
 
@@ -170,16 +176,14 @@ export const addHouseRegistration = async (req, res) => {
     if (created || !(await blockRegistration.hasHouse(house))) {
 
       const idHouseRegistration = house.id;
-      const grid  = req.body.grid;
+      const grid = req.body.grid;
       const state = req.body.state;
       const area = req.body.area;
       const comment = req.body.comment;
 
-      console.log(area)
-      console.log(typeof area);
 
       if (grid && state && area) {
-        const houseRegistration = await blockRegistration.addHouse(house, {through:{ grid, comment, area, state }});
+        const houseRegistration = await blockRegistration.addHouse(house, { through: { grid, comment, area, state } });
 
         let formatedHouseRegistrations = { idHouseRegistration, grid, comment, area, state, BlockRegistrationId, addressHouse }
         // crear formattedHouseRegistration para mandarle los datos que quiero mostrar en el front 
@@ -211,3 +215,43 @@ export const addHouseRegistration = async (req, res) => {
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
   }
 };
+
+// Editar casa
+
+export const updateHouseRegistration = async (req, res) => {
+  try {
+    // Validar que vengan datos en el cuerpo 
+    if (Object.keys(req.body).length === 0) {
+      return res.status(400).json('El cuerpo de la solicitud está vacío.');
+    }
+
+    const { HouseRegistrationId } = req.params;
+    const houseRegistration = await HouseRegistration.findByPk(HouseRegistrationId, {
+      attributes: ['id', 'HouseId']
+    });
+    const houseId = houseRegistration.dataValues.HouseId;
+
+    const { houseInfo } = req.body; // es lo mismo que: const houseInfo = req.body.houseInfo;
+    if (houseInfo) {
+      const validatedHouseFields = await validateFieldsDataType(houseInfo, House);
+      if (validatedHouseFields.errors) {
+        return res.sendStatus(400);
+      }
+      await House.update(houseInfo, { where: { id: houseId } });
+    }
+
+    const { houseRegistrationInfo } = req.body;
+    if (houseRegistrationInfo) {
+      const validatedHouseRegistrationFields = await validateFieldsDataType(houseRegistrationInfo, HouseRegistration);
+      if (validatedHouseRegistrationFields.errors) {
+        return res.sendStatus(400);
+      }
+      await houseRegistration.update(houseRegistrationInfo);
+    }
+
+    return res.sendStatus(200);
+  } catch (error) {
+    console.error('Error al actualizar la manzana', error);
+    return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
+  }
+}

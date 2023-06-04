@@ -1,0 +1,75 @@
+<main>
+
+    <!-- GATITOO -->
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <a href="/campaigns/">Listar campañas</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks">Listar manzanas</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>">Ver manzana</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>/houses">Listar casas</a>
+        <p>Ver casa</p>
+    </section>
+    <hr>
+
+<!-- ATTENTO FORMATEEDDDDDD -->
+
+
+
+    <h1>Información del árbol</h1>
+    <form id="editPost" class="info-post">
+        <div class="item-post">
+            <p class="key-post">Especies</p>
+            <div class="value-post">
+                <p><%= formatted %></p>
+                <input placeholder="<%= formatted %>" id="comment" type="text" style="display: none;">
+            </div>
+        </div>
+        <!--  -->
+        <div class="item-post">
+            <p class="key-post">Estado</p>
+            <div class="value-post">
+                <p><%= formatted %></p>
+                <select class="" id="area" style="display: none;">
+                    <option value="" disabled selected><%= formatted %></option>
+                    <% Object.values(area).forEach(area => { %>
+                        <option value="<%= area %>"><%= area %></option>
+                    <% }); %>
+                </select>
+            </div>
+        </div>
+        <!--  -->
+        <div class="item-post">
+            <p class="key-post">Cantidad de árboles</p>
+            <div class="value-post">
+                <p><%= formatted %></p>
+                <input placeholder="<%= formatted %>" id="comment" type="text" style="display: none;">
+            </div>
+        </div>
+        <!--  -->
+        <div class="item-post">
+            <p class="key-post">Unidades por muestra</p>
+            <div class="value-post">
+                <p><%= formatted %></p>
+                <input placeholder="<%= formatted %>" id="comment" type="text" style="display: none;">
+            </div>
+        </div>
+        <hr>
+        <button id="edit" class="button-green-default button-60">Editar</button>
+        <div class="buttons-edit" style="display: none;">
+            <button type="submit" class="button-40">Guardar</button>
+            <button id="cancel-edit" class=" button-green-default button-60">Cancelar</button>
+        </div>
+    </form>
+    <hr>
+    <div class="buttons-options">
+        <button type="submit" class="button-green-default option-button">VER PROSPECTO</button>
+        <a href="<%= formattedHouseRegistrationns.id %>/trees" class="button-green-default option-button">VER ÁRBOLES</a>
+    </div>
+</main>
+<div id="message" class="alert" role="alert"></div>
+
+
+<!-- <script src="/js/houseRegistration.js" type="module"></script> -->

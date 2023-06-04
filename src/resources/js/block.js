@@ -1,7 +1,7 @@
 import { showMessage } from "./helpers.js";
 
 const message = localStorage.getItem('message');
-console.log( message);
+
 if (message) {
   showMessage(message);
   // Limpiar el mensaje almacenado después de mostrarlo
@@ -15,16 +15,25 @@ const formEdit = document.getElementById('editPost');
 formEdit.addEventListener('submit', async (event) => { 
   event.preventDefault();// Evitar el envío del formulario por defecto
 
-  var inputs = document.getElementsByClassName("street-input");
+  let inputs = document.getElementsByClassName("street-input");
   // Recorrer los elementos obtenidos
-  let streets = "";
-  for (var i = 0; i < inputs.length; i++) {
+  let streets = '';
+  const placeholders = [];
+  for (let i = 0; i < inputs.length; i++) {
+    const placeholder = inputs[i].placeholder;
+    placeholders.push(placeholder);
+
     let inputValue = inputs[i].value.trim();
+    if(!inputValue) { inputValue = placeholder };
     if (i == 0) {
       streets = inputValue;
     } else {
       streets = streets + '@' + inputValue;
     }
+  }
+
+  if (streets == placeholders.join('@')){
+    return showMessage('No hay datos para actualizar', 'error');
   }
 
   // Obtener los valores de los campos del formulario

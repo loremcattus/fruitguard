@@ -13,6 +13,10 @@ export const getFocuses = async (req,res) => {
         const{ address, active = true } = req.query;// Obtener los parámetros de bùsqueda de la URL
         const { CampaignId } = req.params;
 
+        const breadcrumbs = {
+            CampaignId
+        };
+
         // Convertir el valor openString a booleano (?)
         const activeBoolean = active === true;
 
@@ -31,7 +35,7 @@ export const getFocuses = async (req,res) => {
 
         const data = focused.length > 0 ? focused : 'No hay focos registrados o que coincidan con tu búsqueda';
 
-        return res.render('index.html', { formattedFocused: data, fileHTML, title });
+        return res.render('index.html', { formattedFocused: data, fileHTML, title, breadcrumbs });
     }catch(error){
         return res.render('error.html',{error: 404 });
     }
@@ -44,6 +48,11 @@ export const getFocus = async (req, res) => {
     const single = true;
 
     try{
+
+        const breadcrumbs = {
+            CampaignId: req.params.CampaignId
+        };
+
         // Obtener todas los focos con propiedades definidas 
         const focus = await Focus.findByPk( req.params.FocusId,{
             attributes: ['id', 'address', 'active', 'createdAt', 'updatedAt']
@@ -53,7 +62,7 @@ export const getFocus = async (req, res) => {
             const { createdAt, updatedAt, ...data } = focus.dataValues;
             data.createdAt = formatDate(createdAt);
             data.updatedAt = formatDate(updatedAt);
-            return res.render('index.html',{formattedFocus: data, fileHTML, title, single });
+            return res.render('index.html',{formattedFocus: data, fileHTML, title, single, breadcrumbs });
         } else {
             return res.render('error.html',{ error: 404 });
         }

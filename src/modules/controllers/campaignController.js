@@ -1,7 +1,12 @@
 import models from '../models/index.js';
 import { validateRequestBody, formatDate, validateFieldsDataType } from '../../helpers/validators.js';
+import { roles } from '../../helpers/enums.js';
 
 const { Campaign, User, UserRegistration, Sequelize } = models;
+
+const isNumeric = (str) => {
+  return /^\d+$/.test(str);
+};
 
 // Obtener todas las campañas
 export const getCampaigns = async (req, res) => {
@@ -60,11 +65,31 @@ export const getCampaign = async (req, res) => {
       formattedCampaign.managerId = managerId;
       formattedCampaign.manager = manager.dataValues.name;
 
+      const { nameOrRun, role } = req.query; // Obtener los parámetros de búsqueda de la URL
+      let name = '';
+      let run = '';
+      
+      if(nameOrRun){
+        if(isNumeric(nameOrRun)) {
+          run = nameOrRun;
+        } else {
+          name = { [Sequelize.Op.substring]: nameOrRun };
+        }
+      }
+
+      // Construir el objeto de búsqueda dinámicamente
+      const searchOptions = {
+        ...(name && { name }),
+        ...(run && {run}),
+        ...(role && { role })
+      };
+
       const users = await Campaign.findOne({
         attributes: ['id'],
         include: {
           model: User,
           attributes: ['id', 'name', 'run', 'dvRun', 'role'],
+          where: searchOptions
         },
         where: { id: campaign.id }
       });
@@ -76,12 +101,12 @@ export const getCampaign = async (req, res) => {
             RegistrationId: user.dataValues.UserRegistration.dataValues.id,
             name: user.name,
             rut: user.run + '-' + user.dvRun,
-            role: user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase(),
+            role: user.role,
           });
         }
       }
 
-      return res.render('index.html', { formattedCampaign, formattedUsers, fileHTML, title, single });
+      return res.render('index.html', { formattedCampaign, formattedUsers, fileHTML, title, single, roles: [roles.SUPERVISOR, roles.PROSPECTOR] });
     } else {
       return res.render('error.html', { error: 404 });
     }
@@ -167,7 +192,7 @@ export const deleteUserFromCampaign = async (req, res) => {
   }
 }
 
-// Listar usuarios que no pertenecen a la campaña para luego añadirlos
+// Listar usuarios que no pertenecen a la campaña
 export const getNonCampaignUsers = async (req, res) => {
   try {
     // Obtener usuarios que están registrados en la campaña
@@ -177,13 +202,16 @@ export const getNonCampaignUsers = async (req, res) => {
         attributes: ['id']
       }
     });
-    
+
     const campaignUserIDs = campaignUsers.Users.map(({ dataValues }) => dataValues.id);
 
     const nonCampaignUsers = await User.findAll({
       where: {
         id: {
           [Sequelize.Op.notIn]: campaignUserIDs
+        },
+        role: {
+          [Sequelize.Op.in]: [roles.SUPERVISOR, roles.PROSPECTOR]
         }
       }
     });
@@ -198,7 +226,7 @@ export const getNonCampaignUsers = async (req, res) => {
       id: user.id,
       name: user.name,
       rut: `${user.run}-${user.dvRun}`,
-      role: user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()
+      role: user.role
     }));
     // console.log(formattedUsers);
 
@@ -206,6 +234,47 @@ export const getNonCampaignUsers = async (req, res) => {
     return res.status(200).json(formattedUsers);
   } catch (error) {
     console.error('Error en getNonCampaignUsers: ', error);
+    return res.sendStatus(500);
+  }
+};
+
+// Agregar usuarios a la campaña
+export const addUsersToCampaign = async (req, res) => {
+  try {
+    // Valida que vengan datos en el cuerpo
+    if (req.body.length == 0) {
+      throw new Error('El cuerpo de la solicitud está vacío.');
+    }
+
+    const campaignId = parseInt(req.params.CampaignId);
+    const userIDs = req.body.map(function (userID) {
+      return parseInt(userID);
+    });
+
+    try {
+      const campaign = await Campaign.findByPk(campaignId);
+      if (!campaign) {
+        throw new Error('Campaña no encontrada');
+      }
+
+      const users = await User.findAll({
+        where: {
+          id: userIDs
+        }
+      });
+
+      if (users.length !== userIDs.length) {
+        throw new Error('Alguno(s) de los usuarios no se encontraron');
+      }
+
+      await campaign.addUsers(users);
+      return res.sendStatus(200);
+    } catch (error) {
+      console.error('Error al agregar usuarios a la campaña:', error);
+    }
+
+  } catch (error) {
+    console.error('Error al insertar usuarios a la campaña', error);
     return res.sendStatus(500);
   }
 };

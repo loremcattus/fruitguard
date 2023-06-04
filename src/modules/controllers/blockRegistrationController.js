@@ -9,8 +9,14 @@ export const getBlocks = async (req, res) => {
   const title = 'Manzanas';
 
   try {
+
     const { streets } = req.query;
     const FocusId = parseInt(req.params.FocusId, 10);
+
+    const breadcrumbs = {
+      CampaignId: req.params.CampaignId,
+      FocusId: req.params.FocusId,
+    };
 
     const searchOptions = {
       ...(streets && { streets: { [Sequelize.Op.substring]: streets } }),
@@ -31,14 +37,13 @@ export const getBlocks = async (req, res) => {
     if (focus && "Blocks" in focus) {
       for (let i = 0; i < focus.Blocks.length; i++) {
         let streets = focus.Blocks[i].dataValues.streets.split("@");
-        console.log(focus.Blocks[i].BlockRegistration.dataValues);
         let blockRegistrationId = focus.Blocks[i].BlockRegistration.dataValues.id;
         data[i] = { streets, blockRegistrationId };
       }
     };
     data.reverse();
 
-    return res.render('index.html', { formattedBlocks: data, fileHTML, title });
+    return res.render('index.html', { formattedBlocks: data, fileHTML, title, breadcrumbs });
   } catch (error) {
     console.log(error);
     return res.render('error.html', { error: 404 });
@@ -51,35 +56,32 @@ export const getBlock = async (req, res) => {
   const title = 'Ver Manzana';
   const single = true;
 
+  const breadcrumbs = {
+    CampaignId: req.params.CampaignId,
+    FocusId: req.params.FocusId,
+  };
+
   try {
-    // const block = await BlockRegistration.findByPk(req.params.BlockId, {
-    //   attributes: ['id', 'createdAt', 'updatedAt'],
-    //   include: {
-    //     model: Block,
-    //     attributes: ['streets']
-    //   }
-    // })
+
     const blockRegistration = await BlockRegistration.findByPk(req.params.BlockId, {
-      attributes: ['id', 'BlockId', 'createdAt', 'updatedAt']
+      attributes: ['id', 'BlockId', 'createdAt']
     })
     const blockStreets = await Block.findByPk(blockRegistration.dataValues.BlockId, {
-      attributes: ['streets']
+      attributes: ['streets', 'updatedAt']
     });
-    
+
     const block = {
       id: blockRegistration.dataValues.id,
       streets: blockStreets.dataValues.streets,
       createdAt: blockRegistration.dataValues.createdAt,
-      updatedAt: blockRegistration.dataValues.updatedAt,
+      updatedAt: blockStreets.dataValues.updatedAt,
     }
-    // attributes: ['id'] //'createdAt', 'updatedAt'// FALTA
-    // console.log(block.dataValues.BlockId);
 
     if (block) {
       const { createdAt, updatedAt, ...data } = block;// createdAt, updatedAt,
       data.createdAt = formatDate(createdAt);
       data.updatedAt = formatDate(updatedAt);
-      return res.render('index.html', { formattedBlock: data, fileHTML, title, single });
+      return res.render('index.html', { formattedBlock: data, fileHTML, title, single, breadcrumbs });
     } else {
       return res.render('error.html', { error: 404 });
     }
@@ -126,7 +128,7 @@ export const addBlock = async (req, res) => {
       where: validatedObject,
     });
 
-    // Añade el bloque al enfoque si fue creado Y Verifica si el enfoque ya tiene el bloque asociado
+    // Añade el bloque al foco si fue creado Y Verifica si el foco ya tiene el bloque asociado
     if (created || !(await focus.hasBlock(block))) {
       await focus.addBlock(block);
     } else {
@@ -142,32 +144,34 @@ export const addBlock = async (req, res) => {
 };
 
 
-// Editar foco 
+// Editar block 
 
 export const updateBlock = async (req, res) => {
-  try{
-      // Validar que vengan datos en el cuerpo 
-      if(Object.keys(req.body).length === 0 ){
-          return res.status(400).json('El cuerpo de la solicitud está vacío.');
+  try {
+    // Validar que vengan datos en el cuerpo 
+    if (Object.keys(req.body).length === 0) {
+      return res.status(400).json('El cuerpo de la solicitud está vacío.');
+    }
+    // Validar el cuerpo de la solicitud 
+    const validatedFields = await validateFieldsDataType(req.body, Block);
+    // Comprobar errores de validación
+    if (validatedFields.errors) {
+      return res.status(400).json(validatedFields.errors);
+    }
+    // TODO: No se debe actualizar el bloque,
+    // se debe verificar si el bloque ha sido registrado en otro foco,
+    // de no ser así, se debe borrar.
+    // Luego se debe borrar la relación entre foco y bloque
+    // y crear una nueva relación entre foco y el nuevo bloque
+    const block = await Block.update(req.body, {
+      where: {
+        id: req.params.BlockId
       }
-      // Validar el cuerpo de la solicitud 
-      const validatedFields = await validateFieldsDataType(req.body, Block);
-      // Comprobar errores de validación
-      if (validatedFields.errors){
-          return res.status(400).json(validatedFields.errors);
-      } 
-      console.log( req.body);
-      let block = await Block.update(req.body,{
-          where:{
-              id: req.params.BlockId
-          }
-      });
+    });
 
-      console.log( block );
-
-      return res.status(200).json(block);
+    return res.status(200).json(block);
   } catch (error) {
-      console.error('Error al actualizar la manzana',error);
-      return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
+    console.error('Error al actualizar la manzana', error);
+    return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
   }
 }

@@ -2,9 +2,9 @@
     <section class="breadcrumbs">
         <a href="#">Inicio</a>
         <a href="/campaigns/">Listar campañas</a>
-        <a href="#">Ver campaña</a>
-        <a href="/focuses/">Listar focos</a>
-        <a href="#">Ver foco</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
         <p>Listar manzanas</p>
     </section>
     <hr>

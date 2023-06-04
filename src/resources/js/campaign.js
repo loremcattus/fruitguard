@@ -110,7 +110,7 @@ formEdit.addEventListener('submit', async (event) => {
 
 // Obtener referencias a los elementos relevantes
 const removeBtns = document.querySelectorAll('.removeBtn');
-const modalBackdrop = document.getElementById('modalBackdropRemove');
+const modalBackdropRemove = document.getElementById('modalBackdropRemove');
 const removeModal = document.getElementById('removeModal');
 const closeButton = document.querySelector('div.close-modal[data-dismiss="modalRemoveUser"]');
 const cancelBtn = document.querySelector('#cancelRemoveUser');
@@ -118,7 +118,7 @@ const confirmBtn = removeModal.querySelector('#confirmRemoveUser');
 
 // Función para mostrar el modal y el fondo del modal
 function openRemoveModal() {
-  modalBackdrop.style.display = '';
+  modalBackdropRemove.style.display = '';
   removeModal.style.display = '';
 
   // Obtener el nombre de usuario
@@ -132,7 +132,7 @@ function openRemoveModal() {
 
 // Función para cerrar el modal y el fondo del modal
 function closeRemoveModal() {
-  modalBackdrop.style.display = 'none';
+  modalBackdropRemove.style.display = 'none';
   removeModal.style.display = 'none';
 }
 
@@ -154,20 +154,20 @@ function handleConfirm() {
       'Content-Type': 'application/json'
     }
   })
-  .then(response => {
-    if (response.ok) {
-      showMessage(`${username} ha sido retirado/a de la campaña`);
-      closeRemoveModal();
-      document.querySelector(`[user-id="${userId}"]`).parentNode.remove();
-    } else if (response.status === 404) {
-      throw new Error(`${username} ya ha sido retirado/a de la campaña`);
-    } else {
-      throw new Error('Error al enviar el formulario');
-    }
-  })
-  .catch(error => {
-    showMessage(error.message, 'error');
-  });
+    .then(response => {
+      if (response.ok) {
+        showMessage(`${username} ha sido retirado/a de la campaña`);
+        closeRemoveModal();
+        document.querySelector(`[user-id="${userId}"]`).parentNode.remove();
+      } else if (response.status === 404) {
+        throw new Error(`${username} ya ha sido retirado/a de la campaña`);
+      } else {
+        throw new Error('Error al enviar el formulario');
+      }
+    })
+    .catch(error => {
+      showMessage(error.message, 'error');
+    });
 }
 
 // Agregar eventos de clic a los botones de eliminación
@@ -179,30 +179,33 @@ removeBtns.forEach(btn => {
 cancelBtn.addEventListener('click', closeRemoveModal);
 confirmBtn.addEventListener('click', handleConfirm);
 closeButton.addEventListener('click', closeRemoveModal);
-modalBackdrop.addEventListener('click', closeRemoveModal);
+modalBackdropRemove.addEventListener('click', closeRemoveModal);
 
 // USERS ADD
 
 const addModal = document.querySelector('[data-target="#addModal"]');
 addModal.addEventListener('click', getNonCampaignUsers);
+const formAdd = document.getElementById('addPost');
+formAdd.addEventListener('submit', addUsers);
 
-function getNonCampaignUsers () {
-  fetch(`/api/campaigns/${CampaignId}/users/not-in/`, {
+function getNonCampaignUsers() {
+  fetch(`/api/campaigns/${CampaignId}/users/not-in`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
     },
   })
-  .then(response => response.json())
-  .then(data => {
-    const addUsersSection = document.querySelector('.add-users-cards');
-    
-    // Limpiar contenido existente dentro del section
-    addUsersSection.innerHTML = '';
+    .then(response => response.json())
+    .then(data => {
+      const addUsersSection = document.querySelector('.add-users-cards');
 
-    // Recorrer los datos y agregarlos como tarjetas dentro del section
-    data.forEach(user => {
-      const card = `
+      // Limpiar contenido existente dentro del section
+      addUsersSection.innerHTML = '';
+
+      // Recorrer los datos y agregarlos como tarjetas dentro del section
+      data.forEach(user => {
+        user.role = user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase();
+        const card = `
         <a>
           <div class="card-left-side">
             <p class="card-left-side-top">${user.name}</p>
@@ -213,23 +216,55 @@ function getNonCampaignUsers () {
           </div>
         </a>
       `;
-      addUsersSection.innerHTML += card;
+        addUsersSection.innerHTML += card;
+      });
+    })
+    .catch(error => {
+      console.error('Error en la solicitud fetch: ', error);
     });
-  })
-  .catch(error => {
-    console.error('Error en la solicitud fetch: ', error);
-  });
 }
 
-// addPost
-// function addUsers () {
-//   let usersToAdd = document.querySelectorAll('[non-campaign-user-id]');
-//   // Recorrer los elementos y obtener sus valores
-//   var valores = [];
-//   elementos.forEach(function(usersToAdd) {
-//     valores.push(elemento.getAttribute('non-campaign-user-id'));
-//   });
-  
-//   console.log(valores);
-// }
+function addUsers() {
+  event.preventDefault(); // Evitar el envío del formulario por defecto
+
+  let nonCampaignUsers = document.querySelectorAll('[non-campaign-user-id]');
+  // Recorrer los elementos y obtener sus valores
+  if (nonCampaignUsers) {
+    var usersToAdd = [];
+    nonCampaignUsers.forEach(function (nonCampaignUser) {
+      if (nonCampaignUser.checked ? true : false) {
+        usersToAdd.push(nonCampaignUser.getAttribute('non-campaign-user-id'));
+      };
+    });
+
+    if (usersToAdd.length > 0) {
+
+      fetch(`/api/campaigns/${CampaignId}/users`, {
+        method: 'POST',
+        body: JSON.stringify(usersToAdd),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+        .then(response => {
+          if (response.status === 200) {
+            localStorage.setItem('message', 'Usuario(s) añadidos a la campaña');
+            location.reload();
+          } else {
+            throw new Error('Error al añadir usuarios');
+          }
+        })
+        .catch(error => {
+          console.error('Error en la solicitud: ', error);
+          showMessage('Error al añadir los usuarios', 'error');
+        });
+
+    } else {
+      showMessage('Por favor, selecciona al menos un usuario', 'error');
+    }
+  } else {
+    showMessage('No hay usuarios para añadir a la campaña', 'error');
+  }
+
+}
 

@@ -10,7 +10,8 @@ const blockModel = (sequelize) => {
   }, {
     sequelize,
     modelName: 'Block',
-    timestamps: false,
+    timestamps: true,
+    updatedAt: false,
   });
 
   return Block;

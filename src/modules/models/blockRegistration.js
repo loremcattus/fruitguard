@@ -14,6 +14,8 @@ const blockRegistrationModel = (sequelize) => {
   }, {
     sequelize,
     paranoid: true,
+    timestamps: true,
+    updatedAt: false,
     modelName: 'BlockRegistration',
     tableName: 'block_registrations',
   });

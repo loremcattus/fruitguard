@@ -7,6 +7,13 @@ import treeSpeciesRegistrationModel from '../models/treeSpeciesRegistration.js';
 const { HouseRegistration, TreeSpecies, TreeSpeciesRegistration } = models;
 
 export const getTreeSpeciesRegistrations = async (req, res) => {
+  const breadcrumbs = {
+    CampaignId: req.params.CampaignId,
+    FocusId: req.params.FocusId,
+    BlockRegistrationId: req.params.BlockRegistrationId,
+    HouseRegistrationId: req.params.HouseRegistrationId,
+  };
+
   const fileHTML = 'list-treeSpeciesRegistration';
   const title = 'Registro de Árboles';
   try {
@@ -37,6 +44,8 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
         where: speciesId
       }
     });
+    // DEBO Buscar el Id de el registro de árbol 
+    // para enlazarlo a la vista del árbol 
 
     const formatedTreeSpeciesRegistration = [];
     if(houseRegistration) {
@@ -62,8 +71,8 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
         }
       }
     }
-
-    return res.render('index.html', { formatedTreeSpeciesRegistration, fileHTML, title, treeStates, formattedTreeSpecies });
+    
+    return res.render('index.html', { formatedTreeSpeciesRegistration, fileHTML, title, breadcrumbs, treeStates, formattedTreeSpecies });
   } catch (error) {
     console.log(error);
     return res.render('error.html', { error: 404 });

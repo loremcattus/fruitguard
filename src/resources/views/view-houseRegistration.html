@@ -2,9 +2,13 @@
     <section class="breadcrumbs">
         <a href="#">Inicio</a>
         <a href="/campaigns/">Listar campañas</a>
-        <a href="#">Ver campaña</a> <!--Puede ser FormattedCampaign.id-->
-        <a href="/focuses/">Listar focos</a>
-        <a href="#">Ver foco</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks">Listar manzanas</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>">Ver manzana</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>/houses">Listar casas</a>
+        <p>Ver casa</p>
     </section>
     <hr>
     <h1>Información de la casa</h1>
@@ -12,52 +16,69 @@
         <div class="item-post">
             <p class="key-post">ID</p>
             <div class="value-post">
-                <p><%= formattedHouseRegistration.id %></p>
+                <p><%= formattedHouseRegistrationns.id %></p>
             </div>
         </div>
-        <div class="item-post">
+        <!-- SE EDITA  -->
+        <div class="item-post"> 
             <p class="key-post">Dirección</p>
             <div class="value-post">
-                <p><%= formattedHouseRegistration.address %></p>
-                <input placeholder="<%= formattedHouseRegistration.address %>" id="address" type="text" style="display: none;">
+                <p><%= formattedHouseRegistrationns.address %></p>
+                <input placeholder="<%= formattedHouseRegistrationns.address %>" id="address" type="text" style="display: none;">
             </div>
         </div>
+        <!-- SE EDITA  -->
         <div class="item-post">
             <p class="key-post">Grilla</p>
             <div class="value-post">
-                <p><%= formattedHouseRegistration.grid %></p>
-                <input placeholder="<%= formattedHouseRegistration.grid %>" id="address" type="text" style="display: none;">
+                <p><%= formattedHouseRegistrationns.grid %></p>
+                <input placeholder="<%= formattedHouseRegistrationns.grid %>" id="grid" type="text" style="display: none;">
             </div>
         </div>
+        <!-- SE EDITA  -->
         <div class="item-post">
             <p class="key-post">Área</p>
             <div class="value-post">
-                <p><%= formattedHouseRegistration.area %></p>
+                <p><%= formattedHouseRegistrationns.area %></p>
+                <select class="" id="area" style="display: none;">
+                    <option value="" disabled selected><%= formattedHouseRegistrationns.area %></option>
+                    <% Object.values(areas).forEach(area => { %>
+                        <option value="<%= area %>"><%= area %></option>
+                    <% }); %>
+                </select>
             </div>
         </div>
+        <!-- SE EDITA  -->
         <div class="item-post">
             <p class="key-post">Estado</p>
             <div class="value-post">
-                <p><%= formattedHouseRegistration.state %></p>
+                <p><%= formattedHouseRegistrationns.state %></p>
+                <select class="" id="state" style="display: none;">
+                    <option value="" disabled selected><%= formattedHouseRegistrationns.state %></option>
+                    <% Object.values(states).forEach(state => { %>
+                        <option value="<%= state %>"><%= state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() %></option>
+                    <% }); %>
+                </select>
             </div>
         </div>
         <div class="item-post">
             <p class="key-post">Fecha de creación</p>
             <div class="value-post">
-                <p><%= formattedHouseRegistration.createdAt %></p>
+                <p><%= formattedHouseRegistrationns.createdAt %></p>
             </div>
         </div>
         <div class="item-post">
             <p class="key-post">Fecha de modificación</p>
             <div class="value-post">
-                <p><%= formattedHouseRegistration.updatedAt %></p>
+                <p><%= formattedHouseRegistrationns.updatedAt %></p>
             </div>
         </div>
+        <!-- SE EDITA  -->
         <div class="item-post">
             <p class="key-post">Comentario</p>
             <div class="value-post">
-                <p><%= formattedHouseRegistration.comment %></p>
-                <input placeholder="<%= formattedHouseRegistration.comment %>" id="comment" type="text" style="display: none;">
+                <p><%= formattedHouseRegistrationns.comment %></p>
+                <input placeholder="<%= formattedHouseRegistrationns.comment %>" id="comment" type="text" style="display: none;">
             </div>
         </div>
         <!--FALTARIA AGREGAR MAPAS TANTO EN EL CONTROLADOR COMO EN EL FRONT-->
@@ -71,8 +92,8 @@
     <hr>
     <div class="buttons-options">
         <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
-        <a href="<%= formattedHouseRegistration.id %>/blocks" class="button-green-default option-button">VER ÁRBOLES</a>
+        <a href="<%= formattedHouseRegistrationns.id %>/trees" class="button-green-default option-button">VER ÁRBOLES</a>
     </div>
 </main>
 <div id="message" class="alert" role="alert"></div>
-<!-- <script src="/js/focus.js" type="module"></script> -->
+<script src="/js/houseRegistration.js" type="module"></script>
