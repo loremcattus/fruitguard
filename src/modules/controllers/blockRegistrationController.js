@@ -2,7 +2,7 @@ import models from '../models/index.js';
 import { validateRequestBody, validateFieldsDataType, formatDate } from '../../helpers/validators.js';
 import { Sequelize } from 'sequelize';
 
-const { Focus, Block, BlockRegistration } = models;
+const { Focus, Block, BlockRegistration, Campaign } = models;
 
 export const getBlocks = async (req, res) => {
   const fileHTML = 'list-block';
@@ -63,24 +63,22 @@ export const getBlock = async (req, res) => {
 
   try {
 
-    const blockRegistration = await BlockRegistration.findByPk(req.params.BlockId, {
+    const blockRegistration = await BlockRegistration.findByPk(req.params.BlockRegistrationId, {
       attributes: ['id', 'BlockId', 'createdAt']
     })
     const blockStreets = await Block.findByPk(blockRegistration.dataValues.BlockId, {
-      attributes: ['streets', 'updatedAt']
+      attributes: ['streets']
     });
 
     const block = {
       id: blockRegistration.dataValues.id,
       streets: blockStreets.dataValues.streets,
       createdAt: blockRegistration.dataValues.createdAt,
-      updatedAt: blockStreets.dataValues.updatedAt,
     }
 
     if (block) {
-      const { createdAt, updatedAt, ...data } = block;// createdAt, updatedAt,
+      const { createdAt, ...data } = block;// createdAt, updatedAt,
       data.createdAt = formatDate(createdAt);
-      data.updatedAt = formatDate(updatedAt);
       return res.render('index.html', { formattedBlock: data, fileHTML, title, single, breadcrumbs });
     } else {
       return res.render('error.html', { error: 404 });
@@ -158,18 +156,38 @@ export const updateBlock = async (req, res) => {
     if (validatedFields.errors) {
       return res.status(400).json(validatedFields.errors);
     }
-    // TODO: No se debe actualizar el bloque,
-    // se debe verificar si el bloque ha sido registrado en otro foco,
-    // de no ser así, se debe borrar.
-    // Luego se debe borrar la relación entre foco y bloque
-    // y crear una nueva relación entre foco y el nuevo bloque
-    const block = await Block.update(req.body, {
-      where: {
-        id: req.params.BlockId
+
+    // Verificar si el bloque antiguo tiene algún otro registro de bloque
+    const blockRegistration = await BlockRegistration.findByPk(req.params.BlockRegistrationId, {
+      attributes: ['id', 'BlockId']
+    });
+    const oldBlockId = blockRegistration.dataValues.BlockId;
+
+    const focusWithBlock = await Focus.findAll({
+      attributes: ['id'],
+      include: {
+        model: Block,
+        where: {id: oldBlockId}
       }
     });
 
-    return res.status(200).json(block);
+    const { streets } = req.body;    
+    // Verificar si ya existe un bloque con las calles para actualizar, o si no crearlo
+    const [blockWithNewAddress] = await Block.findOrCreate({ attributes: ['id'], where: { streets } });
+    const newBlockId = blockWithNewAddress.dataValues.id;
+    // Actualizar el BlockId del registro de bloque para vincularlo con el nuevo bloque
+    await blockRegistration.update({BlockId: newBlockId});
+
+    // Borra el bloque antiguo en caso de que no este registrado a ningún otro bloque
+    if (focusWithBlock.length == 1) {
+      await Block.destroy({
+        where: {
+          id: oldBlockId
+        }
+      });
+    }
+
+    return res.sendStatus(200);
   } catch (error) {
     console.error('Error al actualizar la manzana', error);
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });

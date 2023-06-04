@@ -34,7 +34,6 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
       ...(species && { species }),
       ...(treeState && { treeState })
     }
-    
     // Trae todas las casas filtradas por especie siempre y cuando venga en la url
     const houseRegistration = await HouseRegistration.findByPk( houseRegistrationId, {
       order: [['id', 'DESC']],
@@ -45,7 +44,7 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
       }
     });
     // DEBO Buscar el Id de el registro de árbol 
-    // para enlazarlo a la vista del árbol 
+    // para enlazarlo a la vista del árbol
 
     const formatedTreeSpeciesRegistration = [];
     if(houseRegistration) {
@@ -72,7 +71,7 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
       }
     }
     
-    return res.render('index.html', { formatedTreeSpeciesRegistration, fileHTML, title, breadcrumbs, treeStates, formattedTreeSpecies });
+    return res.render('index.html', { formatedTreeSpeciesRegistration, fileHTML, title, breadcrumbs, treeStates, formattedTreeSpecies, houseRegistrationId  });
   } catch (error) {
     console.log(error);
     return res.render('error.html', { error: 404 });
@@ -144,3 +143,4 @@ export const addTreeSpeciesRegistration = async (req, res) => {
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
   }
 }
+

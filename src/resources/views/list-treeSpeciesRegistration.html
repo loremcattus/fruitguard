@@ -38,7 +38,7 @@
     <section class="cards">
         <% if (formatedTreeSpeciesRegistration.length > 0) { %>
             <% for (let i = 0; i < formatedTreeSpeciesRegistration.length; i++) { %>
-                <a href="trees/<%= formatedTreeSpeciesRegistration[i].id %>">
+                <a href="trees/<%= houseRegistrationId %>">
                     <div class="card-left-side">
                         <p class="card-left-side-top"><%= formatedTreeSpeciesRegistration[i].species %></p>
                         <p class="card-left-side-bottom"><%= formatedTreeSpeciesRegistration[i].tree_state %></p>
@@ -85,4 +85,4 @@
 </div>
 <div id="message" class="alert" role="alert"></div>
 <script src="/js/locations.js"></script>
-<script src="/js/treeRegistrationRegistration.js" type="module"></script>
+<script src="/js/treeRegistrations.js" type="module"></script>

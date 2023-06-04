@@ -35,9 +35,9 @@ router.patch('/api/campaigns/:CampaignId/focuses/:FocusId', updateFocus);
 
 // Manzanas
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks', getBlocks);
-router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockId', getBlock);
+router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId', getBlock);
 router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks', addBlock);
-router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockId', updateBlock);
+router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId', updateBlock);
 // Casas
 // router.get('/api/houses', getHouses);
 // router.post('/api/houses', addHouses);
