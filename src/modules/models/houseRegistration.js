@@ -35,11 +35,10 @@ const houseRegistrationModel = (sequelize) => {
     // estado de la casa
     state: {
       type: DataTypes.ENUM(...statesValues),
-      defaultValue: states.STATE,
       validate: {
         isIn: {
           args: [statesValues],
-          msg: `Invalid state. Valid state are: ${statesValues.join(', ')}`,
+          msg: `Invalid state. Valid states are: ${statesValues.join(', ')}`,
         },
       },
     },

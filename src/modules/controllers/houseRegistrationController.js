@@ -1,7 +1,7 @@
 import models from '../models/index.js';
 import { areas, states } from '../../helpers/enums.js';
 import { Sequelize } from 'sequelize';
-import { validateRequestBody, validateFieldsDataType, formatDate } from '../../helpers/validators.js';
+import { validateFieldsDataType, formatDate } from '../../helpers/validators.js';
 
 const { HouseRegistration, BlockRegistration, House } = models;
 
@@ -148,67 +148,55 @@ export const getHouseRegistration = async (req, res) => {
   }
 };
 
-// Agregar una campaña
+// Agregar un registro de bloque
 export const addHouseRegistration = async (req, res) => {
   try {
     // Valida que vengan datos en el cuerpo
     if (Object.keys(req.body).length === 0) {
-      return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío.' });
+      return res.sendStatus(400);
     }
 
-    //Rescatar address del object
-    const addressHouse = req.body.address;
+    const { address } = req.body;
+    const { grid } = req.body;
+    const { state } = req.body;
+    const { area } = req.body;
+    const { comment } = req.body;
 
-    const BlockRegistrationId = parseInt(req.params.BlockRegistrationId, 10);
+    // Comprobar errores de validación
+    if (!address || !grid || !state || !area ) {
+      return res.sendStatus(400);
+    }
 
-    const blockRegistration = await BlockRegistration.findOne({
+    const houseRegistrationInfo = {
+      grid,
+      area,
+      state,
+      ...(comment && { comment }),
+    };
+
+    const blockRegistration = await BlockRegistration.findByPk(req.params.BlockRegistrationId, {
+      attributes: ['id', 'BlockId']
+    });
+    const BlockId = blockRegistration.dataValues.BlockId;
+
+    // Busca o crea una casa utilizando la dirección y el bloque
+    const [house] = await House.findOrCreate({
       attributes: ['id'],
-      where: { id: BlockRegistrationId },
+      where: { BlockId, address },
     });
 
-    // Busca o crea una casa (house) utilizando la dirección
-    const [house, created] = await House.findOrCreate({
-      where: { address: addressHouse, BlockId: BlockRegistrationId },
-    });
-    //si la casa existia dame la id de esa casa para crear un house registration con esa id de casa
+    // Verifica si el foco ya tiene el bloque asociado
+    if (await blockRegistration.hasHouse(house)) { return res.sendStatus(409); };
 
-    // Añade el bloque al enfoque si fue creado Y Verifica si el enfoque ya tiene el bloque asociado
-    if (created || !(await blockRegistration.hasHouse(house))) {
-
-      const idHouseRegistration = house.id;
-      const grid = req.body.grid;
-      const state = req.body.state;
-      const area = req.body.area;
-      const comment = req.body.comment;
-
-
-      if (grid && state && area) {
-        const houseRegistration = await blockRegistration.addHouse(house, { through: { grid, comment, area, state } });
-
-        let formatedHouseRegistrations = { idHouseRegistration, grid, comment, area, state, BlockRegistrationId, addressHouse }
-        // crear formattedHouseRegistration para mandarle los datos que quiero mostrar en el front 
-        //luego en front houseregistration.js escribir las variables
-        return res.status(201).json(formatedHouseRegistrations);
-      } else {
-        return res.status(400).json({ error: 'Faltan datos del formulario' });
-      }
-
-    } else {
-      console.log('La casa ya existe en el blockregistration');
-      // Filtrar y validar el cuerpo de la solicitud
-      const validatedObject = await validateRequestBody(req.body, HouseRegistration);
-
-      // Comprobar errores de validación
-      if (validatedObject.error) {
-        console.log(validatedObject.error);
-        return res.status(400).json(validatedObject);
-      }
-
-      // Crear una nueva campaña en la base de datos y devolverla como respuesta
-      const houseRegistration = await HouseRegistration.create(validatedObject);
-      return res.status(201).json(houseRegistration.toJSON());
-
+    const houseRegistration = await blockRegistration.addHouse(house, { through: houseRegistrationInfo });
+    console.log(houseRegistration);
+    const formatedHouseRegistrations = {
+      id: houseRegistration[0].dataValues.id,
+      address,
+      grid,
+      area,
     }
+    return res.status(201).json(formatedHouseRegistrations);
 
   } catch (error) {
     console.error('Error al insertar una casa', error);
@@ -229,15 +217,51 @@ export const updateHouseRegistration = async (req, res) => {
     const houseRegistration = await HouseRegistration.findByPk(HouseRegistrationId, {
       attributes: ['id', 'HouseId']
     });
-    const houseId = houseRegistration.dataValues.HouseId;
+    const oldHouseId = houseRegistration.dataValues.HouseId;
 
-    const { houseInfo } = req.body; // es lo mismo que: const houseInfo = req.body.houseInfo;
+    const { houseInfo } = req.body;
     if (houseInfo) {
       const validatedHouseFields = await validateFieldsDataType(houseInfo, House);
       if (validatedHouseFields.errors) {
         return res.sendStatus(400);
       }
-      await House.update(houseInfo, { where: { id: houseId } });
+
+      // Verificar si la casa no ha sido registrada previamente en el registro de bloque
+      const registeredHouse = await BlockRegistration.findOne({
+        attributes: ['id'],
+        where: { id: req.params.BlockRegistrationId },
+        include: {
+          model: House,
+          where: houseInfo
+        }
+      });
+      if (registeredHouse) {
+        return res.sendStatus(409);
+      };
+
+      // Verificar si la casa antigua tiene algún otro registro de casa
+      const blocksRegistrationWithHouse = await BlockRegistration.findAll({
+        attributes: ['id'],
+        include: {
+          model: House,
+          where: { id: oldHouseId }
+        }
+      });
+      // Verificar si ya existe una casa con la dirección para actualizar, o si no crearla
+      const [houseWithNewAddress] = await House.findOrCreate({ attributes: ['id'], where: houseInfo });
+      const newHouseId = houseWithNewAddress.dataValues.id;
+
+      // Actualizar el HouseId del registro de la casa para vincularlo con la nueva casa
+      await houseRegistration.update({ HouseId: newHouseId });
+
+      // Borra la casa antigua en caso de que no este registrada a ningún otro registro de bloque
+      if (blocksRegistrationWithHouse.length == 1) {
+        await House.destroy({
+          where: {
+            id: oldHouseId
+          }
+        });
+      }
     }
 
     const { houseRegistrationInfo } = req.body;

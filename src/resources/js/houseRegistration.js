@@ -70,6 +70,8 @@ formEdit.addEventListener('submit', async (event) => {
       localStorage.setItem('message', 'Casa actualizada con éxito');
       // Recargar la página 
       location.reload();
+    } else if (response.status === 409) {
+      showMessage('La casa ya ha sido registrada en el registro de manzana', 'error');
     } else if (response.status === 400) {
       return response.text().then(errorMessage => {
         showMessage(errorMessage, 'error');
