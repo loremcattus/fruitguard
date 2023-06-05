@@ -1,10 +1,9 @@
 import models from '../models/index.js';
 import { treeStates } from '../../helpers/enums.js';
-import { Sequelize } from 'sequelize';
 import { validateRequestBody } from '../../helpers/validators.js';
-import treeSpeciesRegistrationModel from '../models/treeSpeciesRegistration.js';
 
-const { HouseRegistration, TreeSpecies, TreeSpeciesRegistration } = models;
+
+const { HouseRegistration, TreeSpecies, TreeSpeciesRegistration,Prospectus } = models;
 
 export const getTreeSpeciesRegistrations = async (req, res) => {
   const breadcrumbs = {
@@ -43,8 +42,6 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
         where: speciesId
       }
     });
-    // DEBO Buscar el Id de el registro de árbol 
-    // para enlazarlo a la vista del árbol
 
     const formatedTreeSpeciesRegistration = [];
     if(houseRegistration) {
@@ -76,8 +73,59 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
     console.log(error);
     return res.render('error.html', { error: 404 });
   }
+};
 
-}
+
+/////////////////////////////////////////////////////////// Árbol en especifico  //////////////////////////////////////////////////////////////////////7
+export const getTreeRegistration = async(req, res) =>{
+  const fileHTML = 'view-treeSpeciesRegistration';
+  const title = 'Ver  Detalle del árbol';
+  const single = true;
+
+  const breadcrumbs = {
+    CampaignId: req.params.CampaignId,
+    FocusId: req.params.FocusId,
+    BlockRegistrationId: req.params.BlockRegistrationId,
+    HouseRegistrationId: req.params.HouseRegistrationId,
+  };
+
+  try{
+    console.log(req.params);
+    // Obtener todas las propiedades del treeRegistrations
+    const prospectus = await Prospectus.findByPk(req.params.TreeSpeciesRegistrationId,{
+      attributes: ['id','units_per_sample','TreeSpeciesRegistrationId']
+    });
+    const treeRegistration = await TreeSpeciesRegistration.findByPk(req.params.TreeSpeciesRegistrationId,{
+      attributes: ['id','tree_number','tree_state','HouseRegistrationId', 'TreeSpecyId']
+    })
+    const treeSpecy = await TreeSpecies.findByPk(treeRegistration.dataValues.TreeSpecyId,{
+      attributes: ['id','species']
+    })
+
+    const tree ={
+      idProspectus: prospectus.dataValues.id,
+      idTreeRegist: treeRegistration.dataValues.id,
+      idTreeSpecy: treeSpecy.dataValues.id,
+      units_per_sample: prospectus.dataValues.units_per_sample,
+      tree_number: treeRegistration.dataValues.tree_number,
+      tree_state: treeRegistration.dataValues.tree_state,
+      HouseRegistrationId: treeRegistration.dataValues.HouseRegistrationId,
+      species: treeSpecy.dataValues.species,
+    }
+    console.log(tree);
+
+    if (tree) {
+      const { ...data } = tree;
+      return res.render('index.html', { formattedTreeRegistration: data, fileHTML, title, single, breadcrumbs });
+    } else {
+      return res.render('error.html', { error: 404 });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.render('error.html', { error: 500 });
+  }
+};
+
 
 export const addTreeSpeciesRegistration = async (req, res) => {
   console.log(" - - - - - - - - post - - - - - - - -")
@@ -143,4 +191,3 @@ export const addTreeSpeciesRegistration = async (req, res) => {
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
   }
 }
-

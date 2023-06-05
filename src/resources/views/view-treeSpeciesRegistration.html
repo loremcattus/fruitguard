@@ -1,5 +1,4 @@
 <main>
-
     <!-- GATITOO -->
     <section class="breadcrumbs">
         <a href="#">Inicio</a>
@@ -20,37 +19,37 @@
         <div class="item-post">
             <p class="key-post">Especies</p>
             <div class="value-post">
-                <p><%= formatted %></p>
-                <input placeholder="<%= formatted %>" id="comment" type="text" style="display: none;">
+                <p><%= formattedTreeRegistration.species %></p>
+                <!-- <input placeholder="<%=// formatted %>" id="comment" type="text" style="display: none;"> -->
             </div>
         </div>
         <!--  -->
         <div class="item-post">
             <p class="key-post">Estado</p>
             <div class="value-post">
-                <p><%= formatted %></p>
-                <select class="" id="area" style="display: none;">
-                    <option value="" disabled selected><%= formatted %></option>
-                    <% Object.values(area).forEach(area => { %>
-                        <option value="<%= area %>"><%= area %></option>
-                    <% }); %>
-                </select>
+                <p><%= formattedTreeRegistration.tree_state %></p>
+                <!-- <select class="" id="area" style="display: none;">
+                    <option value="" disabled selected><%=// formatted %></option>
+                    <%// Object.values(area).forEach(area => { %>
+                        <option value="<%=// area %>"><%=// area %></option>
+                    <%// }); %>
+                </select> -->
             </div>
         </div>
         <!--  -->
         <div class="item-post">
             <p class="key-post">Cantidad de árboles</p>
             <div class="value-post">
-                <p><%= formatted %></p>
-                <input placeholder="<%= formatted %>" id="comment" type="text" style="display: none;">
+                <p><%= formattedTreeRegistration.tree_number %></p>
+                <!-- <input placeholder="<%=// formatted %>" id="comment" type="text" style="display: none;"> -->
             </div>
         </div>
         <!--  -->
         <div class="item-post">
             <p class="key-post">Unidades por muestra</p>
             <div class="value-post">
-                <p><%= formatted %></p>
-                <input placeholder="<%= formatted %>" id="comment" type="text" style="display: none;">
+                <p><%= formattedTreeRegistration.units_per_sample %></p>
+                <!-- <input placeholder="<%=// formatted %>" id="comment" type="text" style="display: none;"> -->
             </div>
         </div>
         <hr>
@@ -66,6 +65,4 @@
     </div>
 </main>
 <div id="message" class="alert" role="alert"></div>
-
-
 <!-- <script src="/js/houseRegistration.js" type="module"></script> -->
