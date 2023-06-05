@@ -85,6 +85,8 @@ formEdit.addEventListener('submit', async (event) => {
       localStorage.setItem('message', 'Manzana actualizada con éxito');
       // Recargar la página 
       location.reload();
+    } else if (response.status === 409) {
+      showMessage('La manzana ya ha sido registrada en el foco', 'error');
     } else if (response.status === 400) {
       return response.text().then(errorMessage => {
         showMessage(errorMessage, 'error');

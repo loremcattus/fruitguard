@@ -126,15 +126,18 @@ export const addBlock = async (req, res) => {
       where: validatedObject,
     });
 
+    const blockRegistrationFormatted = {};
     // Añade el bloque al foco si fue creado Y Verifica si el foco ya tiene el bloque asociado
     if (created || !(await focus.hasBlock(block))) {
-      await focus.addBlock(block);
+      const blockRegistration = await focus.addBlock(block);
+      blockRegistrationFormatted.id = blockRegistration[0].dataValues.id;
     } else {
-      return res.status(409).json('La manzana ya existe en el foco');
+      return res.sendStatus(409);
     }
+    blockRegistrationFormatted.FocusId = FocusId;
 
     // Retorna el bloque como una respuesta JSON con estado 201 (creado)
-    return res.status(201).json(block.toJSON());
+    return res.status(201).json(blockRegistrationFormatted);
   } catch (error) {
     console.error('Error al insertar usuario', error);
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
@@ -157,6 +160,21 @@ export const updateBlock = async (req, res) => {
       return res.status(400).json(validatedFields.errors);
     }
 
+    const { streets } = req.body;
+
+    // Verificar si la casa no ha sido registrada previamente en el registro de bloque
+    const registeredBlock = await Focus.findOne({
+      attributes: ['id'],
+      where: { id: req.params.FocusId },
+      include: {
+        model: Block,
+        where: { streets }
+      }
+    });
+    if(registeredBlock){
+      return res.sendStatus(409);
+    };
+
     // Verificar si el bloque antiguo tiene algún otro registro de bloque
     const blockRegistration = await BlockRegistration.findByPk(req.params.BlockRegistrationId, {
       attributes: ['id', 'BlockId']
@@ -171,10 +189,9 @@ export const updateBlock = async (req, res) => {
       }
     });
 
-    const { streets } = req.body;
     // Verificar si ya existe un bloque con las calles para actualizar, o si no crearlo
-    const [blockWithNewAddress] = await Block.findOrCreate({ attributes: ['id'], where: { streets } });
-    const newBlockId = blockWithNewAddress.dataValues.id;
+    const [blockWithNewStreets] = await Block.findOrCreate({ attributes: ['id'], where: { streets } });
+    const newBlockId = blockWithNewStreets.dataValues.id;
     // Actualizar el BlockId del registro de bloque para vincularlo con el nuevo bloque
     await blockRegistration.update({BlockId: newBlockId});
 

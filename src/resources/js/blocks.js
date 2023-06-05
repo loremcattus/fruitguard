@@ -69,7 +69,7 @@ formAdd.addEventListener('submit', async (event) => {
 
       // Procesar la respuesta del servidor
       const data = await response.json();
-      showMessage(`Manzana "${data.streets}" creada correctamente`);// deberia ser otro msg
+      showMessage(`Manzana registrada correctamente`);// deberia ser otro msg
 
       // Obtener el conetenedor de las campañas
       const blocksContainer = document.querySelector('.cards');
@@ -82,7 +82,7 @@ formAdd.addEventListener('submit', async (event) => {
 
       //Crear un nuevo elemento de campaña con los datos recibidos
       const newBlocksElement = document.createElement('a');
-      newBlocksElement.href = `/focuses/${data.FocusId}/blocks/${data.id}`;
+      newBlocksElement.href = `blocks/${data.id}`;
       newBlocksElement.insertAdjacentHTML('beforeend', `
               <div class="card-left-side">
                 <p class="card-left-side-top">${data.id}</p>

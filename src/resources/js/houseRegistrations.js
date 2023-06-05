@@ -15,7 +15,7 @@ formAdd.addEventListener('submit', async (event) => {
   event.preventDefault(); // Evitar el envío del formulario por defecto
 
   // Validar los campos del formulario
-  if (!addressInputAdd.value || !gridInputAdd.value || !areaInputAdd.value || !stateInputAdd.value || !commentInputAdd.value) {
+  if (!addressInputAdd.value || !gridInputAdd.value || !areaInputAdd.value || !stateInputAdd.value) {
     showMessage('Por favor, complete todos los campos', 'error');
     return;
   }
@@ -47,7 +47,6 @@ formAdd.addEventListener('submit', async (event) => {
 
     // Componer la URL completa para la solicitud
     const url = `${baseUrl}/api${pathName}`;
-    //campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses
 
     // Enviar el objeto al servidor
     const response = await fetch(url, {
@@ -61,7 +60,7 @@ formAdd.addEventListener('submit', async (event) => {
     if (response.status === 201) {
       // Procesar la respuesta del servidor
       const data = await response.json();
-      showMessage(`Casa "${data.addressHouse}" creada correctamente`);
+      showMessage(`Casa "${data.address}" creada correctamente`);
 
       // Obtener el contenedor de las campañas
       const housesContainer = document.querySelector('.cards');
@@ -74,24 +73,26 @@ formAdd.addEventListener('submit', async (event) => {
 
       // Crear un nuevo elemento de campaña con los datos recibidos
       const newHouseElement = document.createElement('a');
-      newHouseElement.href = `/houses/${data.idHouseRegistration}`;
+      newHouseElement.href = `/houses/${data.id}`;
       newHouseElement.insertAdjacentHTML('beforeend', `
         <div class="card-left-side">
-          <p class="card-left-side-top"> ${data.idHouseRegistration} | <span class="card-left-side-top-highlight">${data.addressHouse}</span></p>
-          <p class="card-left-side-bottom"> Grilla ${data.grid}> Area ${data.area}</p>
+          <p class="card-left-side-top"> ${data.id} | <span class="card-left-side-top-highlight">${data.address}</span></p>
+          <p class="card-left-side-bottom"> Grilla ${data.grid} > Area ${data.area}</p>
         </div>
       `);
 
       // Agregar el nuevo elemento de campaña al contenedor existente
       housesContainer.prepend(newHouseElement);
 
+    } else if (response.status === 409) {
+      showMessage('La casa ya ha sido registrada en el registro de manzana', 'error');
     } else {
       throw new Error('Error al enviar el formulario');
     }
   } catch (error) {
     // Manejar el error
     showMessage('Error al enviar el formulario', 'error');
-    console.error('Error al enviar el formulario:', error);
+    console.error(error, error);
   }
 });
 
