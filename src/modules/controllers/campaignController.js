@@ -192,7 +192,7 @@ export const deleteUserFromCampaign = async (req, res) => {
   }
 }
 
-// Listar usuarios que no pertenecen a la campaña
+// Listar usuarios que no pertenecen a ninguna campaña
 export const getNonCampaignUsers = async (req, res) => {
   try {
     // Obtener usuarios que están registrados en la campaña

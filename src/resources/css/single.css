@@ -118,11 +118,10 @@
 
 .add-users-modal {
     position: fixed;
-    height: 90vh;
+    height: 90%;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-sizing: border-box;
 }
 
 .modal-items-add-users {
@@ -136,15 +135,18 @@
 }
 
 .addUsersTitle {
-    height: fit-content;
-    box-sizing: border-box;
+    max-height: 10%;
+}
+
+.search-users-to-add-form {
+    max-height: 20%;
 }
 
 .add-users-form {
-    height: 100%;
-    max-height: 100%; /* Asegura que el formulario no exceda el ancho del contenedor padre */
-    padding: 0.5rem; /* Ajusta el padding según tus necesidades */
-    box-sizing: border-box;
+    margin: unset;
+    margin-top: auto;
+    padding: unset;
+    height: 70%;
 }
 
 .add-user-checkbox {
@@ -152,16 +154,15 @@
 }
 
 .add-users-cards {
-    height: 60vh;
+    height: 85%;
+    width: 100%;
     overflow: hidden;
     overflow-y: scroll;
-    width: 100%;
     margin: unset;
     padding: 0.2rem;
 }
 
 .bottom-crud-add-users {
+    height: 10%;
     width: 100%;
-    height: fit-content;
-    margin-top: auto;
 }

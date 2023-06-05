@@ -123,6 +123,15 @@
     <div class="modal-items modal-items-add-users">
         <div class="close-modal" data-dismiss="modal"></div>
         <h1 class="addUsersTitle">Añadir usuarios</h1>
+        <form id="searchToAdd" class="search-users-to-add-form">
+            <input id="nameRutSearch" type="text" class="full" placeholder="Nombre ó RUN del usuario">
+            <select id="rolSearch" class="full">
+                <option value="">Rol</option>
+                <% Object.values(roles).forEach(role => { %>
+                    <option value="<%= role %>"><%= role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() %></option>
+                <% }); %>
+            </select>
+        </form>
         <form id="addPost" class="add-users-form">
             <section class="cards add-users-cards"></section>
             <div class="bottom-crud bottom-crud-add-users">

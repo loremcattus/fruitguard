@@ -268,3 +268,51 @@ function addUsers() {
 
 }
 
+// USER SEARCH TO ADD
+function isNumeric(str) {
+  return /\d/.test(str);
+}
+
+const formSearchUsersToAdd = document.getElementById('searchToAdd');
+const nameOrRunInput = document.getElementById('nameRutSearch');
+const roleSelect = document.getElementById('rolSearch');
+
+nameOrRunInput.addEventListener('input', performSearch);
+roleSelect.addEventListener('input', performSearch);
+
+function performSearch() {
+  const usersToAddCards = document.querySelectorAll(".cards.add-users-cards a");
+
+  let nameOrRun = nameOrRunInput.value.toLowerCase(); // Convertir a minúsculas
+  let role = roleSelect.value
+  let name = '';
+  let run = '';
+
+  if (isNumeric(nameOrRun)) {
+    run = nameOrRun;
+  } else {
+    name = nameOrRun;
+  }
+
+  const filterOptions = {
+    ...(run && { run }),
+    ...(name && { name }),
+    ...(role && { role })
+  }
+
+  usersToAddCards.forEach((userToAddCard) => {
+    const userName = userToAddCard.querySelector(".card-left-side-top").textContent.toLowerCase(); // Convertir a minúsculas
+    const userRole = userToAddCard.querySelector(".card-left-side-bottom").textContent.split(" | ")[0].toLowerCase(); // Convertir a minúsculas
+    const userRun = userToAddCard.querySelector(".card-left-side-bottom").textContent.split(" | ")[1];
+
+    if (
+      (!filterOptions.name || userName.includes(filterOptions.name)) &&
+      (!filterOptions.run || userRun.includes(filterOptions.run)) &&
+      (!filterOptions.role || userRole === filterOptions.role)
+    ) {
+      userToAddCard.style.display = ''; // Mostrar la tarjeta
+    } else {
+      userToAddCard.style.display = 'none'; // Ocultar la tarjeta
+    }
+  });
+}
