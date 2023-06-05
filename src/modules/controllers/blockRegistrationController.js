@@ -122,19 +122,20 @@ export const addBlock = async (req, res) => {
     });
 
     // Busca o crea un bloque (block) utilizando el objeto validado
-    const [block, created] = await Block.findOrCreate({
+    const [block] = await Block.findOrCreate({
       where: validatedObject,
     });
 
-    const blockRegistrationFormatted = {};
-    // Añade el bloque al foco si fue creado Y Verifica si el foco ya tiene el bloque asociado
-    if (created || !(await focus.hasBlock(block))) {
-      const blockRegistration = await focus.addBlock(block);
-      blockRegistrationFormatted.id = blockRegistration[0].dataValues.id;
-    } else {
-      return res.sendStatus(409);
-    }
-    blockRegistrationFormatted.FocusId = FocusId;
+    // Verifica si el foco ya tiene el bloque asociado
+    if (await focus.hasBlock(block)) { return res.sendStatus(409); };
+    
+    // Añade el bloque al foco
+    const blockRegistration = await focus.addBlock(block);
+    
+    const blockRegistrationFormatted = {
+      id: blockRegistration[0].dataValues.id,
+      FocusId
+    };
 
     // Retorna el bloque como una respuesta JSON con estado 201 (creado)
     return res.status(201).json(blockRegistrationFormatted);

@@ -9,6 +9,8 @@ const blockModel = (sequelize) => {
     streets: DataTypes.STRING(250),
   }, {
     sequelize,
+    timestamps: true,
+    updatedAt: false,
     modelName: 'Block',
   });
 

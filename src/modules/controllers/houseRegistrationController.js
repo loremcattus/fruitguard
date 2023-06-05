@@ -188,7 +188,7 @@ export const addHouseRegistration = async (req, res) => {
       where: { BlockId, address },
     });
 
-    // Verifica si el foco ya tiene el bloque asociado
+    // Verifica si el registro de bloque ya tiene la casa asociada
     if (await blockRegistration.hasHouse(house)) { return res.sendStatus(409); };
 
     const houseRegistration = await blockRegistration.addHouse(house, { through: houseRegistrationInfo });
@@ -213,8 +213,10 @@ export const addHouseRegistration = async (req, res) => {
 export const updateHouseRegistration = async (req, res) => {
   try {
     // Validar que vengan datos en el cuerpo 
-    if (Object.keys(req.body).length === 0) {
-      return res.status(400).json('El cuerpo de la solicitud está vacío.');
+    const { houseInfo } = req.body;
+    const { houseRegistrationInfo } = req.body;
+    if (Object.keys(houseInfo).length == 0 && Object.keys(houseRegistrationInfo).length == 0) {
+      return res.sendStatus(400);
     }
 
     const { HouseRegistrationId } = req.params;
@@ -223,8 +225,7 @@ export const updateHouseRegistration = async (req, res) => {
     });
     const oldHouseId = houseRegistration.dataValues.HouseId;
 
-    const { houseInfo } = req.body;
-    if (houseInfo) {
+    if (Object.keys(houseInfo).length > 0) {
       const validatedHouseFields = await validateFieldsDataType(houseInfo, House);
       if (validatedHouseFields.errors) {
         return res.sendStatus(400);
@@ -268,8 +269,7 @@ export const updateHouseRegistration = async (req, res) => {
       }
     }
 
-    const { houseRegistrationInfo } = req.body;
-    if (houseRegistrationInfo) {
+    if (Object.keys(houseRegistrationInfo).length > 0) {
       const validatedHouseRegistrationFields = await validateFieldsDataType(houseRegistrationInfo, HouseRegistration);
       if (validatedHouseRegistrationFields.errors) {
         return res.sendStatus(400);

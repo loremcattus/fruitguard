@@ -52,9 +52,9 @@
         <div class="item-post">
             <p class="key-post">Estado</p>
             <div class="value-post">
-                <p><%= formattedHouseRegistrationns.state %></p>
+                <p><%= formattedHouseRegistrationns.state.charAt(0).toUpperCase() + formattedHouseRegistrationns.state.slice(1).toLowerCase() %></p>
                 <select class="" id="state" style="display: none;">
-                    <option value="" disabled selected><%= formattedHouseRegistrationns.state %></option>
+                    <option value="" disabled selected><%= formattedHouseRegistrationns.state.charAt(0).toUpperCase() + formattedHouseRegistrationns.state.slice(1).toLowerCase() %></option>
                     <% Object.values(states).forEach(state => { %>
                         <option value="<%= state %>"><%= state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() %></option>
                     <% }); %>
