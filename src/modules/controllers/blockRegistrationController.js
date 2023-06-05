@@ -171,7 +171,7 @@ export const updateBlock = async (req, res) => {
       }
     });
 
-    const { streets } = req.body;    
+    const { streets } = req.body;
     // Verificar si ya existe un bloque con las calles para actualizar, o si no crearlo
     const [blockWithNewAddress] = await Block.findOrCreate({ attributes: ['id'], where: { streets } });
     const newBlockId = blockWithNewAddress.dataValues.id;

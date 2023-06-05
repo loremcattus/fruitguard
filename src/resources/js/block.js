@@ -12,36 +12,48 @@ const formEdit = document.getElementById('editPost');
 
 
 // Evento de envío del formulario
-formEdit.addEventListener('submit', async (event) => { 
+formEdit.addEventListener('submit', async (event) => {
   event.preventDefault();// Evitar el envío del formulario por defecto
 
   let inputs = document.getElementsByClassName("street-input");
-  // Recorrer los elementos obtenidos
   let streets = '';
   const placeholders = [];
+  const inputValues = [];
+
+  // Obtener y ordenar los valores de los inputs
   for (let i = 0; i < inputs.length; i++) {
     const placeholder = inputs[i].placeholder;
     placeholders.push(placeholder);
 
     let inputValue = inputs[i].value.trim();
-    if(!inputValue) { inputValue = placeholder };
-    if (i == 0) {
-      streets = inputValue;
+    if (!inputValue) {
+      inputValue = placeholder;
+    }
+    inputValues.push(inputValue);
+  }
+
+  // Ordenar el array inputValues
+  inputValues.sort();
+
+  // Formar la variable "streets" con los valores ordenados
+  for (let i = 0; i < inputValues.length; i++) {
+    if (i === 0) {
+      streets = inputValues[i];
     } else {
-      streets = streets + '@' + inputValue;
+      streets = streets + '@' + inputValues[i];
     }
   }
 
-  if (streets == placeholders.join('@')){
+  if (streets == placeholders.join('@')) {
     return showMessage('No hay datos para actualizar', 'error');
   }
 
   // Obtener los valores de los campos del formulario
-  
+
   // Validar los campos del formulario
 
   // Crear el objeto solo con los valores que venga del formulario 
-  const object ={
+  const object = {
     streets
   };
 
@@ -64,24 +76,24 @@ formEdit.addEventListener('submit', async (event) => {
     const response = await fetch(url, {
       method: 'PATCH',
       body: JSON.stringify(object),
-      headers:{
+      headers: {
         'Content-Type': 'application/json'
       }
     })
-    if (response.status === 200){
+    if (response.status === 200) {
       // Gueardar el mensaje en el almacenamiento local
-      localStorage.setItem('message','Manzana actualizada con éxito');
+      localStorage.setItem('message', 'Manzana actualizada con éxito');
       // Recargar la página 
       location.reload();
-    } else if ( response.status === 400){
+    } else if (response.status === 400) {
       return response.text().then(errorMessage => {
         showMessage(errorMessage, 'error');
       });
     } else {
       throw new Error('Error al enviar el formulario');
     }
-  } catch (error){
+  } catch (error) {
     // Manejar el error 
-    showMessage('Error al enviar el formulario','error');
+    showMessage('Error al enviar el formulario', 'error');
   }
 });

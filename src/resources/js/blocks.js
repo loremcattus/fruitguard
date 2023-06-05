@@ -10,40 +10,46 @@ const formAdd = document.getElementById('addPost');
 formAdd.addEventListener('submit', async (event) => {
   event.preventDefault(); // Evita el envío de formulario por defecto
 
-  var inputs = document.getElementsByClassName("street-input");
-  
-  // Recorrer los elementos obtenidos
-  let streetsArray = "";
-  let streets = "";
-  for (var i = 0; i < inputs.length; i++) {
+  let inputs = document.getElementsByClassName("street-input");
+
+  // Obtener los valores de los inputs
+  const inputValues = [];
+  for (let i = 0; i < inputs.length; i++) {
     let inputValue = inputs[i].value.trim();
-    if (i == 0) {
-      streets = inputValue;
-    } else {
-      streets = streets + '@' + inputValue;
-    }
-    streetsArray = streetsArray + `<p class="card-left-side-bottom">${inputValue}</p>`;
+    inputValues.push(inputValue);
   }
+
+  // Ordenar el array inputValues
+  inputValues.sort();
+
+  // Formar la variable streetsArray con los valores ordenados
+  let streetsArray = "";
+  for (let i = 0; i < inputValues.length; i++) {
+    streetsArray += `<p class="card-left-side-bottom">${inputValues[i]}</p>`;
+  }
+
+  // Formar la variable streets con los valores ordenados
+  let streets = inputValues.join('@');
 
   // Validar los campos de formulario 
   if (!streets) {
     showMessage('Por favor, complete todos los campos', 'error');
     return;
   };
-  
+
 
   try {
-    
+
     // Obtener los valores de los campos del formulario
     const object = {
       streets
     };
-    
+
     // Obtener el host y el puerto del servidor actual
     const host = window.location.hostname; // localhost
     const port = window.location.port; // 8000
     const pathName = window.location.pathname;// campaigns/2/focuses/4/blocks/8
-    
+
     // Construir la URL base 
     const baseUrl = `http://${host}:${port}`;
 
@@ -86,7 +92,7 @@ formAdd.addEventListener('submit', async (event) => {
 
       // Agregar el nuevo elemento de campaña al contenedor existente
       blocksContainer.prepend(newBlocksElement);
-      
+
     } else if (response.status === 409) {
       throw new Error('La manzana ya ha sido registrada en el foco');
     } else {
