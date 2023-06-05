@@ -62,13 +62,14 @@ export const getHouseRegistrations = async (req, res) => {
     }
 
     let i = 0;
-    const formatedHouseRegistrations = []
+    const formattedHouseRegistrations = []
     blockRegistration.Houses.filter(house => {
       const address = house.dataValues.address;
       const id = house.HouseRegistration.id;
       //console.log("id houseRegistration " + id);
       const { grid, area, state } = house.HouseRegistration;
-      const params = { address, grid, area, state, id };
+      const isOpen = state == states.OPEN; 
+      const params = { address, grid, area, isOpen, id };
       // Verificar si al menos una opción de búsqueda está presente
       if (Object.keys(searchOptions).length > 0) {
         // Verificar cada criterio de búsqueda si está presente y coincide con el valor correspondiente
@@ -78,18 +79,19 @@ export const getHouseRegistrations = async (req, res) => {
           (!searchOptions.state || state === searchOptions.state) &&
           (!searchOptions.id || id == searchOptions.id)
         ) {
-          formatedHouseRegistrations[i] = params;
+          formattedHouseRegistrations[i] = params;
           i++;
           return true;
         };
       } else {
-        formatedHouseRegistrations[i] = params;
+        formattedHouseRegistrations[i] = params;
         i++;
         // Si no hay opciones de búsqueda, devolver todas las casas sin filtrar
         return true;
       }
     });
-    return res.render('index.html', { formattedHouseRegistration: formatedHouseRegistrations, fileHTML, title, breadcrumbs, areas, states });
+    formattedHouseRegistrations.reverse();
+    return res.render('index.html', { formattedHouseRegistrations, fileHTML, title, breadcrumbs, areas, states });
 
   } catch (error) {
     console.log(error);
@@ -159,6 +161,7 @@ export const addHouseRegistration = async (req, res) => {
     const { address } = req.body;
     const { grid } = req.body;
     const { state } = req.body;
+    const isOpen = state == states.OPEN; 
     const { area } = req.body;
     const { comment } = req.body;
 
@@ -195,6 +198,7 @@ export const addHouseRegistration = async (req, res) => {
       address,
       grid,
       area,
+      isOpen,
     }
     return res.status(201).json(formatedHouseRegistrations);
 

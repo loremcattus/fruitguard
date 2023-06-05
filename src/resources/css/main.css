@@ -395,3 +395,15 @@ input[type="checkbox" i]:checked {
   background-color: #f8d7da;
   color: #721c24;
 }
+
+.green-ball, .red-ball {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+}
+.green-ball {
+  background-color: #69B578;
+}
+.red-ball {
+  background-color: #E84A5F;
+}

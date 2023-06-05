@@ -70,14 +70,18 @@ formAdd.addEventListener('submit', async (event) => {
       if (housesContainer.firstElementChild.tagName === 'P') {
         housesContainer.innerHTML = '';
       }
+      data.state = data.isOpen ? '<div class="green-ball"></div>' : '<div class="red-ball"></div>';
 
       // Crear un nuevo elemento de campaña con los datos recibidos
       const newHouseElement = document.createElement('a');
-      newHouseElement.href = `/houses/${data.id}`;
+      newHouseElement.href = `houses/${data.id}`;
       newHouseElement.insertAdjacentHTML('beforeend', `
         <div class="card-left-side">
           <p class="card-left-side-top"> ${data.id} | <span class="card-left-side-top-highlight">${data.address}</span></p>
           <p class="card-left-side-bottom"> Grilla ${data.grid} > Area ${data.area}</p>
+        </div>
+        <div class="card-right-side">
+          ${data.state}
         </div>
       `);
 
