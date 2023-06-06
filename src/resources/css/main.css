@@ -84,6 +84,7 @@ hr {
 
 
 h1, h2 {
+  width: fit-content;
   text-align: center;
   font-size: 1.5rem;
   font-weight: 500;
@@ -101,6 +102,7 @@ form {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
 }
 
@@ -407,4 +409,53 @@ input[type="checkbox" i]:checked {
 }
 .red-ball {
   background-color: #E84A5F;
+}
+
+/* BLOCK STREETS */
+.street-can-be-remove {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.street-can-be-remove > input{
+  width: 80%;
+}
+
+.remove-street, .remove-street-edit {
+  border: 0;
+  margin-inline: auto;
+  background-color: #E84A5F;
+  border-radius: 50%;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+  width: 1.7rem;
+  height: 1.7rem;
+  display: flex;
+  align-items: center;
+  background-image: url('/images/minus.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 80%;
+}
+#add-street {
+  border: 0;
+  margin-inline: auto;
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+  background-color: #69B578;
+  border-radius: 50%;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  background-image: url('/images/plus.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 60%;
+}
+
+.remove-street-edit {
+  margin-left: 0.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }

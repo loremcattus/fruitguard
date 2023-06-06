@@ -254,7 +254,205 @@ export const seed = async (models) => {
       password: '13579',
       hasLicense: false,
       role: roles.PROSPECTOR
-    }
+    },
+    { // 28
+      name: 'Felipe Montoya',
+      run: 30303030,
+      dvRun: '5',
+      email: 'fe.montoya@sag.cl',
+      password: 'qwerty',
+      hasLicense: false,
+      role: roles.PROSPECTOR
+    },
+    { // 29
+      name: 'Ana García',
+      run: 40404040,
+      dvRun: '4',
+      email: 'an.garcia@sag.cl',
+      password: 'asdfgh',
+      hasLicense: true,
+      role: roles.PROSPECTOR
+    },
+    { // 30
+      name: 'Roberto Jiménez',
+      run: 50505050,
+      dvRun: '3',
+      email: 'ro.jimenez@sag.cl',
+      password: 'zxcvbn',
+      hasLicense: false,
+      role: roles.PROSPECTOR
+    },
+    { // 31
+      name: 'Sandra Castro',
+      run: 60606060,
+      dvRun: '2',
+      email: 'sa.castro@sag.cl',
+      password: '123456',
+      hasLicense: false,
+      role: roles.PROSPECTOR
+    },
+    { // 32
+      name: 'Diego Rodríguez',
+      run: 70707070,
+      dvRun: '1',
+      email: 'di.rodriguez@sag.cl',
+      password: 'abcdef',
+      hasLicense: false,
+      role: roles.PROSPECTOR
+    },
+    { // 33
+      name: 'Verónica Morales',
+      run: 80808080,
+      dvRun: '0',
+      email: 've.morales@sag.cl',
+      password: 'uvwxyz',
+      hasLicense: true,
+      role: roles.PROSPECTOR
+    },
+    { // 34
+      name: 'Felipe Sánchez',
+      run: 90909090,
+      dvRun: '9',
+      email: 'fe.sanchez@sag.cl',
+      password: '987654',
+      hasLicense: false,
+      role: roles.PROSPECTOR
+    },
+    { // 35
+      name: 'Javiera Torres',
+      run: 10101010,
+      dvRun: '8',
+      email: 'ja.torres@sag.cl',
+      password: '13579',
+      hasLicense: false,
+      role: roles.SUPERVISOR
+    },
+    { // 36
+      name: 'Ricardo Pizarro',
+      run: 11111111,
+      dvRun: '7',
+      email: 'ri.pizarro@sag.cl',
+      password: '24680',
+      hasLicense: false,
+      role: roles.PROSPECTOR
+    },
+    { // 37
+      name: 'Marcela Navarro',
+      run: 12121213,
+      dvRun: '6',
+      email: 'ma.navarro@sag.cl',
+      password: '54321',
+      hasLicense: false,
+      role: roles.PROSPECTOR
+    },
+    { // 38
+      name: 'Ignacio González',
+      run: 13131313,
+      dvRun: '5',
+      email: 'ig.gonzalez@sag.cl',
+      password: '13579',
+      hasLicense: true,
+      role: roles.PROSPECTOR
+    },
+    { // 39
+      name: 'Beatriz Silva',
+      run: 14141414,
+      dvRun: '4',
+      email: 'be.silva@sag.cl',
+      password: '24680',
+      hasLicense: true,
+      role: roles.PROSPECTOR
+    },
+    { // 40
+      name: 'Rafael Mendoza',
+      run: 15151515,
+      dvRun: '3',
+      email: 'ra.mendoza@sag.cl',
+      password: '54321',
+      hasLicense: false,
+      role: roles.PROSPECTOR
+    },
+    { // 41
+      name: 'Constanza Torres',
+      run: 16161616,
+      dvRun: '2',
+      email: 'co.torres@sag.cl',
+      password: '123456',
+      hasLicense: false,
+      role: roles.SUPERVISOR
+    },
+    { // 42
+      name: 'Eduardo Rojas',
+      run: 17171717,
+      dvRun: '1',
+      email: 'ed.rojas@sag.cl',
+      password: 'abcdef',
+      hasLicense: true,
+      role: roles.PROSPECTOR
+    },
+    { // 43
+      name: 'Laura Salazar',
+      run: 18181818,
+      dvRun: '0',
+      email: 'la.salazar@sag.cl',
+      password: 'uvwxyz',
+      hasLicense: false,
+      role: roles.SUPERVISOR
+    },
+    { // 44
+      name: 'Sebastián Castro',
+      run: 19191919,
+      dvRun: '9',
+      email: 'se.castro@sag.cl',
+      password: '987654',
+      hasLicense: false,
+      role: roles.PROSPECTOR
+    },
+    { // 45
+      name: 'Isabella Torres',
+      run: 20202020,
+      dvRun: '8',
+      email: 'is.torres@sag.cl',
+      password: '13579',
+      hasLicense: false,
+      role: roles.SUPERVISOR
+    },
+    { // 46
+      name: 'Mauricio Mendoza',
+      run: 21212121,
+      dvRun: '7',
+      email: 'ma.mendoza@sag.cl',
+      password: '24680',
+      hasLicense: true,
+      role: roles.PROSPECTOR
+    },
+    { // 47
+      name: 'Catalina Pizarro',
+      run: 22222222,
+      dvRun: '6',
+      email: 'ca.pizarro@sag.cl',
+      password: '54321',
+      hasLicense: false,
+      role: roles.PROSPECTOR
+    },
+    { // 48
+      name: 'Gabriel González',
+      run: 23232323,
+      dvRun: '5',
+      email: 'ga.gonzalez@sag.cl',
+      password: '13579',
+      hasLicense: false,
+      role: roles.SUPERVISOR
+    },
+    { // 49
+      name: 'Camila Silva',
+      run: 24242424,
+      dvRun: '4',
+      email: 'ca.silva@sag.cl',
+      password: '24680',
+      hasLicense: true,
+      role: roles.PROSPECTOR
+    },
   ]);
 
   const campaigns = await models.Campaign.bulkCreate([
@@ -356,38 +554,38 @@ export const seed = async (models) => {
   const teams = await models.Team.bulkCreate([
     {
       CampaignId: campaigns[0].dataValues.id,
-      tasks: blocks[0].dataValues.id+','+blocks[1].dataValues.id,
-      users: users[8].dataValues.id+','+users[11].dataValues.id+','+users[12].dataValues.id+','+users[14].dataValues.id,
+      tasks: blocks[0].dataValues.id + ',' + blocks[1].dataValues.id,
+      users: users[8].dataValues.id + ',' + users[11].dataValues.id + ',' + users[12].dataValues.id + ',' + users[14].dataValues.id,
       CarId: cars[0].dataValues.id
     },
     {
       CampaignId: campaigns[0].dataValues.id,
       tasks: blocks[2].dataValues.id,
-      users: users[9].dataValues.id+','+users[13].dataValues.id,
+      users: users[9].dataValues.id + ',' + users[13].dataValues.id,
       CarId: cars[1].dataValues.id
     },
     {
       CampaignId: campaigns[0].dataValues.id,
       tasks: blocks[3].dataValues.id,
-      users: users[10].dataValues.id+','+users[15].dataValues.id+','+users[16].dataValues.id,
+      users: users[10].dataValues.id + ',' + users[15].dataValues.id + ',' + users[16].dataValues.id,
       CarId: cars[3].dataValues.id
     },
     {
       CampaignId: campaigns[1].dataValues.id,
       tasks: blocks[4].dataValues.id,
-      users: users[18].dataValues.id+','+users[23].dataValues.id,
+      users: users[18].dataValues.id + ',' + users[23].dataValues.id,
       CarId: cars[6].dataValues.id
     },
     {
       CampaignId: campaigns[1].dataValues.id,
-      tasks: blocks[5].dataValues.id+','+blocks[6].dataValues.id,
-      users: users[19].dataValues.id+','+users[24].dataValues.id+','+users[25].dataValues.id+','+users[26].dataValues.id,
+      tasks: blocks[5].dataValues.id + ',' + blocks[6].dataValues.id,
+      users: users[19].dataValues.id + ',' + users[24].dataValues.id + ',' + users[25].dataValues.id + ',' + users[26].dataValues.id,
       CarId: cars[5].dataValues.id
     },
     {
       CampaignId: campaigns[1].dataValues.id,
       tasks: blocks[7].dataValues.id,
-      users: users[20].dataValues.id+','+users[27].dataValues.id,
+      users: users[20].dataValues.id + ',' + users[27].dataValues.id,
       CarId: cars[9].dataValues.id
     },
   ]);
@@ -395,7 +593,7 @@ export const seed = async (models) => {
   const attendances = [];
   for (let i = 0; i < 28; i++) {
     const isPresent = !(i === 17 || i === 21 || i === 22);
-    
+
     attendances.push({
       userId: users[i].dataValues.id,
       isPresent: isPresent,

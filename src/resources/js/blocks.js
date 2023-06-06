@@ -4,8 +4,6 @@ import { showMessage } from "./helpers.js";
 // Obtener referencias a los elementos del formulario 
 const formAdd = document.getElementById('addPost');
 
-// const streetsInputAdd = document.getElementById('streetsAdd');
-
 // Evento de envío de formulario 
 formAdd.addEventListener('submit', async (event) => {
   event.preventDefault(); // Evita el envío de formulario por defecto
@@ -16,6 +14,11 @@ formAdd.addEventListener('submit', async (event) => {
   const inputValues = [];
   for (let i = 0; i < inputs.length; i++) {
     let inputValue = inputs[i].value.trim();
+    // Validar los campos de formulario 
+    if (!inputValue) {
+      showMessage('Por favor, no deje calles vacías', 'error');
+      return;
+    };
     inputValues.push(inputValue);
   }
 
@@ -30,13 +33,6 @@ formAdd.addEventListener('submit', async (event) => {
 
   // Formar la variable streets con los valores ordenados
   let streets = inputValues.join('@');
-
-  // Validar los campos de formulario 
-  if (!streets) {
-    showMessage('Por favor, complete todos los campos', 'error');
-    return;
-  };
-
 
   try {
 
@@ -134,4 +130,60 @@ formSearch.addEventListener('submit', async (event) => {
     showMessage('Error al realizar la búsqueda', 'error');
     console.error('Error al realizar la búsqueda: ', error);
   };
+});
+
+// STREETS ADD/REMOVE
+
+const addStreetButton = document.getElementById('add-street');
+const streetContainer = document.getElementById('addPost');
+const removeStreetDivs = document.querySelectorAll('.remove-street');
+
+removeStreetDivs.forEach((removeStreetDiv) => {
+  removeStreetDiv.addEventListener('click', () => {
+    const streetDiv = removeStreetDiv.parentNode;
+    streetDiv.remove();
+    if (streetContainer.querySelectorAll('.street-can-be-remove').length < 5) {
+      addStreetButton.style.display = 'block';
+    }
+  });
+});
+
+addStreetButton.addEventListener('click', () => {
+  const streetDivs = streetContainer.querySelectorAll('.street-can-be-remove');
+  const streetCount = streetDivs.length;
+
+  if (streetCount < 5) {
+    // Crear el elemento div con la clase "street-can-be-remove"
+    const streetDiv = document.createElement('div');
+    streetDiv.classList.add('street-can-be-remove');
+
+    // Crear el elemento input con la clase "street-input"
+    const streetInput = document.createElement('input');
+    streetInput.classList.add('street-input');
+    streetInput.type = 'text';
+    streetInput.placeholder = 'Nombre de la calle';
+
+    // Crear el elemento div con la clase "remove-street"
+    const removeStreetDiv = document.createElement('div');
+    removeStreetDiv.classList.add('remove-street');
+
+    removeStreetDiv.addEventListener('click', () => {
+      streetDiv.remove();
+      if (streetContainer.querySelectorAll('.street-can-be-remove').length < 5) {
+        addStreetButton.style.display = 'block';
+      }
+    });
+
+    // Añadir los elementos al contenedor de calles
+    streetDiv.appendChild(streetInput);
+    streetDiv.appendChild(removeStreetDiv);
+    streetContainer.insertBefore(streetDiv, addStreetButton);
+
+    if (streetCount + 1 === 5) {
+      addStreetButton.style.display = 'none';
+    }
+  } else {
+    // Aquí puedes agregar el código que deseas ejecutar cuando se alcance el límite de calles (5)
+    console.log('Se alcanzó el límite de calles');
+  }
 });

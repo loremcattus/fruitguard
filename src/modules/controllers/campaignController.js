@@ -65,34 +65,17 @@ export const getCampaign = async (req, res) => {
       formattedCampaign.managerId = managerId;
       formattedCampaign.manager = manager.dataValues.name;
 
-      const { nameOrRun, role } = req.query; // Obtener los parámetros de búsqueda de la URL
-      let name = '';
-      let run = '';
-      
-      if(nameOrRun){
-        if(isNumeric(nameOrRun)) {
-          run = nameOrRun;
-        } else {
-          name = { [Sequelize.Op.substring]: nameOrRun };
-        }
-      }
-
-      // Construir el objeto de búsqueda dinámicamente
-      const searchOptions = {
-        ...(name && { name }),
-        ...(run && {run}),
-        ...(role && { role })
-      };
-
       const users = await Campaign.findOne({
         attributes: ['id'],
         include: {
           model: User,
           attributes: ['id', 'name', 'run', 'dvRun', 'role'],
-          where: searchOptions
         },
         where: { id: campaign.id }
       });
+
+      let supervisorCount = 0;
+      let prospectorCount = 0;
 
       const formattedUsers = [];
       if (users) {
@@ -103,16 +86,21 @@ export const getCampaign = async (req, res) => {
             rut: user.run + '-' + user.dvRun,
             role: user.role,
           });
+          if (user.role === 'supervisor') {
+            supervisorCount++;
+          } else if (user.role === 'prospector') {
+            prospectorCount++;
+          }
         }
       }
 
-      return res.render('index.html', { formattedCampaign, formattedUsers, fileHTML, title, single, roles: [roles.SUPERVISOR, roles.PROSPECTOR] });
+      return res.render('index.html', { formattedCampaign, formattedUsers, fileHTML, title, single, roles: [roles.SUPERVISOR, roles.PROSPECTOR], supervisorCount, prospectorCount });
     } else {
       return res.render('error.html', { error: 404 });
     }
 
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.render('error.html', { error: 500 });
   }
 };
@@ -156,15 +144,21 @@ export const updateCampaign = async (req, res) => {
       return res.status(400).json(validatedFields.errors);
     }
 
-    let campaign = await Campaign.update(req.body, {
+    await Campaign.update(req.body, {
       where: {
         id: req.params.CampaignId
       }
     });
 
-    console.log(campaign);
+    if (!req.body.open) {
+      await UserRegistration.destroy({
+        where: {
+          CampaignId: req.params.CampaignId
+        }
+      });
+    }
 
-    return res.status(200).json(campaign);
+    return res.sendStatus(200);
   } catch (error) {
     console.error('Error al actualizar la campaña', error);
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
@@ -192,23 +186,34 @@ export const deleteUserFromCampaign = async (req, res) => {
   }
 }
 
-// Listar usuarios que no pertenecen a la campaña
+// Listar usuarios que no pertenecen a ninguna campaña
 export const getNonCampaignUsers = async (req, res) => {
   try {
     // Obtener usuarios que están registrados en la campaña
-    const campaignUsers = await Campaign.findByPk(req.params.CampaignId, {
-      include: {
-        model: User,
-        attributes: ['id']
-      }
-    });
+    // const campaignUsers = await Campaign.findByPk(req.params.CampaignId, {
+    //   include: {
+    //     model: User,
+    //     attributes: ['id']
+    //   }
+    // });
 
-    const campaignUserIDs = campaignUsers.Users.map(({ dataValues }) => dataValues.id);
+    let userIds = [];
+    // Obtener usuarios que están registrados en alguna campaña
+    await UserRegistration.findAll({
+      attributes: ['UserId']
+    })
+      .then(results => {
+        userIds = results.map(result => result.UserId);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    // const campaignUserIDs = campaignUsers.Users.map(({ dataValues }) => dataValues.id);
 
     const nonCampaignUsers = await User.findAll({
       where: {
         id: {
-          [Sequelize.Op.notIn]: campaignUserIDs
+          [Sequelize.Op.notIn]: userIds
         },
         role: {
           [Sequelize.Op.in]: [roles.SUPERVISOR, roles.PROSPECTOR]
@@ -216,7 +221,7 @@ export const getNonCampaignUsers = async (req, res) => {
       }
     });
 
-    // Comprobar si existen usuarios que no están registrados en la campaña
+    // Comprobar si existen usuarios disponibles
     if (!nonCampaignUsers) {
       return res.sendStatus(404);
     }
@@ -228,7 +233,6 @@ export const getNonCampaignUsers = async (req, res) => {
       rut: `${user.run}-${user.dvRun}`,
       role: user.role
     }));
-    // console.log(formattedUsers);
 
     // Enviar usuarios formateados
     return res.status(200).json(formattedUsers);
