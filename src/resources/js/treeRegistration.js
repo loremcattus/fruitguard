@@ -11,7 +11,7 @@ if (message) {
 
 const formEdit = document.getElementById('editPost');
 const especiesDropdownEdit = document.getElementById('especies');
-// const treeStateDropdownEdit = document.getElementById('treeState');
+const treeStateDropdownEdit = document.getElementById('treeState');
 const numberTreesInputEdit = document.getElementById('numberTrees');
 const units_per_sampleInputEdit = document.getElementById('units_per_sample');
 
@@ -20,13 +20,13 @@ formEdit.addEventListener('submit', async (event) => {
     event.preventDefault(); // Evitar el envío del formulario por defecto
 
     const species = especiesDropdownEdit.value;
-    // const treeState = treeStateDropdownEdit.value;
+    const tree_state = treeStateDropdownEdit.value;
     const tree_number = parseInt(numberTreesInputEdit.value);
     const units_per_sample = parseInt(units_per_sampleInputEdit.value);
 
     const object ={
         ...(species && {species}),
-        // ...(treeState &&  {treeState}),
+        ...(tree_state &&  {tree_state}),
         ...(tree_number && {tree_number}),
         ...(units_per_sample &&{units_per_sample}),
     };

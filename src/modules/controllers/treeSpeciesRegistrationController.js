@@ -131,7 +131,7 @@ export const getTreeRegistration = async(req, res) =>{
 
     if (tree) {
       const { ...data } = tree;
-      return res.render('index.html', { formattedTreeRegistration: data, fileHTML, title, single, breadcrumbs, formattedTreeSpecies });
+      return res.render('index.html', { formattedTreeRegistration: data, fileHTML, title, single, treeStates, breadcrumbs, formattedTreeSpecies });
     } else {
       return res.render('error.html', { error: 404 });
     }
@@ -223,9 +223,27 @@ export const updateTreeRegistration = async (req, res) => {
     if(validatedFields.errors){
       return res.status(400).json(validatedFields.errors);
     }
-    console.log( req.body );
 
-    let tree = await TreeSpeciesRegistration.update(req.body,{
+    const { tree_state } = req.body;
+    const { tree_number } = req.body;
+    const { species } = req.body;
+    
+    let TreeSpecyId = 0;
+    if (species) {
+      TreeSpecyId = await TreeSpecies.findOne({
+        where: { species }
+      });
+      TreeSpecyId = TreeSpecyId.dataValues.id;
+    }
+
+    const infoToUpdate = {
+      ...(tree_number && { tree_number }),
+      ...(tree_state && { tree_state }),
+      ...(TreeSpecyId && { TreeSpecyId }),
+    };
+    console.log(infoToUpdate);
+
+    let tree = await TreeSpeciesRegistration.update(infoToUpdate,{
       where:{
         id: req.params.TreeSpeciesRegistrationId
       }
@@ -237,10 +255,6 @@ export const updateTreeRegistration = async (req, res) => {
       }
     })
 
-    
-
-    console.log( tree, prospectus);
-    
 
     return res.status(200).json(tree);
   } catch(error) {

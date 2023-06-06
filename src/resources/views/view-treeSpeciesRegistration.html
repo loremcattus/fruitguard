@@ -19,11 +19,11 @@
         <div class="item-post">
             <p class="key-post">Especies</p>
             <div class="value-post">
-                <p><%= formattedTreeRegistration.species %></p>
+                <p><%= formattedTreeRegistration.species.charAt(0).toUpperCase() + formattedTreeRegistration.species.slice(1).toLowerCase() %></p>
                 <select class="" id="especies" style="display: none;">
-                    <option value="" disabled selected><%= formattedTreeRegistration.species %></option>
+                    <option value="" disabled selected><%= formattedTreeRegistration.species.charAt(0).toUpperCase() + formattedTreeRegistration.species.slice(1).toLowerCase() %></option>
                     <% Object.values(formattedTreeSpecies).forEach(formattedTreeSpecies => { %>
-                        <option value="<%= formattedTreeSpecies.species %>"><%= formattedTreeSpecies.species %></option>
+                        <option value="<%= formattedTreeSpecies.species %>"><%= formattedTreeSpecies.species.charAt(0).toUpperCase() + formattedTreeSpecies.species.slice(1).toLowerCase()  %></option>
                     <% }); %>
                 </select>
             </div>
@@ -33,7 +33,12 @@
             <p class="key-post">Estado</p>
             <div class="value-post">
                 <p><%= formattedTreeRegistration.tree_state %></p>
-                <input placeholder="<%=formattedTreeRegistration.tree_state %>" id="" type="text" style="display: none;">
+                <select class="" id="treeState" style="display: none;">
+                    <option value="" disabled selected><%= formattedTreeRegistration.tree_state %></option>
+                    <% Object.values(treeStates).forEach(treeStates => { %>
+                        <option value="<%= treeStates %>"><%= treeStates %></option>
+                    <% }); %>
+                </select>
             </div>
         </div>
         <!--  -->
