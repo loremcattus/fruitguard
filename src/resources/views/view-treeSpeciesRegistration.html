@@ -20,7 +20,12 @@
             <p class="key-post">Especies</p>
             <div class="value-post">
                 <p><%= formattedTreeRegistration.species %></p>
-                <!-- <input placeholder="<%=// formatted %>" id="comment" type="text" style="display: none;"> -->
+                <select class="" id="especies" style="display: none;">
+                    <option value="" disabled selected><%= formattedTreeRegistration.species %></option>
+                    <% Object.values(formattedTreeSpecies).forEach(formattedTreeSpecies => { %>
+                        <option value="<%= formattedTreeSpecies.species %>"><%= formattedTreeSpecies.species %></option>
+                    <% }); %>
+                </select>
             </div>
         </div>
         <!--  -->
@@ -28,12 +33,7 @@
             <p class="key-post">Estado</p>
             <div class="value-post">
                 <p><%= formattedTreeRegistration.tree_state %></p>
-                <!-- <select class="" id="area" style="display: none;">
-                    <option value="" disabled selected><%=// formatted %></option>
-                    <%// Object.values(area).forEach(area => { %>
-                        <option value="<%=// area %>"><%=// area %></option>
-                    <%// }); %>
-                </select> -->
+                <input placeholder="<%=formattedTreeRegistration.tree_state %>" id="" type="text" style="display: none;">
             </div>
         </div>
         <!--  -->
@@ -41,7 +41,7 @@
             <p class="key-post">Cantidad de árboles</p>
             <div class="value-post">
                 <p><%= formattedTreeRegistration.tree_number %></p>
-                <!-- <input placeholder="<%=// formatted %>" id="comment" type="text" style="display: none;"> -->
+                <input placeholder="<%= formattedTreeRegistration.tree_number %>" id="numberTrees" type="text" style="display: none;">
             </div>
         </div>
         <!--  -->
@@ -49,7 +49,7 @@
             <p class="key-post">Unidades por muestra</p>
             <div class="value-post">
                 <p><%= formattedTreeRegistration.units_per_sample %></p>
-                <!-- <input placeholder="<%=// formatted %>" id="comment" type="text" style="display: none;"> -->
+                <input placeholder="<%= formattedTreeRegistration.units_per_sample %>" id="units_per_sample" type="text" style="display: none;">
             </div>
         </div>
         <hr>
@@ -65,4 +65,4 @@
     </div>
 </main>
 <div id="message" class="alert" role="alert"></div>
-<!-- <script src="/js/houseRegistration.js" type="module"></script> -->
+<script src="/js/treeRegistration.js" type="module"></script>

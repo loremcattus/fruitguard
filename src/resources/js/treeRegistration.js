@@ -11,29 +11,31 @@ if (message) {
 
 const formEdit = document.getElementById('editPost');
 const especiesDropdownEdit = document.getElementById('especies');
-const treeStateDropdownEdit = document.getElementById('treeState');
+// const treeStateDropdownEdit = document.getElementById('treeState');
 const numberTreesInputEdit = document.getElementById('numberTrees');
 const units_per_sampleInputEdit = document.getElementById('units_per_sample');
+
 
 formEdit.addEventListener('submit', async (event) => {
     event.preventDefault(); // Evitar el envío del formulario por defecto
 
     const species = especiesDropdownEdit.value;
-    const treeState = treeStateDropdownEdit.value;
-    const numberTrees = numberTreesInputEdit.value;
-    const units_per_sample = units_per_sampleInputEdit.value;
+    // const treeState = treeStateDropdownEdit.value;
+    const tree_number = parseInt(numberTreesInputEdit.value);
+    const units_per_sample = parseInt(units_per_sampleInputEdit.value);
 
     const object ={
-        species,
-        treeState,
-        numberTrees,
-        units_per_sample,
+        ...(species && {species}),
+        // ...(treeState &&  {treeState}),
+        ...(tree_number && {tree_number}),
+        ...(units_per_sample &&{units_per_sample}),
     };
 
     try{
         //obtener el host y el puerto del servidor actual 
-        const host = window.location.host;  
+        const host = window.location.hostname;  
         const port = window.location.port;
+        
 
         // Construir la URL base 
         const baseUrl = `http://${host}:${port}`;
@@ -44,16 +46,17 @@ formEdit.addEventListener('submit', async (event) => {
         // Componer la URL completa 
         const url = `${baseUrl}/api${linkPath}`;
 
+
         const response = await fetch(url,{
             method: 'PATCH',
             body: JSON.stringify(object),
             headers:{
-                'content-Type':'aplication/json'
+                'Content-Type':'application/json'
             }
         })
         if (response.status === 200){
             // Guardar el mensaje en el almacenamiento local
-            localStorage.setItem('message','Árbol actualizaso con éxito');
+            localStorage.setItem('message','Árbol actualizado con éxito');
             // Recarga la página 
             location.reload();
         } else if ( response.status === 400 ){
@@ -64,6 +67,7 @@ formEdit.addEventListener('submit', async (event) => {
             throw new Error('Error al enviar el formulario');
         }
     }catch (error){
+        console.log( error );
         // Manejar el error
         showMessage('Error al enviar el formulario','error');
     }

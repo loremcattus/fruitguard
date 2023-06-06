@@ -1,9 +1,9 @@
 import models from '../models/index.js';
 import { treeStates } from '../../helpers/enums.js';
-import { validateRequestBody } from '../../helpers/validators.js';
+import { validateRequestBody, validateFieldsDataType } from '../../helpers/validators.js';
 
 
-const { HouseRegistration, TreeSpecies, TreeSpeciesRegistration,Prospectus } = models;
+const { HouseRegistration, TreeSpecies, TreeSpeciesRegistration, Prospectus } = models;
 
 export const getTreeSpeciesRegistrations = async (req, res) => {
   const breadcrumbs = {
@@ -43,32 +43,36 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
       }
     });
 
+
+
     const formatedTreeSpeciesRegistration = [];
     if(houseRegistration) {
       if (speciesId) {
         const species = houseRegistration.TreeSpecies[0].dataValues.species;
         for(let i = 0; i < houseRegistration.TreeSpecies.length; i++) {
+          const treeRegistrationId = houseRegistration.TreeSpecies[i].dataValues.TreeSpeciesRegistration.dataValues.id; 
           const tree_state = houseRegistration.TreeSpecies[i].dataValues.TreeSpeciesRegistration.dataValues.tree_state;
           if (searchOptions.treeState && tree_state != searchOptions.treeState ){
             continue;
           }
-          const params = { tree_state, species };
+          const params = { tree_state, species, treeRegistrationId };
           formatedTreeSpeciesRegistration.push(params);
         }
       } else {
         for(let i = 0; i < houseRegistration.TreeSpecies.length; i++) {
           const species = houseRegistration.TreeSpecies[i].dataValues.species;
+          const treeRegistrationId = houseRegistration.TreeSpecies[i].dataValues.TreeSpeciesRegistration.dataValues.id; 
           const tree_state = houseRegistration.TreeSpecies[i].dataValues.TreeSpeciesRegistration.dataValues.tree_state;
           if (searchOptions.treeState && tree_state != searchOptions.treeState ){
             continue;
           }
-          const params = { tree_state, species };
+          const params = { tree_state, species, treeRegistrationId };
           formatedTreeSpeciesRegistration.push(params);
         }
       }
     }
     
-    return res.render('index.html', { formatedTreeSpeciesRegistration, fileHTML, title, breadcrumbs, treeStates, formattedTreeSpecies, houseRegistrationId  });
+    return res.render('index.html', { formatedTreeSpeciesRegistration, fileHTML, title, breadcrumbs, treeStates, formattedTreeSpecies, houseRegistrationId });
   } catch (error) {
     console.log(error);
     return res.render('error.html', { error: 404 });
@@ -90,7 +94,16 @@ export const getTreeRegistration = async(req, res) =>{
   };
 
   try{
-    console.log(req.params);
+    const treeSpecies = await TreeSpecies.findAll({
+      attributes: ['id','species'],
+      distinct: true,
+    });
+    const formattedTreeSpecies = treeSpecies.map(species => ({
+      id: species.id,
+      species: species.species
+    }));
+    // console.log({formattedTreeSpecies});
+    // console.log(req.params);
     // Obtener todas las propiedades del treeRegistrations
     const prospectus = await Prospectus.findByPk(req.params.TreeSpeciesRegistrationId,{
       attributes: ['id','units_per_sample','TreeSpeciesRegistrationId']
@@ -101,6 +114,8 @@ export const getTreeRegistration = async(req, res) =>{
     const treeSpecy = await TreeSpecies.findByPk(treeRegistration.dataValues.TreeSpecyId,{
       attributes: ['id','species']
     })
+
+    
 
     const tree ={
       idProspectus: prospectus.dataValues.id,
@@ -116,7 +131,7 @@ export const getTreeRegistration = async(req, res) =>{
 
     if (tree) {
       const { ...data } = tree;
-      return res.render('index.html', { formattedTreeRegistration: data, fileHTML, title, single, breadcrumbs });
+      return res.render('index.html', { formattedTreeRegistration: data, fileHTML, title, single, breadcrumbs, formattedTreeSpecies });
     } else {
       return res.render('error.html', { error: 404 });
     }
@@ -199,5 +214,47 @@ export const addTreeSpeciesRegistration = async (req, res) => {
   } catch (error) {
     console.error('Error al insertar una árbol', error);
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
+  }
+}
+
+
+
+// Editar árbol 
+
+export const updateTreeRegistration = async (req, res) => {
+  try {
+    // Validar que vengan los datos en el cuerpo 
+    if(Object.keys(req.body).length === 0){
+      return res.status(400).json('El cuerpo de la solicitud está vacío.');
+    }
+    // Validar el cuerpo de la soli
+    const validatedFields = await validateFieldsDataType(req.body, TreeSpeciesRegistration);
+    // Comprobar errores de validación 
+    if(validatedFields.errors){
+      return res.status(400).json(validatedFields.errors);
+    }
+    console.log( req.body );
+
+    let tree = await TreeSpeciesRegistration.update(req.body,{
+      where:{
+        id: req.params.TreeSpeciesRegistrationId
+      }
+    });
+
+    let prospectus = await Prospectus.update(req.body,{
+      where:{
+        id: req.params.TreeSpeciesRegistrationId
+      }
+    })
+
+    
+
+    console.log( tree, prospectus);
+    
+
+    return res.status(200).json(tree);
+  } catch(error) {
+    console.error('Error al actualizar el árbol ',error);
+    return res.status(500).json({error: 'Ocurrió un error en el servidor' });
   }
 }
