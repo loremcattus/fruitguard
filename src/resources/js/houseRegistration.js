@@ -36,6 +36,11 @@ formEdit.addEventListener('submit', async (event) => {
     ...(comment && { comment }),
   };
 
+  if(Object.keys(houseInfo).length == 0 && Object.keys(houseRegistrationInfo).length == 0) {
+    showMessage('No hay campos para actualizar', 'error');
+    return;
+  };
+
   const object = {
     houseInfo,
     houseRegistrationInfo

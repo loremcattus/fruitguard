@@ -145,49 +145,59 @@ export const getTreeRegistration = async(req, res) =>{
 export const addTreeSpeciesRegistration = async (req, res) => {
   console.log(" - - - - - - - - post - - - - - - - -")
   try {
+
+    console.log("cuerpo req " + req.body.species );
+    console.log("cuerpo req " + req.body.treeState );
+    console.log("cuerpo req " + req.body.numberTrees );
+    
     // Valida que vengan datos en el cuerpo
-    if (Object.keys(req.body).length === 0) {
+    if (Object.keys(req.body).length == 0) {
       return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío.' });
     }
 
     //Rescatar  del object
     const speciesTree = req.body.species;
 
-    const TreeSpeciesRegistrationId = parseInt(req.param.TreeSpeciesRegistrationId, 10);
-    console.log(TreeSpeciesRegistrationId);
+    const houseRegistrationId = parseInt(req.params.HouseRegistrationId, 10);
     
-    const treeSpeciesRegistration = await TreeSpeciesRegistration.findOne({
+    const houseRegistration = await HouseRegistration.findOne({
       attributes: ['id'],
-      where: { id: TreeSpeciesRegistrationId },
+      where: { id: houseRegistrationId },
     });
 
     const [treeSpecies, created] = await TreeSpecies.findOrCreate({
-      where: { species: speciesTree },
+      where: { id: speciesTree },
     });
 
-    if (created || !(await treeSpeciesRegistration.hasTreeSpecies(treeSpecies))) {
+    if (created || !(await houseRegistration.hasTreeSpecies(treeSpecies))) {
 
-      const idHouseRegistration = treeSpecies.id;
-      const grid  = req.body.grid;
-      const state = req.body.state;
-      const area = req.body.area;
-      const comment = req.body.comment;
+      console.log("-------------------");
+      console.log(treeSpecies.species);
+      console.log(req.body.treeState);
+      console.log(houseRegistrationId);
 
-      if (grid && state && area) {
-        const houseRegistration = await blockRegistration.addHouse(house, {through:{ grid, comment, area, state }});
+      const idTreeSpeciesRegistration = treeSpecies.id;
+      const species  = treeSpecies.species;
+      const tree_state = req.body.treeState;
+      const tree_number = req.body.numberTrees;
 
-        let formatedHouseRegistrations = { idHouseRegistration, grid, comment, area, state, BlockRegistrationId, addressHouse }
+      if (species && tree_state && tree_number) {
+        const treeSpeciesRegistration = await houseRegistration.addTreeSpecies(treeSpecies, {through:{ species, tree_state, tree_number }});
+        console.log(treeSpeciesRegistration);
+        let formatedTreeSpeciesRegistration = { idTreeSpeciesRegistration, species, tree_state, tree_number, houseRegistrationId }
         // crear formattedHouseRegistration para mandarle los datos que quiero mostrar en el front 
         //luego en front houseregistration.js escribir las variables
-        return res.status(201).json(formatedHouseRegistrations);
+        return res.status(201).json(formatedTreeSpeciesRegistration);
       } else {
         return res.status(400).json({ error: 'Faltan datos del formulario' });
       }
 
     } else {
-      console.log('La casa ya existe en el blockregistration');
+      console.log('La especie ya existe en el TreeSpeciesRegistration');
+
+      console.log(req.body);
       // Filtrar y validar el cuerpo de la solicitud
-      const validatedObject = await validateRequestBody(req.body, HouseRegistration);
+      const validatedObject = await validateRequestBody(req.body, TreeSpeciesRegistration);
       
       // Comprobar errores de validación
       if (validatedObject.error) {
@@ -196,13 +206,13 @@ export const addTreeSpeciesRegistration = async (req, res) => {
       }
 
       // Crear una nueva campaña en la base de datos y devolverla como respuesta
-      const houseRegistration = await HouseRegistration.create(validatedObject);
-      return res.status(201).json(houseRegistration.toJSON());
+      const treeSpeciesRegistration = await TreeSpeciesRegistration.create(validatedObject);
+      return res.status(201).json(treeSpeciesRegistration.toJSON());
 
     }
 
   } catch (error) {
-    console.error('Error al insertar una casa', error);
+    console.error('Error al insertar una árbol', error);
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
   }
 }

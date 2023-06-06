@@ -24,8 +24,8 @@
             <p class="key-post">Jefe de campaña</p>
             <div class="value-post">
                 <p><%= formattedCampaign.manager %></p>
-                <select id="manager" style="display: none;">
-                    <option value="<%= formattedCampaign.managerId %>"><%= formattedCampaign.manager %></option>
+                <select id="manager" style="display: none;" currentManagerId="<%= formattedCampaign.managerId %>">
+                    <option value=""><%= formattedCampaign.manager %></option>
                 </select>
             </div>
         </div>
@@ -88,62 +88,75 @@
         <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
         <a href="<%= formattedCampaign.id %>/focuses" class="button-green-default option-button">VER FOCOS</a>
     </div>
-    <hr>
-    <h2>Usuarios</h2>
-    <form id="search-post" method="GET">
-        <input id="nameRutRemove" name="nameOrRun" type="text" class="full" placeholder="Nombre ó RUN exacto del usuario">
-        <select id="rolRemove" name="role" class="half">
-            <option value="">Rol</option>
-            <% Object.values(roles).forEach(role => { %>
-                <option value="<%= role %>"><%= role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() %></option>
-            <% }); %>
-        </select>
-        <button type="submit" class="button-green-crud">Buscar</button>
-    </form>
-    <hr>
-
-    <section class="cards">
-        <% for (let i = 0; i < formattedUsers.length; i++) { %>
-        <a>
-            <div class="card-left-side">
-                <p class="card-left-side-top"><%= formattedUsers[i].name %></p>
-                <p class="card-left-side-bottom"><%= formattedUsers[i].role.charAt(0).toUpperCase() + formattedUsers[i].role.slice(1).toLowerCase() %> | <%= formattedUsers[i].rut %></p>
-            </div>
-            <div user-id="<%= formattedUsers[i].RegistrationId %>" class="card-right-side removeBtn">
-                <div class="remove-user" data-dismiss="modal"></div>
-            </div>
-        </a>
-        <% } %>
-    </section>
-    <button type="button" class="add-button" data-toggle="modal" data-target="#addModal" aria-label="addButton"></button>
+    <% if (formattedCampaign.open) { %>
+        <hr>
+        <h2>Usuarios</h2>
+        <p class="countRoles">Supervisores: <%= supervisorCount %> - Prospectores: <%= prospectorCount %> </p>
+        <form id="search-post" method="GET">
+            <input id="nameRutRemove" name="nameOrRun" type="text" class="full" placeholder="Nombre ó RUN del usuario">
+            <select id="rolRemove" name="role" class="full">
+                <option value="">Rol</option>
+                <% Object.values(roles).forEach(role => { %>
+                    <option value="<%= role %>"><%= role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() %></option>
+                <% }); %>
+            </select>
+        </form>
+        <hr>
+    
+        <section class="cards">
+            <% for (let i = 0; i < formattedUsers.length; i++) { %>
+            <a>
+                <div class="card-left-side">
+                    <p class="card-left-side-top"><%= formattedUsers[i].name %></p>
+                    <p class="card-left-side-bottom"><%= formattedUsers[i].role.charAt(0).toUpperCase() + formattedUsers[i].role.slice(1).toLowerCase() %> | <%= formattedUsers[i].rut %></p>
+                </div>
+                <div user-id="<%= formattedUsers[i].RegistrationId %>" class="card-right-side removeBtn">
+                    <div class="remove-user" data-dismiss="modal"></div>
+                </div>
+            </a>
+            <% } %>
+        </section>
+        <button type="button" class="add-button" data-toggle="modal" data-target="#addModal" aria-label="addButton"></button>
+    <% } %>
 </main>
 
-<div class="modal-backdrop" style="display: none;" id="modalBackdrop"></div>
-<div class="add-modal add-users-modal" style="display: none;" id="addModal" role="form" aria-labelledby="addModalLabel">
-    <div class="modal-items modal-items-add-users">
-        <div class="close-modal" data-dismiss="modal"></div>
-        <h1 class="addUsersTitle">Añadir usuarios</h1>
-        <form id="addPost" class="add-users-form">
-            <section class="cards add-users-cards"></section>
-            <div class="bottom-crud bottom-crud-add-users">
-                <button type="reset" class="button-40">Cancelar</button>
-                <button type="submit" class="button-green-default button-60">Añadir usuario/s</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="modal-backdrop" style="display: none;" id="modalBackdropRemove"></div>
-<div class="add-modal" style="display: none;" id="removeModal" role="form" aria-labelledby="removeModalLabel">
-    <div class="modal-items">
-        <div class="close-modal" data-dismiss="modalRemoveUser"></div>
-        <p id="modal-message" class="modal-message"></p>
-        <div class="bottom-crud">
-            <button class="button-40" id="confirmRemoveUser">Confirmar</button>
-            <button class="button-green-default button-60" id="cancelRemoveUser">Cancelar</button>
+<% if (formattedCampaign.open) { %>
+    <div class="modal-backdrop" style="display: none;" id="modalBackdrop"></div>
+    <div class="add-modal add-users-modal" style="display: none;" id="addModal" role="form" aria-labelledby="addModalLabel">
+        <div class="modal-items modal-items-add-users">
+            <div class="close-modal" data-dismiss="modal"></div>
+            <h1 class="addUsersTitle">Añadir usuarios</h1>
+            <form id="searchToAdd" class="search-users-to-add-form">
+                <input id="nameRutSearch" type="text" class="full" placeholder="Nombre ó RUN del usuario">
+                <select id="rolSearch" class="full">
+                    <option value="">Rol</option>
+                    <% Object.values(roles).forEach(role => { %>
+                        <option value="<%= role %>"><%= role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() %></option>
+                    <% }); %>
+                </select>
+            </form>
+            <form id="addPost" class="add-users-form">
+                <section class="cards add-users-cards"></section>
+                <div class="bottom-crud bottom-crud-add-users">
+                    <button type="reset" class="button-40">Limpiar</button>
+                    <button type="submit" class="button-green-default button-60">Añadir usuario/s</button>
+                </div>
+            </form>
         </div>
     </div>
-</div>
+    
+    <div class="modal-backdrop" style="display: none;" id="modalBackdropRemove"></div>
+    <div class="add-modal" style="display: none;" id="removeModal" role="form" aria-labelledby="removeModalLabel">
+        <div class="modal-items">
+            <div class="close-modal" data-dismiss="modalRemoveUser"></div>
+            <p id="modal-message" class="modal-message"></p>
+            <div class="bottom-crud">
+                <button class="button-40" id="confirmRemoveUser">Confirmar</button>
+                <button class="button-green-default button-60" id="cancelRemoveUser">Cancelar</button>
+            </div>
+        </div>
+    </div>
+<% } %>
 
 <div id="message" class="alert" role="alert"></div>
 

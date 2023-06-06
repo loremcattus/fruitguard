@@ -17,17 +17,29 @@
                 <p><%= formattedBlock.id %></p>
             </div>
         </div>
+
         <% let streetArray = formattedBlock.streets.split("@") %>
-        <% for (i = 0; i < streetArray.length; i++){ %>
-        <% let street = streetArray[i] %>
         <div class="item-post">
-            <p class="key-post">calle límite <%= i+1 %>:</p>
+            <p class="key-post">Calle límite 1:</p>
+            <div class="value-post">
+                <p><%= streetArray[0] %></p>
+                <input placeholder="<%= streetArray[0] %>"  class="full street-input" type="text" style="display: none;">
+            </div>
+        </div>
+        <% for (i = 1; i < streetArray.length; i++){ %>
+        <% let street = streetArray[i] %>
+        <div class="item-post street-can-be-remove">
+            <p class="key-post">Calle límite <%= i+1 %>:</p>
             <div class="value-post">
                 <p><%= street %></p>
-                <input placeholder="<%= street %>"  class="full street-input" type="text" style="display: none;">
+                <input placeholder="<%= street %>"  class="half street-input" type="text" style="display: none;">
+                <div class="remove-street-edit" style="display: none;"></div>
             </div>
         </div>
         <% } %>
+        <div id="add-street-container" class="value-post">
+            <div id="add-street" class="" style="display: none;"></div>
+        </div>
 
         <div class="item-post">
             <p class="key-post">Fecha de modificación</p>

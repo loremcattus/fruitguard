@@ -13,18 +13,18 @@
     <h1>Buscar casa</h1>
     <form id="searchPost">
         <input class="full" type="text" id="idOrAddressSearch" placeholder="ID o dirección de la casa">
-        <input class="full" type="text" id="gridSearch" placeholder="Grilla">
+        <input class="full" type="number" id="gridSearch" placeholder="Grilla">
         <select class="half" id="areaSearch">
-            <option value="" disabled selected>Area</option>
-          <% Object.entries(areas).forEach(([key, value]) => { %>
-            <option value="<%= value %>"><%= value %></option>
-          <% }); %>
+            <option value="" selected>Área</option>
+            <% Object.values(areas).forEach(area => { %>
+                <option value="<%= area %>"><%= area %></option>
+            <% }); %>
         </select>
         <select class="half" id="stateSearch">
-            <option value="" disabled selected>Estado</option>
-          <% Object.entries(states).forEach(([key, value]) => { %>
-            <option value="<%= value %>"><%= value %></option>
-          <% }); %>
+            <option value="" selected>Estado</option>
+            <% Object.values(states).forEach(state => { %>
+                <option value="<%= state %>"><%= state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() %></option>
+            <% }); %>
         </select>
         <div class="bottom-crud">
             <div class="check-container">
@@ -36,12 +36,19 @@
     </form>
     <hr>
     <section class="cards">
-        <% if (formattedHouseRegistration.length > 0) { %>
-            <% for (let i = 0; i < formattedHouseRegistration.length; i++) { %>
-                <a href="houses/<%= formattedHouseRegistration[i].id %>">
+        <% if (formattedHouseRegistrations.length > 0) { %>
+            <% for (let i = 0; i < formattedHouseRegistrations.length; i++) { %>
+                <a href="houses/<%= formattedHouseRegistrations[i].id %>">
                     <div class="card-left-side">
-                        <p class="card-left-side-top"><%= formattedHouseRegistration[i].id %> | <span class="card-left-side-top-highlight"><%= formattedHouseRegistration[i].address %></span></p>
-                        <p class="card-left-side-bottom"> Grilla <%= formattedHouseRegistration[i].grid %> > Area <%= formattedHouseRegistration[i].area %></p>
+                        <p class="card-left-side-top"><%= formattedHouseRegistrations[i].id %> | <span class="card-left-side-top-highlight"><%= formattedHouseRegistrations[i].address %></span></p>
+                        <p class="card-left-side-bottom"> Grilla <%= formattedHouseRegistrations[i].grid %> > Area <%= formattedHouseRegistrations[i].area %></p>
+                    </div>
+                    <div class="card-right-side">
+                        <% if (formattedHouseRegistrations[i].isOpen) { %>
+                            <div class="green-ball"></div>
+                        <% } else { %>
+                            <div class="red-ball"></div>
+                        <% } %>
                     </div>
                 </a>
             <% } %>
@@ -59,7 +66,7 @@
         <h1>Añadir casa</h1>
         <form id="addPost">
             <input class="full" type="text" id="addressAdd" placeholder="Dirección">
-            <input class="full" type="text" id="gridAdd" placeholder="Grilla">
+            <input class="full" type="number" id="gridAdd" placeholder="Grilla">
             <select class="half" id="areaAdd">
                 <option value="" disabled selected>Area</option>
               <% Object.entries(areas).forEach(([key, value]) => { %>

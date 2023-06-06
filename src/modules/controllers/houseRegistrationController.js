@@ -62,13 +62,14 @@ export const getHouseRegistrations = async (req, res) => {
     }
 
     let i = 0;
-    const formatedHouseRegistrations = []
+    const formattedHouseRegistrations = []
     blockRegistration.Houses.filter(house => {
       const address = house.dataValues.address;
       const id = house.HouseRegistration.id;
       //console.log("id houseRegistration " + id);
       const { grid, area, state } = house.HouseRegistration;
-      const params = { address, grid, area, state, id };
+      const isOpen = state == states.OPEN; 
+      const params = { address, grid, area, isOpen, id };
       // Verificar si al menos una opción de búsqueda está presente
       if (Object.keys(searchOptions).length > 0) {
         // Verificar cada criterio de búsqueda si está presente y coincide con el valor correspondiente
@@ -78,18 +79,19 @@ export const getHouseRegistrations = async (req, res) => {
           (!searchOptions.state || state === searchOptions.state) &&
           (!searchOptions.id || id == searchOptions.id)
         ) {
-          formatedHouseRegistrations[i] = params;
+          formattedHouseRegistrations[i] = params;
           i++;
           return true;
         };
       } else {
-        formatedHouseRegistrations[i] = params;
+        formattedHouseRegistrations[i] = params;
         i++;
         // Si no hay opciones de búsqueda, devolver todas las casas sin filtrar
         return true;
       }
     });
-    return res.render('index.html', { formattedHouseRegistration: formatedHouseRegistrations, fileHTML, title, breadcrumbs, areas, states });
+    formattedHouseRegistrations.reverse();
+    return res.render('index.html', { formattedHouseRegistrations, fileHTML, title, breadcrumbs, areas, states });
 
   } catch (error) {
     console.log(error);
@@ -159,6 +161,7 @@ export const addHouseRegistration = async (req, res) => {
     const { address } = req.body;
     const { grid } = req.body;
     const { state } = req.body;
+    const isOpen = state == states.OPEN; 
     const { area } = req.body;
     const { comment } = req.body;
 
@@ -185,7 +188,7 @@ export const addHouseRegistration = async (req, res) => {
       where: { BlockId, address },
     });
 
-    // Verifica si el foco ya tiene el bloque asociado
+    // Verifica si el registro de bloque ya tiene la casa asociada
     if (await blockRegistration.hasHouse(house)) { return res.sendStatus(409); };
 
     const houseRegistration = await blockRegistration.addHouse(house, { through: houseRegistrationInfo });
@@ -195,6 +198,7 @@ export const addHouseRegistration = async (req, res) => {
       address,
       grid,
       area,
+      isOpen,
     }
     return res.status(201).json(formatedHouseRegistrations);
 
@@ -209,8 +213,10 @@ export const addHouseRegistration = async (req, res) => {
 export const updateHouseRegistration = async (req, res) => {
   try {
     // Validar que vengan datos en el cuerpo 
-    if (Object.keys(req.body).length === 0) {
-      return res.status(400).json('El cuerpo de la solicitud está vacío.');
+    const { houseInfo } = req.body;
+    const { houseRegistrationInfo } = req.body;
+    if (Object.keys(houseInfo).length == 0 && Object.keys(houseRegistrationInfo).length == 0) {
+      return res.sendStatus(400);
     }
 
     const { HouseRegistrationId } = req.params;
@@ -219,8 +225,7 @@ export const updateHouseRegistration = async (req, res) => {
     });
     const oldHouseId = houseRegistration.dataValues.HouseId;
 
-    const { houseInfo } = req.body;
-    if (houseInfo) {
+    if (Object.keys(houseInfo).length > 0) {
       const validatedHouseFields = await validateFieldsDataType(houseInfo, House);
       if (validatedHouseFields.errors) {
         return res.sendStatus(400);
@@ -264,8 +269,7 @@ export const updateHouseRegistration = async (req, res) => {
       }
     }
 
-    const { houseRegistrationInfo } = req.body;
-    if (houseRegistrationInfo) {
+    if (Object.keys(houseRegistrationInfo).length > 0) {
       const validatedHouseRegistrationFields = await validateFieldsDataType(houseRegistrationInfo, HouseRegistration);
       if (validatedHouseRegistrationFields.errors) {
         return res.sendStatus(400);
