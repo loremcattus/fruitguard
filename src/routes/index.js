@@ -1,4 +1,5 @@
 import express from 'express';
+import { getLogin, getRegister} from '../modules/controllers/loginController.js'
 import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign } from '../modules/controllers/campaignController.js';
 import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockRegistrationController.js';
@@ -8,6 +9,10 @@ import { getTreeSpeciesRegistrations, addTreeSpeciesRegistration } from '../modu
 
 
 export const router = express.Router();
+
+// Iniciar Sesión
+router.get('/login', getLogin);
+router.get('/register', getRegister);
 
 // Usuarios
 router.get('/api/users', getUsers);
