@@ -166,3 +166,15 @@
     height: 10%;
     width: 100%;
 }
+
+.countRoles {
+    margin: unset;
+    width: 100%;
+    color: #757575;
+    font-size: 0.8rem;
+}
+
+.value-post-edit {
+    width: 100%;
+    max-width: unset;
+}
