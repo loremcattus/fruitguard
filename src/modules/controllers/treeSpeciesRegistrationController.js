@@ -239,7 +239,7 @@ export const updateTreeRegistration = async (req, res) => {
 
     
 
-    console.log( tree, prospectus, specy);
+    console.log( tree, prospectus);
     
 
     return res.status(200).json(tree);
