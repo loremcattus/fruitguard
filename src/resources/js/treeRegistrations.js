@@ -73,7 +73,7 @@ formAdd.addEventListener('submit', async (event) => {
       newTreeElement.insertAdjacentHTML('beforeend', `
 			<div class="card-left-side">
 				<p class="card-left-side-top">${data.species}</p>
-				<p class="card-left-side-bottom">${data.treeState}</p>
+				<p class="card-left-side-bottom">${data.tree_state}</p>
 			</div>
       `);
 
