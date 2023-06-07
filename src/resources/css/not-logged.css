@@ -1,0 +1,181 @@
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/fonts/KFOmCnqEu92Fr1Mu4mxK.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(/fonts/KFOlCnqEu92Fr1MmWUlfBBc4.woff2) format('woff2');
+}
+
+
+:root {
+
+    --main-color: #00A240;
+    --font-white: #FFFFFF;
+
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #FAFAFA;
+
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+
+    width: 100%;
+    overflow-x: hidden;
+
+    touch-action: pan-y;
+    -webkit-touch-action: pan-y;
+}
+
+
+a {
+    color: var(--main-color);
+}
+
+h1 {
+    width: fit-content;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 500;
+    padding-bottom: 0.2rem;
+    border-bottom: 4px solid var(--main-color);
+    margin: 0.5rem auto;
+}
+
+input {
+    max-width: 100%;
+    font-family: inherit;
+    box-sizing: border-box;
+    background-color: #FEFEFE;
+    border: 0.5px solid #D9D9D9;
+    height: 2rem;
+    border-radius: 4px;
+    padding-left: 0.5rem;
+    font-size: 1rem;
+}
+input[type="email" i]:focus:invalid {
+    outline: 1px solid #721c24;
+}
+input[type="email" i]:focus:valid {
+    outline: 1px solid var(--main-color);
+}
+
+input:focus {
+    outline: 1px solid var(--main-color);
+}
+
+input:disabled {
+    background-color: #EBEBEB;
+}
+
+.full {
+    width: 100%;
+}
+
+.button-green-default {
+    all: unset;
+    background-color: var(--main-color);
+    border-radius: 4px;
+    color: var(--font-white);
+    font-weight: 700;
+    text-align: center;
+    padding: 0.5rem 1.5rem;
+
+    transition: 0.2s;
+}
+
+.button-green-default:active {
+    background-color: #095944;
+    box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%),
+        0 1px 3px 1px rgb(60 64 67 / 15%);
+}
+
+/* ALERTAS */
+.alert {
+    position: fixed;
+    border-radius: 8px;
+    top: 5vh;
+    left: 5vw;
+    right: 5vw;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    display: none;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0;
+}
+
+.alert.show {
+    opacity: 1;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* LOGIN - REGISTER */
+
+.not-logged-card {
+    margin-top: 10%;
+    margin-inline: 5%;
+    padding: 0.5rem;
+    background: #FFFFFF;
+    box-shadow: 0px 0.5px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    padding: 5%;
+}
+
+.not-logged-card > form {
+    margin: 1rem 0;
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+}
+
+.not-logged-card > form > input {
+    padding: 0.8rem;
+    height: 2.5rem;
+}
+
+.not-logged-card > form > button {
+    padding-inline: 15%;
+    margin: 0.5rem 0;
+}
+
+.not-logged-card > p {
+    margin: unset;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.reset-password {
+    margin: 0.2rem 0;
+    width: 100%;
+}
+
+.reset-password > p {
+    width: fit-content;
+    margin: unset;
+    font-size: 0.8rem;
+    color: var(--main-color);
+    text-decoration: underline;
+    cursor: pointer;
+}

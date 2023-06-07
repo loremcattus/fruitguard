@@ -1,5 +1,5 @@
 import express from 'express';
-import { getLogin, getRegister} from '../modules/controllers/loginController.js'
+import { getLogin, getRegister, resetPassword } from '../modules/controllers/loginController.js'
 import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign } from '../modules/controllers/campaignController.js';
 import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockRegistrationController.js';
@@ -11,7 +11,7 @@ import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistr
 export const router = express.Router();
 
 // Iniciar Sesión
-router.get('/login', getLogin);
+router.get('/', getLogin);
 router.get('/register', getRegister);
 
 // Usuarios
@@ -20,6 +20,7 @@ router.get('/api/users/:id', getUser);
 router.post('/api/users', addUser);
 router.patch('/api/users/:id', updateUser);
 router.delete('/api/users/:id', deleteUser);
+router.post('/api/users/reset-password', resetPassword);
 router.get('/api/managers/:currentManagerId', getOtherManagers);
 
 // Campañas

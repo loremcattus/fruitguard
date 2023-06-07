@@ -1,19 +1,14 @@
-<section class="cards">
-    <div class="check-container">
-        <h2 class="custom-section-title intro-title"></h2>
-
-    </div>
-</section>
-<section class="cards">
-    <p class="custom-section-title">Registrarse</p>
-    <br>
+<section class="not-logged-card">
+    <h1 class="custom-section-title">Registrarse</h1>
     <form onsubmit="verificarPasswords(); return false" action="/register" method="POST">
-        <input type="email" name="correo" placeholder="Correo Electrónico">
-        <input type="text" name="nombre" placeholder="Nombre Completo">
-        <input type="text" name="rut" placeholder="RUT">
-        <input required id="password1" type="password" name="contra" placeholder="Contraseña">
-        <input required id="password2" type="password" placeholder="Confirmar contraseña">
-        <button style="font-size: x-large;" type="submit" class="custom-btn">Registrarse</button>
+        <input class="full" required type="email" name="correo" placeholder="Correo electrónico">
+        <input class="full" required type="text" name="nombre" placeholder="Nombre completo">
+        <input class="full" required type="text" name="rut" placeholder="RUT">
+        <input class="full" required id="password1" type="password" name="contra" placeholder="Contraseña">
+        <input class="full" required id="password2" type="password" placeholder="Confirmar contraseña">
+        <button type="submit" class="button-green-default">Registrarse</button>
     </form>
+    <p>¿Ya tienes una cuenta? <a href="/">Iniciar sesión</a></p>
 </section>
+<div id="message" class="alert" role="alert"></div>
 <script src="/js/register.js" type="module"></script>
