@@ -7,8 +7,6 @@ const teamModel = (sequelize) => {
   Team.init({
     // Identificadores de manzanas que debe muestrear el equipo
     tasks: DataTypes.STRING(100),
-    // Identificadores de usuarios que pertenecen al equipo
-    users: DataTypes.STRING(30),
   }, {
     sequelize,
     modelName: 'Team',

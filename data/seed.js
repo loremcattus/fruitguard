@@ -528,14 +528,10 @@ export const seed = async (models) => {
     blocks[2].addHouse([houses[4], houses[5]]),
     blocks[3].addHouse([houses[6], houses[7]]),
   ]);
+
   await Promise.all([
     campaigns[1].addFocus([focuses[2], focuses[3]]),
-    focuses[2].addBlock([blocks[4], blocks[5]]),
-    focuses[3].addBlock([blocks[6], blocks[7]]),
-    blocks[4].addHouse([houses[8], houses[9]]),
-    blocks[5].addHouse([houses[10], houses[11]]),
-    blocks[6].addHouse([houses[12], houses[13]]),
-    blocks[7].addHouse([houses[14], houses[15]]),
+    focuses[2].addBlock([blocks[4], blocks[5], blocks[6], blocks[7]]),
   ]);
 
   const cars = await models.Car.bulkCreate([
@@ -553,60 +549,53 @@ export const seed = async (models) => {
 
   const teams = await models.Team.bulkCreate([
     {
-      CampaignId: campaigns[0].dataValues.id,
       tasks: blocks[0].dataValues.id + ',' + blocks[1].dataValues.id,
-      users: users[8].dataValues.id + ',' + users[11].dataValues.id + ',' + users[12].dataValues.id + ',' + users[14].dataValues.id,
-      CarId: cars[0].dataValues.id
     },
     {
-      CampaignId: campaigns[0].dataValues.id,
       tasks: blocks[2].dataValues.id,
-      users: users[9].dataValues.id + ',' + users[13].dataValues.id,
-      CarId: cars[1].dataValues.id
     },
     {
-      CampaignId: campaigns[0].dataValues.id,
       tasks: blocks[3].dataValues.id,
-      users: users[10].dataValues.id + ',' + users[15].dataValues.id + ',' + users[16].dataValues.id,
-      CarId: cars[3].dataValues.id
-    },
-    {
-      CampaignId: campaigns[1].dataValues.id,
-      tasks: blocks[4].dataValues.id,
-      users: users[18].dataValues.id + ',' + users[23].dataValues.id,
-      CarId: cars[6].dataValues.id
-    },
-    {
-      CampaignId: campaigns[1].dataValues.id,
-      tasks: blocks[5].dataValues.id + ',' + blocks[6].dataValues.id,
-      users: users[19].dataValues.id + ',' + users[24].dataValues.id + ',' + users[25].dataValues.id + ',' + users[26].dataValues.id,
-      CarId: cars[5].dataValues.id
-    },
-    {
-      CampaignId: campaigns[1].dataValues.id,
-      tasks: blocks[7].dataValues.id,
-      users: users[20].dataValues.id + ',' + users[27].dataValues.id,
-      CarId: cars[9].dataValues.id
     },
   ]);
 
-  const attendances = [];
-  for (let i = 0; i < 28; i++) {
-    const isPresent = !(i === 17 || i === 21 || i === 22);
+  await Promise.all([
+    cars[0].setTeam(teams[0]),
+    cars[1].setTeam(teams[1]),
+    cars[3].setTeam(teams[2]),
+    cars[5].setTeam(teams[4]),
+    cars[6].setTeam(teams[3]),
+    cars[9].setTeam(teams[5]),
+  ]);
 
-    attendances.push({
-      userId: users[i].dataValues.id,
-      isPresent: isPresent,
-    });
-  }
-  await models.Attendance.bulkCreate(attendances);
+  const campaignsWithUsers = await models.Campaign.findAll({
+    attributes: ['id'],
+    include: {
+      model: models.User
+    }
+  });
+
+  const usersRegistration = [];
+  (async () => {
+    for (let i = 0; i < campaignsWithUsers.length; i++) {
+      for (let j = 0; j < campaignsWithUsers[i].Users.length; j++) {
+        usersRegistration.push(campaignsWithUsers[i].Users[j].UserRegistration.dataValues.id);
+      }
+    }
+  })();
+
+  await Promise.all([
+    teams[0].setUserRegistrations([usersRegistration[1], usersRegistration[4], usersRegistration[5], usersRegistration[7]]),
+    teams[1].setUserRegistrations([usersRegistration[2], usersRegistration[6]]),
+    teams[2].setUserRegistrations([usersRegistration[3], usersRegistration[8], usersRegistration[9]]),
+  ]);
 
   const houseRegistrations = await models.HouseRegistration.bulkCreate([
     {
       grid: 1,
       comment: 'Comentario registro de casa 1',
       area: areas[200],
-      state: states.REFUSE,
+      state: states.OPEN,
       HouseId: houses[0].id,
       BlockRegistrationId: blocks[0].dataValues.id,
     },
@@ -646,7 +635,7 @@ export const seed = async (models) => {
       grid: 3,
       comment: 'Comentario registro de casa 6',
       area: areas[400],
-      state: states.CLOSE,
+      state: states.REFUSE,
       HouseId: houses[5].id,
       BlockRegistrationId: blocks[2].dataValues.id,
     },
@@ -665,70 +654,6 @@ export const seed = async (models) => {
       state: states.CLOSE,
       HouseId: houses[7].id,
       BlockRegistrationId: blocks[3].dataValues.id,
-    },
-    {
-      grid: 5,
-      comment: 'Comentario registro de casa 9',
-      area: areas[400],
-      state: states.CLOSE,
-      HouseId: houses[8].id,
-      BlockRegistrationId: blocks[4].dataValues.id,
-    },
-    {
-      grid: 5,
-      comment: 'Comentario registro de casa 10',
-      area: areas[800],
-      state: states.OPEN,
-      HouseId: houses[9].id,
-      BlockRegistrationId: blocks[4].dataValues.id,
-    },
-    {
-      grid: 6,
-      comment: 'Comentario registro de casa 11',
-      area: areas[400],
-      state: states.CLOSE,
-      HouseId: houses[10].id,
-      BlockRegistrationId: blocks[5].dataValues.id,
-    },
-    {
-      grid: 6,
-      comment: 'Comentario registro de casa 12',
-      area: areas[200],
-      state: states.OPEN,
-      HouseId: houses[11].id,
-      BlockRegistrationId: blocks[5].dataValues.id,
-    },
-    {
-      grid: 7,
-      comment: 'Comentario registro de casa 13',
-      area: areas[800],
-      state: states.CLOSE,
-      HouseId: houses[12].id,
-      BlockRegistrationId: blocks[6].dataValues.id,
-    },
-    {
-      grid: 7,
-      comment: 'Comentario registro de casa 14',
-      area: areas[400],
-      state: states.OPEN,
-      HouseId: houses[13].id,
-      BlockRegistrationId: blocks[6].dataValues.id,
-    },
-    {
-      grid: 8,
-      comment: 'Comentario registro de casa 15',
-      area: areas[400],
-      state: states.UNINHABITED,
-      HouseId: houses[14].id,
-      BlockRegistrationId: blocks[7].dataValues.id,
-    },
-    {
-      grid: 8,
-      comment: 'Comentario registro de casa 16',
-      area: areas[200],
-      state: states.REFUSE,
-      HouseId: houses[15].id,
-      BlockRegistrationId: blocks[7].dataValues.id,
     },
   ]);
 
@@ -764,111 +689,33 @@ export const seed = async (models) => {
   const treeSpeciesRegistrations = await models.TreeSpeciesRegistration.bulkCreate([
     {
       tree_number: 3,
-      tree_state: treeStates.FRUITLESS,
+      tree_state: treeStates.RIPE,
       HouseRegistrationId: houseRegistrations[0].dataValues.id,
       TreeSpecyId: treeSpecies[1].dataValues.id
     },
     {
+      tree_number: 5,
+      tree_state: treeStates.FRUITLESS,
+      HouseRegistrationId: houseRegistrations[0].dataValues.id,
+      TreeSpecyId: treeSpecies[15].dataValues.id
+    },
+    {
       tree_number: 4,
       tree_state: treeStates.RIPE,
-      HouseRegistrationId: houseRegistrations[1].dataValues.id,
+      HouseRegistrationId: houseRegistrations[0].dataValues.id,
       TreeSpecyId: treeSpecies[0].dataValues.id
+    },
+    {
+      tree_number: 3,
+      tree_state: treeStates.UNRIPE,
+      HouseRegistrationId: houseRegistrations[0].dataValues.id,
+      TreeSpecyId: treeSpecies[17].dataValues.id
     },
     {
       tree_number: 1,
       tree_state: treeStates.SAPLING,
       HouseRegistrationId: houseRegistrations[2].dataValues.id,
       TreeSpecyId: treeSpecies[2].dataValues.id
-    },
-    {
-      tree_number: 2,
-      tree_state: treeStates.UNRIPE,
-      HouseRegistrationId: houseRegistrations[3].dataValues.id,
-      TreeSpecyId: treeSpecies[4].dataValues.id
-    },
-    {
-      tree_number: 5,
-      tree_state: treeStates.RIPE,
-      HouseRegistrationId: houseRegistrations[4].dataValues.id,
-      TreeSpecyId: treeSpecies[3].dataValues.id
-    },
-    {
-      tree_number: 4,
-      tree_state: treeStates.SAPLING,
-      HouseRegistrationId: houseRegistrations[5].dataValues.id,
-      TreeSpecyId: treeSpecies[5].dataValues.id
-    },
-    {
-      tree_number: 1,
-      tree_state: treeStates.UNRIPE,
-      HouseRegistrationId: houseRegistrations[6].dataValues.id,
-      TreeSpecyId: treeSpecies[7].dataValues.id
-    },
-    {
-      tree_number: 3,
-      tree_state: treeStates.FRUITLESS,
-      HouseRegistrationId: houseRegistrations[7].dataValues.id,
-      TreeSpecyId: treeSpecies[6].dataValues.id
-    },
-    {
-      tree_number: 2,
-      tree_state: treeStates.SAPLING,
-      HouseRegistrationId: houseRegistrations[8].dataValues.id,
-      TreeSpecyId: treeSpecies[8].dataValues.id
-    },
-    {
-      tree_number: 1,
-      tree_state: treeStates.UNRIPE,
-      HouseRegistrationId: houseRegistrations[9].dataValues.id,
-      TreeSpecyId: treeSpecies[10].dataValues.id
-    },
-    {
-      tree_number: 4,
-      tree_state: treeStates.FRUITLESS,
-      HouseRegistrationId: houseRegistrations[10].dataValues.id,
-      TreeSpecyId: treeSpecies[9].dataValues.id
-    },
-    {
-      tree_number: 5,
-      tree_state: treeStates.RIPE,
-      HouseRegistrationId: houseRegistrations[11].dataValues.id,
-      TreeSpecyId: treeSpecies[11].dataValues.id
-    },
-    {
-      tree_number: 2,
-      tree_state: treeStates.SAPLING,
-      HouseRegistrationId: houseRegistrations[12].dataValues.id,
-      TreeSpecyId: treeSpecies[13].dataValues.id
-    },
-    {
-      tree_number: 3,
-      tree_state: treeStates.FRUITLESS,
-      HouseRegistrationId: houseRegistrations[13].dataValues.id,
-      TreeSpecyId: treeSpecies[12].dataValues.id
-    },
-    {
-      tree_number: 1,
-      tree_state: treeStates.UNRIPE,
-      HouseRegistrationId: houseRegistrations[14].dataValues.id,
-      TreeSpecyId: treeSpecies[14].dataValues.id
-    },
-    {
-      tree_number: 2,
-      tree_state: treeStates.SAPLING,
-      HouseRegistrationId: houseRegistrations[15].dataValues.id,
-      TreeSpecyId: treeSpecies[16].dataValues.id
-    },
-    {
-      tree_number: 5,
-      tree_state: treeStates.RIPE,
-      HouseRegistrationId: houseRegistrations[0].dataValues.id,
-      TreeSpecyId: treeSpecies[15].dataValues.id
-    },
-    {
-      tree_number: 3,
-      tree_state: treeStates.UNRIPE,
-      HouseRegistrationId: houseRegistrations[1].dataValues.id,
-      TreeSpecyId: treeSpecies[17].dataValues.id
     },
     {
       tree_number: 4,
@@ -877,10 +724,22 @@ export const seed = async (models) => {
       TreeSpecyId: treeSpecies[19].dataValues.id
     },
     {
+      tree_number: 2,
+      tree_state: treeStates.UNRIPE,
+      HouseRegistrationId: houseRegistrations[2].dataValues.id,
+      TreeSpecyId: treeSpecies[4].dataValues.id
+    },
+    {
       tree_number: 1,
       tree_state: treeStates.SAPLING,
-      HouseRegistrationId: houseRegistrations[3].dataValues.id,
+      HouseRegistrationId: houseRegistrations[2].dataValues.id,
       TreeSpecyId: treeSpecies[18].dataValues.id
+    },
+    {
+      tree_number: 5,
+      tree_state: treeStates.RIPE,
+      HouseRegistrationId: houseRegistrations[4].dataValues.id,
+      TreeSpecyId: treeSpecies[3].dataValues.id
     },
     {
       tree_number: 2,
@@ -889,10 +748,22 @@ export const seed = async (models) => {
       TreeSpecyId: treeSpecies[20].dataValues.id
     },
     {
+      tree_number: 4,
+      tree_state: treeStates.SAPLING,
+      HouseRegistrationId: houseRegistrations[4].dataValues.id,
+      TreeSpecyId: treeSpecies[5].dataValues.id
+    },
+    {
       tree_number: 5,
       tree_state: treeStates.RIPE,
-      HouseRegistrationId: houseRegistrations[5].dataValues.id,
+      HouseRegistrationId: houseRegistrations[4].dataValues.id,
       TreeSpecyId: treeSpecies[22].dataValues.id
+    },
+    {
+      tree_number: 1,
+      tree_state: treeStates.UNRIPE,
+      HouseRegistrationId: houseRegistrations[6].dataValues.id,
+      TreeSpecyId: treeSpecies[7].dataValues.id
     },
     {
       tree_number: 4,
@@ -901,121 +772,35 @@ export const seed = async (models) => {
       TreeSpecyId: treeSpecies[21].dataValues.id
     },
     {
+      tree_number: 3,
+      tree_state: treeStates.FRUITLESS,
+      HouseRegistrationId: houseRegistrations[6].dataValues.id,
+      TreeSpecyId: treeSpecies[6].dataValues.id
+    },
+    {
       tree_number: 1,
       tree_state: treeStates.FRUITLESS,
-      HouseRegistrationId: houseRegistrations[7].dataValues.id,
+      HouseRegistrationId: houseRegistrations[6].dataValues.id,
       TreeSpecyId: treeSpecies[23].dataValues.id
-    },
-    {
-      tree_number: 3,
-      tree_state: treeStates.RIPE,
-      HouseRegistrationId: houseRegistrations[8].dataValues.id,
-      TreeSpecyId: treeSpecies[25].dataValues.id
-    },
-    {
-      tree_number: 2,
-      tree_state: treeStates.FRUITLESS,
-      HouseRegistrationId: houseRegistrations[9].dataValues.id,
-      TreeSpecyId: treeSpecies[24].dataValues.id
-    },
-    {
-      tree_number: 1,
-      tree_state: treeStates.SAPLING,
-      HouseRegistrationId: houseRegistrations[10].dataValues.id,
-      TreeSpecyId: treeSpecies[0].dataValues.id
-    },
-    {
-      tree_number: 4,
-      tree_state: treeStates.RIPE,
-      HouseRegistrationId: houseRegistrations[11].dataValues.id,
-      TreeSpecyId: treeSpecies[2].dataValues.id
-    },
-    {
-      tree_number: 5,
-      tree_state: treeStates.UNRIPE,
-      HouseRegistrationId: houseRegistrations[12].dataValues.id,
-      TreeSpecyId: treeSpecies[1].dataValues.id
-    },
-    {
-      tree_number: 2,
-      tree_state: treeStates.SAPLING,
-      HouseRegistrationId: houseRegistrations[13].dataValues.id,
-      TreeSpecyId: treeSpecies[3].dataValues.id
-    },
-    {
-      tree_number: 3,
-      tree_state: treeStates.FRUITLESS,
-      HouseRegistrationId: houseRegistrations[14].dataValues.id,
-      TreeSpecyId: treeSpecies[5].dataValues.id
-    },
-    {
-      tree_number: 1,
-      tree_state: treeStates.RIPE,
-      HouseRegistrationId: houseRegistrations[15].dataValues.id,
-      TreeSpecyId: treeSpecies[4].dataValues.id
     },
   ]);
 
   const prospectus = await models.Prospectus.bulkCreate([
     {
       units_per_sample: 194,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[21].dataValues.id
+      treeSpeciesRegistrationId: treeSpeciesRegistrations[0].dataValues.id
     },
     {
       units_per_sample: 170,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[11].dataValues.id
+      treeSpeciesRegistrationId: treeSpeciesRegistrations[2].dataValues.id
     },
     {
       units_per_sample: 231,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[31].dataValues.id,
+      treeSpeciesRegistrationId: treeSpeciesRegistrations[8].dataValues.id,
     },
     {
       units_per_sample: 213,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[24].dataValues.id
-    },
-    {
-      units_per_sample: 178,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[4].dataValues.id,
-    },
-    {
-      units_per_sample: 238,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[16].dataValues.id
-    },
-    {
-      units_per_sample: 161,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[27].dataValues.id,
-    },
-    {
-      units_per_sample: 205,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[1].dataValues.id,
-    },
-    {
-      units_per_sample: 189,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[14].dataValues.id,
-    },
-    {
-      units_per_sample: 216,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[20].dataValues.id
-    },
-    {
-      units_per_sample: 174,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[17].dataValues.id
-    },
-    {
-      units_per_sample: 242,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[9].dataValues.id,
-    },
-    {
-      units_per_sample: 167,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[28].dataValues.id,
-    },
-    {
-      units_per_sample: 223,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[6].dataValues.id
-    },
-    {
-      units_per_sample: 203,
-      treeSpeciesRegistrationId: treeSpeciesRegistrations[3].dataValues.id
+      treeSpeciesRegistrationId: treeSpeciesRegistrations[11].dataValues.id
     },
   ]);
 

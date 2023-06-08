@@ -42,6 +42,11 @@ const houseRegistrationModel = (sequelize) => {
         },
       },
     },
+    // usuario responsable del registro de la casa
+    UserId: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
   }, {
     sequelize,
     paranoid: true,
