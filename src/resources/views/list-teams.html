@@ -1,0 +1,73 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <p>Listar equipos</p>
+    </section>
+    <hr>
+    <h1>Ver equipos</h1>
+    <section class="cards">
+        <% if (formattedTeams.length > 0) { %>
+            <% for (let i = 0; i < formattedTeams.length; i++) { %>
+                <a href="/teams/<%= formattedTeams[i].team %>">
+                    <div class="card-left-side">
+                        <p class="card-left-side-top">Equipo <%= formattedTeams[i].team %></p>
+                        <p class="card-left-side-bottom"><strong>Encargados:</strong></p>
+                        <% for (let j = 0; j < formattedTeams[i].users.length; j++) { %>
+                            <p user-id="<%= formattedTeams[i].users[j].id %>" class="card-left-side-bottom">
+                                - <%= formattedTeams[i].users[j].name %>
+                                <% if (formattedTeams[i].users[j].hasLicense) { %>
+                                con licencia
+                                <% } %>
+                            </p>
+                        <% } %>
+                        <p class="card-left-side-bottom"><strong>Vehículo:</strong> <%= formattedTeams[i].car.patent %></p>
+                        <p class="card-left-side-bottom">Capacidad para <%= formattedTeams[i].car.capacity %> personas</p>
+                        <p class="card-left-side-bottom"><strong>Manzanas:</strong> <%= formattedTeams[i].tasks %></p>
+                    </div>
+                </a>
+            <% } %>
+        <% } else { %>
+            <p>No hay equipos creados para hoy</p>
+        <% } %>
+    </section>
+    <button type="button" class="add-button" data-toggle="modal" data-target="#addModal"
+        aria-label="addButton"></button>
+</main>
+<div class="modal-backdrop" style="display: none;" id="modalBackdrop"></div>
+<div class="add-modal" style="display: none;" id="addModal" role="form" aria-labelledby="addModalLabel">
+    <div class="modal-items">
+        <div class="close-modal" data-dismiss="modal"></div>
+        <h1>Asignar trabajo</h1>
+        <!-- TODO: Hacer fetch de datos en teams.js -->
+        <form id="addPost">
+            <!-- Autos disponibles y con TeamId null -->
+            <select required class="half" id="carAdd">
+                <option value="">Vehículo</option>
+            </select>
+            <!-- Usuarios de la campaña con licencia -->
+            <select required class="half" id="driverAdd" disabled>
+                <option value="">Conductor</option>
+            </select>
+            <!-- Permitir añadir tantos como lo permita el auto -->
+            <select class="full" id="userAdd" disabled>
+                <option value="">Seleccionar encargado</option>
+            </select>
+            <!-- De entre los focos activos -->
+            <select class="full" id="focusAdd">
+                <option value="">Seleccionar foco</option>
+            </select>
+            <!-- Revisar que no esté asignada a ningún otro equipo -->
+            <!-- Se podría añadir un atributo a la manzana para marcarla como lista -->
+            <select required class="full" id="blockAdd1" disabled>
+                <option value="">Seleccionar manzana</option>
+            </select>
+            <hr>
+            <div class="bottom-crud">
+                <button class="button-40">Cancelar</button>
+                <button type="submit" class="button-green-default button-60">Crear equipo</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="message" class="alert" role="alert"></div>
+<script src="/js/teams.js" type="module"></script>
