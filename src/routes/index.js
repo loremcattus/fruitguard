@@ -1,6 +1,5 @@
 import express from 'express';
 import passport from 'passport';
-import { getLogin, getRegister} from '../modules/controllers/loginController.js'
 import { getLogin, getRegister, resetPassword } from '../modules/controllers/loginController.js'
 import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign } from '../modules/controllers/campaignController.js';
