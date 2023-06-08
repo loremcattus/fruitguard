@@ -1,6 +1,33 @@
 import models from '../models/index.js';
 const { UserRegistration, User, Team, Car, Sequelize } = models;
 
+const clearTeams = async () => {
+  // Obtener el día actual
+  const today = new Date().toISOString().slice(0, 10);
+  const team = await Team.findOne({
+    attributes: ['createdAt']
+  });
+
+  if (!team) return;
+
+  // Extraer el día de creación del equipo
+  const teamCreatedDay = team.dataValues.createdAt.toISOString().slice(0, 10);
+
+  if (today !== teamCreatedDay) {
+    await UserRegistration.update({ TeamId: null }, {
+      where: {
+        TeamId: { [Sequelize.Op.not]: null }
+      }
+    });
+    await Car.update({ TeamId: null }, {
+      where: {
+        TeamId: { [Sequelize.Op.not]: null }
+      }
+    });
+    await Team.destroy({ truncate: true });
+  }
+}
+
 // Obtener todas las campañas
 export const getTeams = async (req, res) => {
   const fileHTML = 'list-teams';
@@ -8,8 +35,9 @@ export const getTeams = async (req, res) => {
   const formattedTeams = [];
 
   try {
-    // TODO: Revisar si el primer equipo tiene fecha de creación de un día distinto
-    // , en caso de ser así, limpiar todo (userRegister y autos)
+    // TODO: Preguntar que opinan, porque tal vez sea mejor dejarlo creado, en caso de quitarlo, limpiar createdAt del modelo
+    clearTeams();
+
     const supervisorId = 7; // 7 u 8
 
     const supervisorRegistration = await UserRegistration.findOne({
