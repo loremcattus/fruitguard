@@ -51,7 +51,6 @@ const models = {
   Sequelize,
   sequelize,
   User: userModel(sequelize),
-  Attendance: attendanceModel(sequelize),
   Campaign: campaignModel(sequelize),
   UserRegistration: userRegistrationModel(sequelize),
   Car: carModel(sequelize),
@@ -71,12 +70,12 @@ const models = {
 // Usuario N:M Campaña (a través de Registro de Usuario)
 models.Campaign.belongsToMany(models.User, { through: models.UserRegistration }, { foreignKey: 'CampaignId' }); // Una campaña está compuesta por muchos usuarios
 models.User.belongsToMany(models.Campaign, { through: models.UserRegistration }, { foreignKey: 'UserId' }); // Un usuario participa en muchas campañas
-// Campaña 1:N Equipo
-models.Campaign.hasMany(models.Team, { foreignKey: 'CampaignId' }); // Una campaña está compuesta por muchos equipos
-models.Team.belongsTo(models.Campaign, { foreignKey: 'CampaignId' }); // Un equipo pertenece a una campaña
-// Auto 1:N Equipo
-models.Car.hasMany(models.Team, { foreignKey: 'CarId' }); // Un auto puede ser utilizado por un equipo
-models.Team.belongsTo(models.Car, { foreignKey: 'CarId' }); // Un equipo utiliza un auto
+// Equipo 1:N Registros de Usuario
+models.Team.hasMany(models.UserRegistration, { foreignKey: 'TeamId' }); // Un equipo esta compuesto por muchos registros de usuario
+models.UserRegistration.belongsTo(models.Team, { foreignKey: 'TeamId' }); // Una registro de usuario puede pertenecer a un equipo
+// Equipo 1:1 Auto 
+models.Team.hasOne(models.Car, { foreignKey: 'TeamId' }); // Un equipo utiliza un auto
+models.Car.belongsTo(models.Team, { foreignKey: 'TeamId' }); // Un auto puede ser utilizado por un equipo
 // Campaña 1:N Foco
 models.Campaign.hasMany(models.Focus, { foreignKey: 'CampaignId' }); // Una campaña está compuesta por uno o varios focos
 models.Focus.belongsTo(models.Campaign, { foreignKey: 'CampaignId' }); // Un foco pertenece a una campaña
