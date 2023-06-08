@@ -1,17 +1,47 @@
 import { showMessage } from './helpers.js';
 
-// Obtener el host y el puerto del servidor actual
-const host = window.location.hostname;
-const port = window.location.port;
-
 // Construir la URL base
-const baseUrl = `http://${host}:${port}`;
+const baseUrl = `${location.protocol}//${location.host}`;
 
 // INICIAR SESIÓN
 
 // Obtener referencias a los elementos del formulario
 const formAdd = document.getElementById('loginPost');
-const regionsSelectAdd = document.getElementById('regionAdd');
-const communesSelectAdd = document.getElementById('communeAdd');
-const nameInputAdd = document.getElementById('nameAdd');
-const fileInputAdd = document.getElementById('file-upload');
+const emailInput = document.getElementById('email');
+
+// RECUPERAR CONTRASEÑA
+
+// Función para validar el formato del correo electrónico
+function validateEmail(email) {
+  var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
+const resetPassword = document.getElementById('reset-password');
+resetPassword.addEventListener('click', () => {
+  const email = emailInput.value.trim();
+  if (!email) return showMessage('Por favor, ingresa tu correo', 'error');
+  if (!validateEmail(email)) return showMessage('Correo inválido', 'error');
+
+  const url = `${baseUrl}/api/users/reset-password`;
+  fetch(url, {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(response => {
+      if (response.ok) {
+        showMessage('Se ha enviado un mensaje a tu correo');
+      } else if (response.status === 404) {
+        throw new Error('El correo ingresado no está registrado');
+      } else {
+        throw new Error('Error al recuperar la contraseña');
+      }
+    })
+    .catch(error => {
+      showMessage(error.message, 'error');
+    });
+
+});

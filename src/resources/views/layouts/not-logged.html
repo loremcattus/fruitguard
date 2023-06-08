@@ -8,23 +8,18 @@
 
   <title><%= (title) ? title : 'Servicio Agrícola y Ganadero' %> | SAG</title>
 
-  <link rel="stylesheet" href="/css/main.css" media="screen">
+  <link rel="stylesheet" href="/css/not-logged.css" media="screen">
   <link rel="stylesheet" href="/css/header.css" media="screen">
-  <% if (typeof single !== 'undefined' && single) { %>
-    <link rel="stylesheet" href="/css/single.css" media="screen">
-  <% } %>
 
 </head>
 
 <body>
   
   <header>
-    <%- include('../partials/nav.html') %>
+    <%- include('../partials/header.html') %>
   </header>
 
   <%- include('../' + fileHTML + '.html' ) %>
-
-  <script src="/js/main.js" type="module"></script>
 
 </body>
 
