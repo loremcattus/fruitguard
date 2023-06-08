@@ -9,3 +9,4 @@ export const getRegister = async (req, res) => {
     const title = 'Registrarse';
     return res.render('index.html', { fileHTML, title });
 }
+

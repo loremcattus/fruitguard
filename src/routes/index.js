@@ -1,4 +1,5 @@
 import express from 'express';
+import passport from 'passport';
 import { getLogin, getRegister} from '../modules/controllers/loginController.js'
 import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign } from '../modules/controllers/campaignController.js';
@@ -7,12 +8,24 @@ import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controll
 import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
 import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration,updateTreeRegistration } from '../modules/controllers/treeSpeciesRegistrationController.js'
 
-
 export const router = express.Router();
 
 // Iniciar Sesión
 router.get('/login', getLogin);
 router.get('/register', getRegister);
+router.post('/signin', (req, res, next) => {
+    passport.authenticate('local.signin', {
+        successRedirect: '/',
+        failureRedirect: '/login',
+        failureFlash: true
+    })(req, res, next);
+});
+router.post('/register', passport.authenticate('local.registrarse', {
+    successRedirect: '/',
+    failureRedirect: '/login',
+    failureFlash: true
+}));
+
 
 // Usuarios
 router.get('/api/users', getUsers);

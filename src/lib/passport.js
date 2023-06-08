@@ -4,87 +4,65 @@ const LocalStrategy = require('passport-local').Strategy;
 const connection = require('../database/database.js');
 const helpers = require('../lib/helpers');
 
-//validar usuarios y contrasenna
+import User from '../modules/models/user.js';
+
 passport.use('local.signin', new LocalStrategy({
-    usernameField: 'correo',
-    passwordField: 'contra',
+    usernameField: 'email',
+    passwordField: 'password',
     passReqToCallback: true
-}, async (req, correo, contra, done) => {
-    let rows;
-    rows = await connection.query('SELECT * FROM usuario WHERE usuario_correo = ?', [correo]);
-    console.log(rows.length);
-    if (rows.length > 0){
-        const user = rows[0];
-        const validPassword = await helpers.matchPassword(contra, user.usuario_contra);
-        if (validPassword) {
-            done(null, user, req.flash('success','Bienvenido' + user.usuario_correo));
+}, async (req, email, password, done) => {
+    try {
+        const user = await User.findOne({ 
+          where: { email: email } 
+        });
+        console.log(user);
+        // Traer contraseña de base de datos para comparar en matchPassword
+        if (user) {
+            const validPassword = await helpers.matchPassword(password, user.password);
+            if (validPassword) {
+                //Modificar mensaje
+                done(null, user, req.flash('success', 'Bienvenido ' + user.email));
+            } else {
+                done(null, false, req.flash('message', 'Contraseña incorrecta'));
+            }
         } else {
-            done(null, false, req.flash('message','Contraseña Incorrecta'))
+            done(null, false, req.flash('message', 'Este usuario no existe'));
         }
-    } else {
-        return done(null, false, req.flash('message','Este usuario no existe'));
+    } catch (error) {
+        done(error);
     }
 }));
 
+
 //recibiendo los datos del Sign Up datos para registrarse EN LA BBDD
 passport.use('local.registrarse', new LocalStrategy({
-    usernameField: 'correo',
-    passwordField: 'contra',
+    usernameField: 'email',
+    passwordField: 'password',
     passReqToCallback: true
-  }, async (req, correo, contra,  done) => {
-      console.log('RUTA CORRECTA PARA REGISTRARSE');
-      console.log(req.body);
-      console.log(correo);
-      console.log(contra);
-      console.log(done);
-      const { nombre, apellido, rut, sexo, fechaNac, telef, } = req.body;
-      const newUser = {
-        usuario_correo: correo,
-        usuario_contra:  contra,
-        usuario_nombre:  nombre,
-        usuario_apellido:  apellido,
-        usuario_rut:  rut,
-        usuario_sexo:  sexo,
-        usuario_telef:  telef,
-        usuario_fechaNac:  fechaNac,
-        usuario_rol : 'Paciente',
-      };
-      console.log(newUser);
-      newUser.usuario_contra = await helpers.encryptPassword(contra);
-      const result = await connection.query('INSERT INTO usuario SET ?', [newUser]);
-      newUser.id_usuario = result.insertId;
+  }, async (req, email, password, done) => {
+    console.log('RUTA CORRECTA PARA REGISTRARSE');
+    console.log(req.body);
+    console.log(email);
+    console.log(password);
+    console.log(done);
+    const { name, run, dvRun, hasLicense, role } = req.body;
+    const newUser = {
+      name: name,
+      run: run,
+      dvRun: dvRun,
+      hasLicense: hasLicense,
+      role: role,
+      usuario_password: await helpers.encryptPassword(password)
+    };
+    console.log(newUser);
+    try {
+      const createdUser = await Usuario.create(newUser);
+      newUser.id_usuario = createdUser.id_usuario;
       return done(null, newUser);
+    } catch (error) {
+      return done(error);
+    }
   }));
-
-//recibiendo los datos del Sign Up datos para registrarse EN LA BBDD
-passport.use('admin.registrarse', new LocalStrategy({
-    usernameField: 'correo',
-    passwordField: 'contra',
-    passReqToCallback: true
-  }, async (req, correo, contra) => {
-      console.log('RUTA CORRECTA PARA REGISTRARSE');
-      console.log(req.body);
-      console.log(correo);
-      console.log(contra);
-      const { nombre, apellido, rut, sexo, fechaNac, telef, rol} = req.body;
-      const newUser = {
-        usuario_correo: correo,
-        usuario_contra:  contra,
-        usuario_nombre:  nombre,
-        usuario_apellido:  apellido,
-        usuario_rut:  rut,
-        usuario_sexo:  sexo,
-        usuario_telef:  telef,
-        usuario_fechaNac:  fechaNac,
-        usuario_rol : rol,
-      };
-      console.log(newUser);
-      newUser.usuario_contra = await helpers.encryptPassword(contra);
-      const result = await connection.query('INSERT INTO usuario SET ?', [newUser]);
-      newUser.id_usuario = result.insertId;
-  }));
-
-
 
 passport.serializeUser((usuario, done) => {
   done(null, usuario.id_usuario);
