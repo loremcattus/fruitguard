@@ -10,7 +10,8 @@ const teamModel = (sequelize) => {
   }, {
     sequelize,
     modelName: 'Team',
-    timestamps: false,
+    timestamps: true,
+    updatedAt: false,
   });
 
   return Team;
