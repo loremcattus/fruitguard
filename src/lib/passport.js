@@ -1,9 +1,13 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
+import models from '../modules/models/index.js';
+import { roles } from '../helpers/enums.js';
+
+const { User } = models;
 
 import helpers from '../lib/helpers.js';
 
-import User from '../modules/models/user.js';
+
 
 const localStrategySignin = new LocalStrategy({
     usernameField: 'email',
@@ -34,46 +38,50 @@ const localStrategySignin = new LocalStrategy({
 
 
 //recibiendo los datos del Sign Up datos para registrarse EN LA BBDD
-const localStrategyRegister = new LocalStrategy({
+export const localStrategyRegister = new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true
   }, async (req, email, password, done) => {
-    console.log('RUTA CORRECTA PARA REGISTRARSE');
-    console.log(req.body);
-    console.log(email);
-    console.log(password);
-    console.log(done);
-    const { name, run, dvRun, hasLicense, role } = req.body;
+    console.log(req.body.run);
+    const { run, dvRun } = separarRun(req.body.run);
+    const { name } = req.body;
     const newUser = {
-      name: name,
-      run: run,
-      dvRun: dvRun,
-      hasLicense: hasLicense,
-      role: role,
-      usuario_password: await helpers.encryptPassword(password)
+      name,
+      run,
+      dvRun,
+      email,
+      password: await helpers.encryptPassword(password)
     };
-    console.log(newUser);
     try {
-      const createdUser = await Usuario.create(newUser);
-      newUser.id_usuario = createdUser.id_usuario;
+      console.log(newUser);
+      const createdUser = await User.create(newUser);
+      newUser.id = createdUser.dataValues.id;
       return done(null, newUser);
     } catch (error) {
       return done(error);
     }
   });
 
-// passport.serializeUser((usuario, done) => {
-//   done(null, usuario.id_usuario);
-// });
+passport.serializeUser((usuario, done) => {
+  done(null, usuario.id);
+});
 
-// passport.deserializeUser( async (id_usuario, done) => {
-//     const rows = await connection.query('SELECT * FROM usuario WHERE id_usuario = ?', [id_usuario]);
-//     done(null, rows[0]); 
-// });
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findOne({ where: id });
+    done(null, user);
+  } catch (error) {
+    done(error);
+  }
+});
+
+function separarRun(rutCompleto) {
+  const partes = rutCompleto.split('-');
+  const run = partes[0];
+  const dvRun = partes[1];
+  
+  return { run, dvRun };
+}
 
 // Exportar las estrategias como un objeto
-export const strategies = {
-  localSignin: localStrategySignin,
-  localRegister: localStrategyRegister
-};

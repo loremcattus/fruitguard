@@ -23,7 +23,7 @@ router.post('/signin', (req, res, next) => {
 
 // Registrarse
 router.get('/register', getRegister);
-router.post('/register', passport.authenticate('localStrategyRegister', {
+router.post('/register', passport.authenticate('local-register', {
     successRedirect: '/',
     failureRedirect: '/login',
     failureFlash: true

@@ -13,15 +13,15 @@ const baseUrl = `http://${host}:${port}`;
 const formAdd = document.getElementById('registerPost');
 const emailInputAdd = document.getElementById('email');
 const nameInputAdd = document.getElementById('name');
-const rutAdd = document.getElementById('rut');
+const runAdd = document.getElementById('run');
 const passwordInputAdd = document.getElementById('password');
 
 // Evento de envío del formulario
 formAdd.addEventListener('submit', async (event) => {
     event.preventDefault(); // Evitar el envío del formulario por defecto
-  
+    console.log(runAdd.value);
     // Validar los campos del formulario
-    if (!emailInputAdd.value || !nameInputAdd.value || !rutAdd.value || !passwordInputAdd.value) {
+    if (!emailInputAdd.value || !nameInputAdd.value || !runAdd.value || !passwordInputAdd.value) {
       showMessage('Por favor, complete todos los campos', 'error');
       return;
     }
@@ -30,14 +30,14 @@ formAdd.addEventListener('submit', async (event) => {
       // Obtener los valores de los campos del formulario
       const email = emailInputAdd.value;
       const name = nameInputAdd.value;
-      const rut = rutAdd.value;
+      const run = runAdd.value;
       const password = passwordInputAdd.value;
   
       // Crear el objeto con los valores del formulario
       const object = {
         email,
         name,
-        rut,
+        run,
         password
       };
   

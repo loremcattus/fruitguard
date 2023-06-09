@@ -40,7 +40,7 @@ createObserver('carAdd', '/cars', (data, element) => {
       const option = document.createElement('option');
       option.value = car.id;
       option.textContent = car.patent;
-      option.setAttribute('data-capacity', car.capacity);
+      option.setAttribute('capacity', car.capacity);
       element.appendChild(option);
     });
   }
@@ -65,12 +65,43 @@ document.getElementById('carAdd').addEventListener('change', (event) => {
           driverSelectAdd.appendChild(option);
         });
       })
-      .catch((error) => {
+      .catch(() => {
         couldBeDrivers = false;
         return showMessage('No hay conductores disponibles', 'error');
       });
   }
 });
+
+document.getElementById('carAdd').addEventListener('change', (event) => {
+  const selectedCarId = event.target.value;
+  const passengerContainer = document.getElementById('passengerContainer');
+
+  // Eliminar los selects de pasajero existentes
+  passengerContainer.innerHTML = '';
+
+  if (!selectedCarId) {
+    passengerContainer.style.display = 'none';
+    return;
+  }
+
+  const selectedCarCapacity = parseInt(event.target.options[event.target.selectedIndex].getAttribute('capacity'));
+
+  // Agregar selects de pasajero
+  for (let i = 0; i < selectedCarCapacity - 1; i++) {
+    const select = document.createElement('select');
+    select.classList.add('full');
+    select.disabled = true;
+
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = `Seleccionar pasajero ${i + 1}`;
+
+    select.appendChild(option);
+    passengerContainer.appendChild(select);
+  }
+});
+
+
 
 // TODO: Al seleccionar un conductor, debe habilitar inputs para pasajeros,
 // tantos como lo permita la capacidad del auto.

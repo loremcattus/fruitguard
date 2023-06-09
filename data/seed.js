@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { roles, areas, states, treeStates } from '../src/helpers/enums.js';
 
 export const seed = async (models) => {
@@ -454,6 +455,24 @@ export const seed = async (models) => {
       role: roles.PROSPECTOR
     },
   ]);
+
+  async function encryptPasswords() {
+    const promises = users.map(async (user) => {
+      const oldPassword = user.dataValues.password;
+      try {
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(oldPassword, salt);
+        await user.update({ password: hash });
+      } catch (err) {
+        console.error('Error al encriptar la contraseña:', err);
+      }
+    });
+  
+    await Promise.all(promises);
+    console.log('The passwords were encrypted');
+  }
+  
+  encryptPasswords();  
 
   const campaigns = await models.Campaign.bulkCreate([
     {

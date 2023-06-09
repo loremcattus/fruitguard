@@ -37,7 +37,7 @@ export const getTeams = async (req, res) => {
   try {
     clearTeams();
 
-    const supervisorId = 7; // 7 u 8
+    const supervisorId = 8; // 7 u 8
 
     const supervisorRegistration = await UserRegistration.findOne({
       attributes: ['id', 'CampaignId'],
@@ -158,7 +158,7 @@ export const getCars = async (req, res) => {
 // Listar conductores disponibles
 export const getDrivers = async (req, res) => {
   try {
-    const supervisorId = 7; // 7 u 8
+    const supervisorId = 8; // 7 u 8
 
     const supervisorRegistration = await UserRegistration.findOne({
       attributes: ['id', 'CampaignId'],
