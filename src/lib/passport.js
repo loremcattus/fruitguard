@@ -1,12 +1,11 @@
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+import passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local';
 
-const connection = require('../database/database.js');
-const helpers = require('../lib/helpers');
+import helpers from '../lib/helpers.js';
 
 import User from '../modules/models/user.js';
 
-passport.use('local.signin', new LocalStrategy({
+const localStrategySignin = new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true
@@ -31,11 +30,11 @@ passport.use('local.signin', new LocalStrategy({
     } catch (error) {
         done(error);
     }
-}));
+});
 
 
 //recibiendo los datos del Sign Up datos para registrarse EN LA BBDD
-passport.use('local.registrarse', new LocalStrategy({
+const localStrategyRegister = new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true
@@ -62,13 +61,19 @@ passport.use('local.registrarse', new LocalStrategy({
     } catch (error) {
       return done(error);
     }
-  }));
+  });
 
-passport.serializeUser((usuario, done) => {
-  done(null, usuario.id_usuario);
-});
+// passport.serializeUser((usuario, done) => {
+//   done(null, usuario.id_usuario);
+// });
 
-passport.deserializeUser( async (id_usuario, done) => {
-    const rows = await connection.query('SELECT * FROM usuario WHERE id_usuario = ?', [id_usuario]);
-    done(null, rows[0]); 
-});
+// passport.deserializeUser( async (id_usuario, done) => {
+//     const rows = await connection.query('SELECT * FROM usuario WHERE id_usuario = ?', [id_usuario]);
+//     done(null, rows[0]); 
+// });
+
+// Exportar las estrategias como un objeto
+export const strategies = {
+  localSignin: localStrategySignin,
+  localRegister: localStrategyRegister
+};

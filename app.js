@@ -1,10 +1,13 @@
 import express from 'express';
 import path from 'path';
+import passport from 'passport';
 import morgan from 'morgan';
 import { renderFile } from 'ejs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { router } from './src/routes/index.js';
+import session from 'express-session';
+import { strategies } from './src/lib/passport.js';
 
 // Cargar variables de entorno desde el archivo .env
 dotenv.config();
@@ -28,9 +31,28 @@ app.set('views', VIEWS_PATH);
 
 // Establecer el motor de HTML como EJS
 app.engine('html', renderFile);
+app.set('view engine', 'ejs');
 
 // Configurar el middleware morgan para registrar las solicitudes en la consola
+app.use(session({
+  secret: 'mB2zXp$5s!8jKqCwE1sHd4a6#9l@7Fg3',
+  resave: false,
+  saveUninitialized: false,
+}));
+
+// Configurar el middleware de passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Configurar las estrategias
+Object.keys(strategies).forEach((strategyName) => {
+  passport.use(strategyName, strategies[strategyName]);
+});
+
 app.use(morgan('dev'));
+app.use(express.urlencoded({extended: false}));//aceptare formatos de string
+app.use(express.json());//se usaran json entre cliente y servidor
+
 
 // Configurar el middleware express.urlencoded para manejar datos de formularios
 app.use(express.urlencoded({ extended: false }));

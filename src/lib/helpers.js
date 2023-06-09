@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 const helpers = {};
 
 helpers.encryptPassword = async (password) => {
@@ -16,4 +16,4 @@ helpers.matchPassword = async (password, savedPassword) => {
     }
 };
 
-module.exports = helpers;
+export default helpers;

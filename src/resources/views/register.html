@@ -1,11 +1,11 @@
 <section class="not-logged-card">
     <h1 class="custom-section-title">Registrarse</h1>
-    <form onsubmit="verificarPasswords(); return false" action="/register" method="POST">
-        <input class="full" required type="email" name="correo" placeholder="Correo electrónico">
-        <input class="full" required type="text" name="nombre" placeholder="Nombre completo">
-        <input class="full" required type="text" name="rut" placeholder="RUT">
-        <input class="full" required id="password1" type="password" name="contra" placeholder="Contraseña">
-        <input class="full" required id="password2" type="password" placeholder="Confirmar contraseña">
+    <form id="registerPost">
+        <input class="full" required type="email" id="email" placeholder="Correo electrónico">
+        <input class="full" required type="text" id="name" placeholder="Nombre completo">
+        <input class="full" required type="text" id="rut" placeholder="RUT">
+        <input class="full" required type="password" id="password" placeholder="Contraseña">
+        <input class="full" required type="password" placeholder="Confirmar contraseña">
         <button type="submit" class="button-green-default">Registrarse</button>
     </form>
     <p>¿Ya tienes una cuenta? <a href="/">Iniciar sesión</a></p>

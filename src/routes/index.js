@@ -12,7 +12,6 @@ export const router = express.Router();
 
 // Iniciar Sesión
 router.get('/', getLogin);
-router.get('/register', getRegister);
 router.post('/signin', (req, res, next) => {
     passport.authenticate('local.signin', {
         successRedirect: '/',
@@ -20,7 +19,10 @@ router.post('/signin', (req, res, next) => {
         failureFlash: true
     })(req, res, next);
 });
-router.post('/register', passport.authenticate('local.registrarse', {
+
+// Registrarse
+router.get('/register', getRegister);
+router.post('/register', passport.authenticate('localStrategyRegister', {
     successRedirect: '/',
     failureRedirect: '/login',
     failureFlash: true
