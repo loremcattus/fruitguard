@@ -49,14 +49,15 @@
                 <input placeholder="<%= formattedTreeRegistration.tree_number %>" id="numberTrees" type="text" style="display: none;">
             </div>
         </div>
-        <!--  -->
+        <!-- 
         <div class="item-post">
             <p class="key-post">Unidades por muestra</p>
             <div class="value-post">
-                <p><%= formattedTreeRegistration.units_per_sample %></p>
-                <input placeholder="<%= formattedTreeRegistration.units_per_sample %>" id="units_per_sample" type="text" style="display: none;">
+                <p><%=// formattedTreeRegistration.units_per_sample %></p>
+                <input placeholder="<%= //formattedTreeRegistration.units_per_sample %>" id="units_per_sample" type="text" style="display: none;">
             </div>
         </div>
+    -->
         <hr>
         <button id="edit" class="button-green-default button-60">Editar</button>
         <div class="buttons-edit" style="display: none;">
@@ -65,9 +66,40 @@
         </div>
     </form>
     <hr>
-    <div class="buttons-options">
-        <a href="#" class="button-green-default option-button">VER PROSPECTO</a>
-    </div>
+    <% if (formattedTreeRegistration.tree_state === 'fruta madura' || formattedTreeRegistration.tree_state === 'fruta verde') { %>
+        <div class="buttons-options" data-target="#addModal">
+            <a class="button-green-default option-button">VER PROSPECTO</a>
+        </div>
+    <% } %>
 </main>
+<div class="modal-backdrop" style="display: none;" id="modalBackdrop"></div>
+<div class="add-modal" style="display: none;" id="addModal" role="form" aria-labelledby="addModalLabel">
+    <div class="modal-items">
+        <div class="close-modal" data-dismiss="modal"></div>
+        <h1>Prospecto</h1>
+        <form id="addPost">
+            <div class="item-post">
+                <p class="key-post">ID</p>
+                <div class="value-post">
+                    <% if (prospectusId) { %>
+                    <%= prospectusId %> 
+                    <% } else { %>
+                    <p> No está creado el Prospecto</p>
+                    <% } %>
+                </div>
+            </div>
+            <div class="input-number">
+                <label for="units_per_sample">Unidades por muestra</label>
+                <input value="<%= units_per_sample %>" type="number" id="units_per_sample" min="1">
+            </div>
+            <hr>
+            <div class="buttons-options">
+                <button type="submit" class="button-green-default option-button">ACEPTAR</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="message" class="alert" role="alert"></div>
 <script src="/js/treeRegistration.js" type="module"></script>
+<script src="/js/prospectus.js" type="module"></script>

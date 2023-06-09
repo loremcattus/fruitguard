@@ -105,8 +105,11 @@ export const getTreeRegistration = async(req, res) =>{
     // console.log({formattedTreeSpecies});
     // console.log(req.params);
     // Obtener todas las propiedades del treeRegistrations
-    const prospectus = await Prospectus.findByPk(req.params.TreeSpeciesRegistrationId,{
-      attributes: ['id','units_per_sample','TreeSpeciesRegistrationId']
+    const prospectus = await Prospectus.findOne({
+      attributes: ['id','units_per_sample','TreeSpeciesRegistrationId'],
+      where:{
+        treeSpeciesRegistrationId: req.params.TreeSpeciesRegistrationId
+      }
     });
     const treeRegistration = await TreeSpeciesRegistration.findByPk(req.params.TreeSpeciesRegistrationId,{
       attributes: ['id','tree_number','tree_state','HouseRegistrationId', 'TreeSpecyId']
@@ -115,29 +118,72 @@ export const getTreeRegistration = async(req, res) =>{
       attributes: ['id','species']
     })
 
-    
+    console.log(prospectus);
+    let prospectusId = 0;
+    let units_per_sample = 0;
+
+    if (prospectus){
+      prospectusId =  prospectus.dataValues.id;
+      units_per_sample = prospectus.dataValues.units_per_sample;
+    }
 
     const tree ={
-      idProspectus: prospectus.dataValues.id,
       idTreeRegist: treeRegistration.dataValues.id,
-      idTreeSpecy: treeSpecy.dataValues.id,
-      units_per_sample: prospectus.dataValues.units_per_sample,
-      tree_number: treeRegistration.dataValues.tree_number,
+      // units_per_sample: prospectus.dataValues.units_per_sample,
       tree_state: treeRegistration.dataValues.tree_state,
-      HouseRegistrationId: treeRegistration.dataValues.HouseRegistrationId,
+      tree_number: treeRegistration.dataValues.tree_number,
       species: treeSpecy.dataValues.species,
+
     }
     console.log(tree);
 
     if (tree) {
       const { ...data } = tree;
-      return res.render('index.html', { formattedTreeRegistration: data, fileHTML, title, single, treeStates, breadcrumbs, formattedTreeSpecies });
+      return res.render('index.html', { formattedTreeRegistration: data, fileHTML, title, single, treeStates, breadcrumbs, formattedTreeSpecies, prospectusId, units_per_sample});
     } else {
       return res.render('error.html', { error: 404 });
     }
   } catch (error) {
     console.log(error);
     return res.render('error.html', { error: 500 });
+  }
+};
+
+//////////////ADD PROSPECTUS////////////////////////////////////////////////////////////////////////
+export const addProspectus = async (req,res)=>{
+  try{
+    //calida que vengan datos en el cuerpo 
+    if(Object.keys(req.body).length === 0 ){
+      return res.status(400).json({ error: 'El cuerpo de la solicitud esta vacio'});
+    }
+    const  units_per_sample  = parseInt(req.body.units_per_sample);
+    const treeSpeciesRegistrationId = parseInt(req.params.TreeSpeciesRegistrationId, 10);
+    
+    console.log('REQUEST BODY',typeof units_per_sample , units_per_sample);
+    console.log('REQUEST PARAMS',typeof  req.params.TreeSpeciesRegistrationId ,req.params.TreeSpeciesRegistrationId);
+
+    const object = { 
+      units_per_sample,
+      treeSpeciesRegistrationId
+    }
+
+    // Filtrar y validar el cuerpo de la solicitud
+    const validatedObject = await validateRequestBody(object, Prospectus);
+
+    // console.log( validatedObject );
+
+    // Comprobar objetos de la validacion
+    console.log(validatedObject);
+    if(validatedObject.error){
+      return res.status(400).json(validatedObject);
+    }
+
+    // Crear un nuevo prospecto em la BBDD y volverla como respuesta
+    const prospectus  = await Prospectus.create(validatedObject);
+    return res.status(201).json(prospectus.toJSON());
+  }catch( error ){
+    console.error('Error al insertar un prospecto', error );
+    return res.status(500).json({error: 'Ocurrió un error en el servidor'});
   }
 };
 

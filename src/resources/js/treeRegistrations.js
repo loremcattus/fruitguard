@@ -66,7 +66,7 @@ formAdd.addEventListener('submit', async (event) => {
       if (treeContainer.firstElementChild.tagName === 'P') {
         treeContainer.innerHTML = '';
       }
-
+      console.log('DATAZO',data);
       // Crear un nuevo elemento de campaña con los datos recibidos
       const newTreeElement = document.createElement('a');
       newTreeElement.href = `/houses/${data.houseRegistrationId}`;
@@ -77,6 +77,7 @@ formAdd.addEventListener('submit', async (event) => {
 			</div>
       `);
 
+        
       // Agregar el nuevo elemento de campaña al contenedor existente
       treeContainer.prepend(newTreeElement);
 
