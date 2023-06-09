@@ -1,5 +1,5 @@
 import models from '../models/index.js';
-const { UserRegistration, User, Team, Car, Sequelize } = models;
+const { UserRegistration, User, Team, Car, Campaign, Sequelize } = models;
 
 const clearTeams = async () => {
   // Obtener el día actual
@@ -35,7 +35,6 @@ export const getTeams = async (req, res) => {
   const formattedTeams = [];
 
   try {
-    // TODO: Preguntar que opinan, porque tal vez sea mejor dejarlo creado, en caso de quitarlo, limpiar createdAt del modelo
     clearTeams();
 
     const supervisorId = 7; // 7 u 8
@@ -123,9 +122,74 @@ export const getTeams = async (req, res) => {
       }
     });
 
-    console.log(formattedTeams[0]);
-
     return res.render('index.html', { formattedTeams, fileHTML, title });
+  } catch (error) {
+    console.error('Error al obtener equipos: ', error);
+    return res.sendStatus(500);
+  }
+};
+
+// Listar autos disponibles
+export const getCars = async (req, res) => {
+  try {
+    const cars = await Car.findAll({
+      where: {
+        available: true,
+        TeamId: null
+      }
+    });
+    
+    if(!cars.length > 0) return res.sendStatus(404);
+
+    const formattedCars = [];
+    for (let i = 0; i < cars.length; i++) {
+      const { id, patent, capacity } = cars[i].dataValues;
+      formattedCars.push({ id, patent, capacity });
+    };
+
+
+    return res.status(200).json(formattedCars);
+  } catch (error) {
+    console.error('Error al obtener equipos: ', error);
+    return res.sendStatus(500);
+  }
+};
+
+// Listar conductores disponibles
+export const getDrivers = async (req, res) => {
+  try {
+    const supervisorId = 7; // 7 u 8
+
+    const supervisorRegistration = await UserRegistration.findOne({
+      attributes: ['id', 'CampaignId'],
+      where: { UserId: supervisorId }
+    });
+
+    const CampaignId = supervisorRegistration.dataValues.CampaignId;
+
+    const campaign = await Campaign.findByPk(CampaignId, { attributes: ['id'] });
+
+    const drivers = await campaign.getUsers({
+      where: {
+        hasLicense: true
+      }
+    });
+    
+    // No hay conductores en la campaña
+    if(!drivers.length > 0) return res.sendStatus(404);
+
+    const formattedDrivers = [];
+    for (let i = 0; i < drivers.length; i++) {
+      if (!drivers[i].UserRegistration.dataValues.TeamId) {
+        const { name } = drivers[i].dataValues;
+        const userRegistrationId = drivers[i].UserRegistration.dataValues.id;
+        formattedDrivers.push({ userRegistrationId, name });
+      }
+    };
+    // No hay conductores disponibles en la campaña
+    if(!formattedDrivers.length > 0) return res.sendStatus(404);
+
+    return res.status(200).json(formattedDrivers);
   } catch (error) {
     console.error('Error al obtener equipos: ', error);
     return res.sendStatus(500);

@@ -1,13 +1,12 @@
 import express from 'express';
 import { getLogin, getRegister, resetPassword } from '../modules/controllers/loginController.js'
-import { getTeams } from '../modules/controllers/teamController.js';
+import { getTeams, getCars, getDrivers } from '../modules/controllers/teamController.js';
 import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign } from '../modules/controllers/campaignController.js';
 import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockRegistrationController.js';
 import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
 import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration,updateTreeRegistration } from '../modules/controllers/treeSpeciesRegistrationController.js'
-
 
 export const router = express.Router();
 
@@ -35,6 +34,8 @@ router.get('/api/campaigns/:CampaignId/users/not-in', getNonCampaignUsers);
 router.post('/api/campaigns/:CampaignId/users', addUsersToCampaign);
 // Teams
 router.get('/teams', getTeams);
+router.get('/cars', getCars);
+router.get('/drivers', getDrivers);
 
 // Focos 
 router.get('/campaigns/:CampaignId/focuses', getFocuses);

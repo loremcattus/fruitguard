@@ -22,7 +22,7 @@
                         <% } %>
                         <p class="card-left-side-bottom"><strong>Vehículo:</strong> <%= formattedTeams[i].car.patent %></p>
                         <p class="card-left-side-bottom">Capacidad para <%= formattedTeams[i].car.capacity %> personas</p>
-                        <p class="card-left-side-bottom"><strong>Manzanas:</strong> <%= formattedTeams[i].tasks %></p>
+                        <p class="card-left-side-bottom"><strong>N° Manzanas:</strong> <%= formattedTeams[i].tasks %></p>
                     </div>
                 </a>
             <% } %>
@@ -48,17 +48,17 @@
             <select required class="half" id="driverAdd" disabled>
                 <option value="">Conductor</option>
             </select>
-            <!-- Permitir añadir tantos como lo permita el auto -->
-            <select class="full" id="userAdd" disabled>
-                <option value="">Seleccionar encargado</option>
-            </select>
+            <!-- Añadir tantos inputs como pasajeros permita el auto -1 (por el conductor) -->
+            <!-- <select class="full" id="userAdd" disabled>
+                <option value="">Seleccionar pasajero</option>
+            </select> -->
             <!-- De entre los focos activos -->
-            <select class="full" id="focusAdd">
+            <select class="full" id="focusAdd" style="display: none;">
                 <option value="">Seleccionar foco</option>
             </select>
             <!-- Revisar que no esté asignada a ningún otro equipo -->
             <!-- Se podría añadir un atributo a la manzana para marcarla como lista -->
-            <select required class="full" id="blockAdd1" disabled>
+            <select required class="full" id="blockAdd1" style="display: none;" disabled>
                 <option value="">Seleccionar manzana</option>
             </select>
             <hr>
