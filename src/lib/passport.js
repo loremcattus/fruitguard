@@ -9,7 +9,7 @@ import helpers from '../lib/helpers.js';
 
 
 
-const localStrategySignin = new LocalStrategy({
+export const localStrategyLogin = new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true
@@ -18,18 +18,19 @@ const localStrategySignin = new LocalStrategy({
         const user = await User.findOne({ 
           where: { email: email } 
         });
-        console.log(user);
         // Traer contraseña de base de datos para comparar en matchPassword
         if (user) {
-            const validPassword = await helpers.matchPassword(password, user.password);
+            const validPassword = await helpers.matchPassword(password, user.dataValues.password);
             if (validPassword) {
                 //Modificar mensaje
-                done(null, user, req.flash('success', 'Bienvenido ' + user.email));
+                console.log("Cotraseña correcta");
+                done(null, user);
             } else {
-                done(null, false, req.flash('message', 'Contraseña incorrecta'));
+              console.log("Cotraseña incorrecta");
+                done(null, false);
             }
         } else {
-            done(null, false, req.flash('message', 'Este usuario no existe'));
+            done(null, false);
         }
     } catch (error) {
         done(error);
@@ -43,7 +44,6 @@ export const localStrategyRegister = new LocalStrategy({
     passwordField: 'password',
     passReqToCallback: true
   }, async (req, email, password, done) => {
-    console.log(req.body.run);
     const { run, dvRun } = separarRun(req.body.run);
     const { name } = req.body;
     const newUser = {
@@ -54,7 +54,6 @@ export const localStrategyRegister = new LocalStrategy({
       password: await helpers.encryptPassword(password)
     };
     try {
-      console.log(newUser);
       const createdUser = await User.create(newUser);
       newUser.id = createdUser.dataValues.id;
       return done(null, newUser);

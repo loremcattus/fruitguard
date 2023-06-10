@@ -19,7 +19,6 @@ const passwordInputAdd = document.getElementById('password');
 // Evento de envío del formulario
 formAdd.addEventListener('submit', async (event) => {
     event.preventDefault(); // Evitar el envío del formulario por defecto
-    console.log(runAdd.value);
     // Validar los campos del formulario
     if (!emailInputAdd.value || !nameInputAdd.value || !runAdd.value || !passwordInputAdd.value) {
       showMessage('Por favor, complete todos los campos', 'error');
@@ -61,11 +60,10 @@ formAdd.addEventListener('submit', async (event) => {
           'Content-Type': 'application/json'
         }
       });
-  
-      if (response.status === 201) {
+
+      if (response.status === 200) {
         // Procesar la respuesta del servidor
-        const data = await response.json();
-        showMessage(`Cuenta creada correctamente`);
+        return showMessage(`Cuenta creada correctamente`);
   
       } else {
         throw new Error('Error al enviar el formulario');

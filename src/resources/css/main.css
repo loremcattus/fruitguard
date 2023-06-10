@@ -150,6 +150,13 @@ input:disabled, select:disabled {
 }
 
 
+.home-options {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
 .bottom-crud {
   display: flex;
   width: 100%;

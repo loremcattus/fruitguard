@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { router } from './src/routes/index.js';
 import session from 'express-session';
-import { localStrategyRegister } from './src/lib/passport.js';
+import { localStrategyRegister, localStrategyLogin } from './src/lib/passport.js';
 
 // Cargar variables de entorno desde el archivo .env
 dotenv.config();
@@ -45,7 +45,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Configurar la estrategia local de Passport
-passport.use('local-register', localStrategyRegister);
+passport.use('localStrategyRegister', localStrategyRegister);
+passport.use('localStrategyLogin', localStrategyLogin);
 
 app.use(morgan('dev'));
 app.use(express.urlencoded({extended: false}));//aceptare formatos de string

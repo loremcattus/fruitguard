@@ -39,3 +39,9 @@ export const resetPassword = async (req, res) => {
     return res.sendStatus(500);
   }
 }
+
+export const getHome = async (req, res) => {
+  const fileHTML = 'home';
+  const title = 'Inicio';
+  return res.render('index.html', { fileHTML, title });
+};

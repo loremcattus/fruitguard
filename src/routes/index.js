@@ -1,38 +1,37 @@
 import express from 'express';
 import passport from 'passport';
-import { getLogin, getRegister, resetPassword } from '../modules/controllers/loginController.js'
-import { getTeams, getCars, getDrivers } from '../modules/controllers/teamController.js';
+import { getLogin, getRegister, resetPassword, getHome } from '../modules/controllers/loginController.js'
 import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign } from '../modules/controllers/campaignController.js';
 import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockRegistrationController.js';
 import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
-import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration,updateTreeRegistration, addProspectus } from '../modules/controllers/treeSpeciesRegistrationController.js'
-import { getAccount, updatedAccount } from '../modules/controllers/accountController.js';
+import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration,updateTreeRegistration } from '../modules/controllers/treeSpeciesRegistrationController.js'
 
 export const router = express.Router();
 
 // Iniciar Sesión
 router.get('/', getLogin);
-router.post('/signin', (req, res, next) => {
-    passport.authenticate('local.signin', {
-        successRedirect: '/',
-        failureRedirect: '/login',
-        failureFlash: true
-    })(req, res, next);
+router.get('/home', getHome);
+router.post('/login', passport.authenticate('localStrategyLogin', {
+    successRedirect: '/home',
+    failureRedirect: '/',
+}));
+router.get('/logout', function(req, res, next) {
+    req.logout(function(err) {
+      if (err) { return next(err); }
+      res.redirect('/');
+    });
 });
+
 
 // Registrarse
 router.get('/register', getRegister);
-router.post('/register', passport.authenticate('local-register', {
+router.post('/register', passport.authenticate('localStrategyRegister', {
     successRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash: true
+    failureRedirect: '/',
 }));
 
-// Cuenta
-router.get('/account/:userId',getAccount);
-router.patch('/api/account/:userId',updatedAccount );
 
 // Usuarios
 router.get('/api/users', getUsers);
@@ -52,10 +51,6 @@ router.patch('/api/campaigns/:CampaignId', updateCampaign);
 router.delete('/api/campaigns/:CampaignId/users/:UserRegistrationId', deleteUserFromCampaign);
 router.get('/api/campaigns/:CampaignId/users/not-in', getNonCampaignUsers);
 router.post('/api/campaigns/:CampaignId/users', addUsersToCampaign);
-// Teams
-router.get('/teams', getTeams);
-router.get('/cars', getCars);
-router.get('/drivers', getDrivers);
 
 // Focos 
 router.get('/campaigns/:CampaignId/focuses', getFocuses);
@@ -83,7 +78,3 @@ router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees/:TreeSpeciesRegistrationId', getTreeRegistration);
 router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees', addTreeSpeciesRegistration);
 router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees/:TreeSpeciesRegistrationId', updateTreeRegistration);
-
-// registro Prospecto 
-// add Prospecto desde la bista de árbol
-router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees/:TreeSpeciesRegistrationId',addProspectus );
