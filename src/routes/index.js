@@ -8,6 +8,7 @@ import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controlle
 import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
 import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration,updateTreeRegistration, addProspectus } from '../modules/controllers/treeSpeciesRegistrationController.js'
+import { getAccount, updatedAccount } from '../modules/controllers/accountController.js';
 
 export const router = express.Router();
 
@@ -29,6 +30,9 @@ router.post('/register', passport.authenticate('local-register', {
     failureFlash: true
 }));
 
+// Cuenta
+router.get('/account/:userId',getAccount);
+router.patch('/api/account/:userId',updatedAccount );
 
 // Usuarios
 router.get('/api/users', getUsers);

@@ -1,0 +1,70 @@
+<main>
+    <!-- 
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+    </section> -->
+    <hr>
+    <h1>Mi perfil</h1>
+    <form id="editPost" class="info-post">
+        <div class="item-post">
+            <p class="key-post">ID</p>
+            <div class="value-post">
+                <p><%= formattedUser.id %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Nombre:</p>
+            <div class="value-post">
+                <p><%= formattedUser.name %></p>
+                <input placeholder="<%= formattedUser.name %>" id="nameInput"  class="" type="text" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Rut:</p>
+            <div class="value-post">
+                <p><%= formattedUser.run %>-<%= formattedUser.dvRun %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Mail:</p>
+            <div class="value-post">
+                <p><%= formattedUser.email %></p>
+                <input placeholder="<%= formattedUser.email %>" id="emailInput" class="" type="text" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post"> Licencia </p>
+            <div class="value-post">
+                <p><%= formattedUser.hasLicense ? 'Si' : 'No' %></p>
+                <input type="checkbox" <%= formattedUser.hasLicense ? 'checked' : '' %> name="" id="hasLicenseCheckbox" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Contraseña:</p>
+            <div class="value-post">
+                <p>**********</p>
+                <input id="passwordInput" class="" type="password" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Fecha de creación</p>
+            <div class="value-post">
+                <p><%= formattedUser.createdAt %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Fecha de modificación</p>
+            <div class="value-post">
+                <p><%= formattedUser.updatedAt %></p>
+            </div>
+        </div>
+        <hr>
+        <button id="edit" class="button-green-default button-60">Editar</button>
+        <div class="buttons-edit" style="display: none;">
+            <button type="submit" class="button-40">Guardar</button>
+            <button id="cancel-edit" class=" button-green-default button-60">Cancelar</button>
+        </div>
+    </form>
+</main>
+<div id="message" class="alert" role="alert"></div>
+<script src="/js/account.js" type="module"></script>
