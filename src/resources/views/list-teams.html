@@ -38,30 +38,33 @@
     <div class="modal-items">
         <div class="close-modal" data-dismiss="modal"></div>
         <h1>Asignar trabajo</h1>
-        <!-- TODO: Hacer fetch de datos en teams.js -->
         <form id="addPost">
-            <!-- Autos disponibles y con TeamId null -->
-            <select required class="half" id="carAdd">
+            <select required class="half" id="carAdd" name="carAdd">
                 <option value="">Vehículo</option>
             </select>
-            <!-- Usuarios de la campaña con licencia -->
-            <select required class="half" id="driverAdd" disabled>
+            <select required class="half" id="driverAdd" name="driverAdd" disabled>
                 <option value="">Conductor</option>
             </select>
-            <!-- Añadir tantos inputs como pasajeros permita el auto -1 (por el conductor) -->
             <div id="passengerContainer" class="full passengers"></div>            
-            <!-- De entre los focos activos -->
-            <select class="full" id="focusAdd" style="display: none;">
-                <option value="">Seleccionar foco</option>
-            </select>
-            <!-- Revisar que no esté asignada a ningún otro equipo -->
-            <!-- Se podría añadir un atributo a la manzana para marcarla como lista -->
-            <select required class="full" id="blockAdd1" style="display: none;" disabled>
-                <option value="">Seleccionar manzana</option>
-            </select>
+            <div id="tasksContainer" class="full" style="display: none; gap: 0.5rem;">
+                <div class="full task" style="display: flex; gap: 0.5rem;">
+                    <select required class="half focusAdd" name="focusAdd">
+                        <option value="">Foco</option>
+                    </select>
+                    <select required class="half blockAdd" name="blockAdd" disabled>
+                        <option value="">Manzana</option>
+                    </select>
+                </div>
+                <div class="task-options">
+                    <div id="remove-task" style="display: none;"></div>
+                    <div id="add-task"></div>
+                </div>
+            </div>
+            <!-- TODO -->
+            <!-- Se podría añadir un atributo al registro de la manzana para marcarla como lista -->
             <hr>
             <div class="bottom-crud">
-                <button class="button-40">Cancelar</button>
+                <button id="closeModal" type="button" class="button-40">Cancelar</button>
                 <button type="submit" class="button-green-default button-60">Crear equipo</button>
             </div>
         </form>

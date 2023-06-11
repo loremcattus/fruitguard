@@ -49,11 +49,16 @@ window.onload = () => {
     modalBackdrop.addEventListener('click', closeModal);
 
     // Obtener el elemento modalTrigger.
-    const modalTrigger = document.querySelector('[data-target="#'+modalID+'"]');
+    const modalTrigger = document.querySelector('[data-target="#' + modalID + '"]');
 
     // Si el elemento modalTrigger existe, añadir un event listener para abrir el modal cuando se hace clic en él.
     if (modalTrigger) {
       modalTrigger.addEventListener('click', openModal);
+    }
+
+    const cancelModal = document.getElementById('closeModal');
+    if (cancelModal) {
+      cancelModal.addEventListener('click', closeModal);
     }
 
     // Obtener el elemento closeButton dentro del modal.
@@ -94,7 +99,7 @@ window.onload = () => {
 
   // Si el elemento file input existe, añadir un event listener a él.
   if (fileInput) {
-    fileInput.addEventListener('change', function() {
+    fileInput.addEventListener('change', function () {
 
       // Obtener el nombre del archivo del elemento file input.
       const fileName = fileInput.value.split('\\').pop();
@@ -105,8 +110,8 @@ window.onload = () => {
   }
 
   // Si el elemento form existe, añadir un event listener a él.
-  if (form) {
-    form.addEventListener('reset', function() {
+  if (form && fileLabel) {
+    form.addEventListener('reset', function () {
 
       // Establecer el texto del elemento file label como "Añadir mapa de la zona".
       fileLabel.innerText = 'Añadir mapa de la zona';
@@ -116,9 +121,9 @@ window.onload = () => {
   const commentTextarea = document.getElementById('comment');
 
   if (commentTextarea) {
-    commentTextarea.addEventListener('input', function() {
+    commentTextarea.addEventListener('input', function () {
       this.style.height = 'auto'; // Restablecer la altura a "auto" para calcular correctamente el nuevo tamaño
-      
+
       // Ajustar la altura del textarea para ajustarse al contenido
       this.style.height = this.scrollHeight + 'px';
 
