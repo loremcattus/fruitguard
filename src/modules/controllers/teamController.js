@@ -3,7 +3,7 @@ const { UserRegistration, User, Team, Car, Campaign, Focus, Block, BlockRegistra
 
 // TODO: Obtener el id del supervisor desde la sesión
 const getSupervisorId = async () => {
-  return 8;
+  return 7;
 };
 
 const clearTeams = async () => {
@@ -134,9 +134,112 @@ export const getTeams = async (req, res) => {
   }
 };
 
+export const getTeam = async (req, res) => {
+  const fileHTML = 'view-team';
+  const title = 'Ver Equipo';
+  const formattedTeam = [];
+  const single = true;
+
+  try {
+
+    const team = await Team.findByPk(req.params.TeamId, {
+      attributes: ['id', 'tasks']
+    });
+
+    if(!team) return res.sendStatus(404);
+
+    const tasks = team.dataValues.tasks.split(',');
+    const blocksRegistration = await BlockRegistration.findAll({
+      attributes: ['id', 'FocuId', 'BlockId'],
+      where: { id: { [Sequelize.Op.in]: tasks } }
+    });
+
+    const blocksId = [];
+    const blocksRegistrationData = [];
+    for(let i = 0; i < blocksRegistration.length; i++) {
+      blocksId.push(blocksRegistration[i].dataValues.BlockId);
+      blocksRegistrationData.push({
+        id: blocksRegistration[i].dataValues.id
+      });
+      const focus = await Focus.findByPk(blocksRegistration[i].FocuId, {
+        attributes: ['CampaignId']
+      });
+      const FocusId = blocksRegistration[i].dataValues.FocuId;
+      const CampaignId = focus.dataValues.CampaignId
+      const BlockRegistrationId = blocksRegistrationData[i].id;
+      blocksRegistrationData[i].href = `/campaigns/${CampaignId}/focuses/${FocusId}/blocks/${BlockRegistrationId}`;
+    }
+    console.log(blocksRegistrationData);
+
+    const blocksData = await Block.findAll({
+      attributes: ['id', 'streets'],
+      where: { id: { [Sequelize.Op.in]: blocksId } }
+    });
+
+    const blocks = [];
+    for (const registration of blocksRegistrationData) {
+      const { id, href } = registration;
+    
+      for (const data of blocksData) {
+        const dataId = data.dataValues.id;
+    
+        if (id === dataId) {
+          const streets = data.dataValues.streets;
+          blocks.push({ id, href, streets });
+          break;
+        }
+      }
+    }
+    console.log(blocks);
+
+    const usersRegistration = await team.getUserRegistrations({
+      attributes: ['UserId']
+    });
+
+    const usersId = []
+    for(let i = 0; i < usersRegistration.length; i++) {
+      usersId.push(usersRegistration[i].dataValues.UserId);
+    }
+
+    const usersData = await User.findAll({
+      attributes: ['name', 'run', 'dvRun', 'hasLicense'],
+      where: { id: { [Sequelize.Op.in]: usersId } }
+    });
+
+    const carData = await team.getCar({
+      attributes: ['patent', 'capacity']
+    })
+
+    const car = {
+      patent: carData.dataValues.patent,
+      capacity: carData.dataValues.capacity,
+    };
+
+    const users = [];
+    for(let i = 0; i < usersData.length; i++) {
+      users.push({
+        name: usersData[i].dataValues.name,
+        rut: usersData[i].dataValues.run+'-'+usersData[i].dataValues.dvRun,
+        hasLicense: usersData[i].dataValues.hasLicense,
+      });
+    }
+
+    const formattedTeam = {
+      id: team.dataValues.id,
+      car,
+      users,
+      blocks,
+    }
+
+    return res.render('index.html', { formattedTeam, fileHTML, title, single });
+  } catch (error) {
+    console.error('Error al obtener equipos: ', error);
+    return res.sendStatus(500);
+  }
+}
+
 export const getTasks = async (__, res) => {
   try {
-    // FIXME: Retorna registros de manzanas que ya estan ocupadas por otros equipos
     const supervisorId = await getSupervisorId();
     const supervisorRegistration = await UserRegistration.findOne({
       attributes: ['CampaignId'],
