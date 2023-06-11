@@ -5,7 +5,7 @@ import { roles } from '../../helpers/enums.js';
 const { User, force, Sequelize } = models;
 
 // Define las propiedades que se van a extraer de los usuarios
-const userProps = ['id', 'role', 'name', 'run', 'dvRun', 'email', 'hasLicense'];
+const userProps = ['id', 'role', 'name', 'run', 'dvRun', 'email', 'hasLicense', 'deletedAt'];
 
 // Formatear respuesta de un usuario
 const formatUser = (user) => {
@@ -18,7 +18,7 @@ const formatUser = (user) => {
 export const getUsers = async (__, res) => {
   try {
     // Obtener todos los usuarios con las propiedades definidas
-    const users = await User.findAll({ attributes: userProps });
+    const users = await User.findAll({ attributes: userProps, paranoid: false } );
 
     // Si no existen usuarios, lanzar un error para capturarlo en el bloque catch
     if (!users[0]) throw new Error('No hay usuarios registrados');
@@ -38,7 +38,7 @@ export const getUser = async (req, res) => {
     // Obtener el ID desde los parámetros de la solicitud
     const { id } = req.params;
     // Buscar el usuario por su ID y obtener sus propiedades definidas
-    const user = await User.findByPk(id, { attributes: userProps });
+    const user = await User.findByPk(id,{ paranoid: false });
 
     // Si el usuario no existe, lanzar un error para capturarlo en el bloque catch
     if (!user) throw new Error('El usuario no existe');
