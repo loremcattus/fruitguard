@@ -1,0 +1,63 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="/home">Inicio</a>
+        <a href="/teams/">Listar equipos</a>
+        <p>Ver equipo</p>
+    </section>
+    <hr>
+    <h1>Información del equipo</h1>
+    <form id="editPost" class="info-post">
+        <div class="item-post">
+            <p class="key-post">ID</p>
+            <div class="value-post">
+                <p><%= formattedTeam.id %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Patente del Vehículo</p>
+            <div class="value-post">
+                <p><%= formattedTeam.car.patent %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Capacidad del Vehículo</p>
+            <div class="value-post">
+                <p>Hasta <%= formattedTeam.car.capacity %> personas</p>
+            </div>
+        </div>
+        <% for (i = 0; i < formattedTeam.users.length; i++){ %>
+        <% const user = formattedTeam.users[i] %>
+        <div class="item-post">
+            <p class="key-post">Usuario <%= i+1 %>:</p>
+            <div class="value-post">
+                <p>
+                    <%= user.name %>
+                    <% if (user.hasLicense) { %>
+                        con licencia
+                    <% } %>
+                </p>
+            </div>
+        </div>
+        <% } %>
+        <% for (i = 0; i < formattedTeam.blocks.length; i++){ %>
+        <% const block = formattedTeam.blocks[i] %>
+        <div class="item-post item-post-to-down">
+            <p class="key-post">Límites de la manzana <%= i+1 %>:</p>
+            <a href="<%= block.href %>" class="value-post">
+                <% const streets = block.streets.split('@') %>
+                <% for (j = 0; j < streets.length; j++){ %>
+                    <%= streets[j] %><% if (j != streets.length-1) { %>, <% } %>
+                <% } %>
+            </a>
+        </div>
+        <% } %>
+    </form>
+    <hr>
+    <div class="buttons-options">
+        <button type="button" id="deleteTeam" class="button-green-default option-button">Disolver equipo</button>
+    </div>
+</main>
+
+<div id="message" class="alert" role="alert"></div>
+
+<script src="/js/team.js" type="module"></script>

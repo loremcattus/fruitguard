@@ -428,7 +428,7 @@ input[type="checkbox" i]:checked {
   width: 80%;
 }
 
-.remove-street, .remove-street-edit {
+.remove-street, .remove-street-edit, #remove-task {
   border: 0;
   margin-inline: auto;
   background-color: #E84A5F;
@@ -443,7 +443,7 @@ input[type="checkbox" i]:checked {
   background-position: center;
   background-size: 80%;
 }
-#add-street {
+#add-street, #add-task {
   border: 0;
   margin-inline: auto;
   margin-top: 0.3rem;
@@ -472,4 +472,14 @@ input[type="checkbox" i]:checked {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+#add-task, #remove-task {
+  margin-inline: 0.5rem;
+}
+.task-options {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 }

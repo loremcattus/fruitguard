@@ -472,7 +472,7 @@ export const seed = async (models) => {
     console.log('The passwords were encrypted');
   }
   
-  encryptPasswords();  
+  encryptPasswords();
 
   const campaigns = await models.Campaign.bulkCreate([
     {

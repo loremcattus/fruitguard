@@ -1,6 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import { getLogin, getRegister, resetPassword, getHome } from '../modules/controllers/loginController.js'
+import { getTeams, getTeam, addTeam, deleteTeam, getCars, getDrivers, getPassengers, getTasks } from '../modules/controllers/teamController.js';
 import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign } from '../modules/controllers/campaignController.js';
 import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockRegistrationController.js';
@@ -51,6 +52,15 @@ router.patch('/api/campaigns/:CampaignId', updateCampaign);
 router.delete('/api/campaigns/:CampaignId/users/:UserRegistrationId', deleteUserFromCampaign);
 router.get('/api/campaigns/:CampaignId/users/not-in', getNonCampaignUsers);
 router.post('/api/campaigns/:CampaignId/users', addUsersToCampaign);
+// Teams
+router.get('/teams', getTeams);
+router.get('/teams/:TeamId', getTeam);
+router.post('/teams', addTeam);
+router.delete('/teams/:TeamId', deleteTeam);
+router.get('/cars', getCars);
+router.get('/drivers', getDrivers);
+router.post('/passengers', getPassengers);
+router.get('/tasks', getTasks);
 
 // Focos 
 router.get('/campaigns/:CampaignId/focuses', getFocuses);
