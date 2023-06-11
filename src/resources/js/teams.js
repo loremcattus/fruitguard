@@ -471,7 +471,7 @@ formAdd.addEventListener('submit', async (event) => {
       blocksRegistrationId.push(blockRegistrationId);
     });
 
-    const tasks = blocksRegistrationId.join(', ');
+    const tasks = blocksRegistrationId.join(',');
 
     const usersId = [];
     usersId.push(parseInt(driverId.value));

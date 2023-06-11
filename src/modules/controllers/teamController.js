@@ -158,7 +158,7 @@ export const getTasks = async (__, res) => {
 
     const tasks = [];
     // Existen equipos con tareas asignadas
-    if (!usersRegistration.length) {
+    if (usersRegistration.length > 0) {
       const teamIds = [...new Set(usersRegistration.map(registration => registration.Team.dataValues.id))];
       const teams = await Team.findAll({
         attributes: ['tasks'],
