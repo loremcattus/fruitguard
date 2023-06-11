@@ -470,7 +470,9 @@ export const seed = async (models) => {
   
     await Promise.all(promises);
     console.log('The passwords were encrypted');
-  }
+  };
+
+  await models.User.destroy({where: {id: 49}});
   
   encryptPasswords();
 

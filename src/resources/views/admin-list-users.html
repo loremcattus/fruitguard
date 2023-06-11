@@ -1,0 +1,64 @@
+<section class="not-logged-card">
+    <h1 class="custom-section-title">Registrar Usuario</h1>
+    <form id="registerPost">
+        <input class="full" required type="email" id="email" placeholder="Correo electrónico">
+        <input class="full" required type="text" id="name" placeholder="Nombre completo">
+        <input class="full" required type="text" id="run" placeholder="RUT">
+        <input class="full" required type="text" id="run" >
+        <button type="submit" class="button-green-default">Registrar</button>
+    </form>
+</section>
+<section class="cards">
+    <h3 class="custom-section-title">Buscar Usuario</h3>
+    <form id="searchPost">
+        <input class="full" required type="email" id="email" placeholder="Correo electrónico">
+        <input class="full" required type="text" id="name" placeholder="Nombre completo">
+        <input class="full" required type="text" id="run" placeholder="RUT">
+        <input class="full" required type="password" id="password" placeholder="Contraseña">
+        <input class="full" required type="password" placeholder="Confirmar contraseña">
+        <div class="bottom-crud">
+            <div class="check-container">
+                <label for="carSearch">Mostrar no disponible</label>
+                <input id="carSearch" type="checkbox">
+            </div>
+            <button type="submit" class="button-green-crud">Buscar</button>
+        </div>
+    </form>
+</section>
+<h3 class="card-title">Usuarios</h3>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Correo electrónico</th>
+                        <th>Nombre completo</th>
+                        <th>RUT</th>
+                        <th>Licencia</th>
+                        <th>Rol</th>
+                    </tr>
+                    </thead>
+                    
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>jho.valenzuela@mail.com</td>
+                        <td>Jhon Henry Valenzuela Vera</td>
+                        <td>20.202.206-5</td>
+                        <td>Si</td>
+                        <td>Prospector</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
+
+<div id="message" class="alert" role="alert"></div>
+<script src="/js/register.js" type="module"></script>
