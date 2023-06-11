@@ -16,4 +16,12 @@ helpers.matchPassword = async (password, savedPassword) => {
     }
 };
 
+helpers.matchRole = (role, savedRole) => {
+    try{
+        return role == savedRole;
+    } catch(e) {
+        console.log(e)
+    }
+}
+
 export default helpers;

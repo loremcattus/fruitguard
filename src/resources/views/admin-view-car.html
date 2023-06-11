@@ -1,0 +1,48 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <a href="/adminCars/">Administracion de autos</a>
+        <p>Ver auto</p>
+    </section>
+    <hr>
+    <h1>Información del auto</h1>
+    <form id="editPost" class="info-post">
+        <div class="item-post">
+            <p class="key-post">ID</p>
+            <div class="value-post">
+                <p><%= formattedCar.id %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Patente</p>
+            <div class="value-post">
+                <p><%= formattedCar.patent %></p>
+                <input placeholder="<%= formattedCar.patent %>" id="patent" type="text" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Capacidad</p>
+            <div class="value-post">
+                <p><%= formattedCar.capacity %></p>
+                <input placeholder="<%= formattedCar.capacity %>" id="capacity" type="text" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Disponibilidad</p>
+            <div class="value-post">
+                <p><%= formattedCar.available ? 'Disponible' : 'No disponible' %></p>
+                <input type="checkbox" <%= formattedCar.available ? 'checked' : '' %> name="" id="available" style="display: none;">
+            </div>
+        </div>
+        <hr>
+        <button id="edit" class="button-green-default button-60">Editar</button>
+        <div class="buttons-edit" style="display: none;">
+            <button type="submit" class="button-40">Guardar</button>
+            <button id="cancel-edit" class="button-green-default button-60">Cancelar</button>
+        </div>
+    </form>
+</main>
+<div id="message" class="alert" role="alert"></div>
+
+<script src="/js/locations.js"></script>
+<script src="/js/adminCar.js" type="module"></script>

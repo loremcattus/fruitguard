@@ -1,0 +1,52 @@
+<section class="not-logged-card">
+    <h1 class="custom-section-title">Registrar Usuario</h1>
+    <form id="registerPost">
+        <input class="full" required type="email" id="email" placeholder="Correo electrónico">
+        <input class="full" required type="text" id="name" placeholder="Nombre completo">
+        <input class="full" required type="text" id="run" placeholder="RUT">
+        <button type="submit" class="button-green-default">Registrar</button>
+    </form>
+</section>
+<div id="message" class="alert" role="alert"></div>
+<script src="/js/register.js" type="module"></script>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title">Default Datatable</h4>
+                <p class="card-title-desc">DataTables has most features enabled by
+                    default, so all you need to do to use it with your own tables is to call
+                    the construction function: <code>$().DataTable();</code>.
+                </p>
+
+                <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Office</th>
+                        <th>Age</th>
+                        <th>Start date</th>
+                        <th>Salary</th>
+                    </tr>
+                    </thead>
+                    
+                    <tbody>
+                    <tr>
+                        <td>Tiger Nixon</td>
+                        <td>System Architect</td>
+                        <td>Edinburgh</td>
+                        <td>61</td>
+                        <td>2011/04/25</td>
+                        <td>$320,800</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
