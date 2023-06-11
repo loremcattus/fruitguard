@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import { getLogin, getRegister, resetPassword } from '../modules/controllers/loginController.js'
-import { getTeams, getTeam, addTeam, getCars, getDrivers, getPassengers, getTasks } from '../modules/controllers/teamController.js';
+import { getTeams, getTeam, addTeam, deleteTeam, getCars, getDrivers, getPassengers, getTasks } from '../modules/controllers/teamController.js';
 import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign } from '../modules/controllers/campaignController.js';
 import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockRegistrationController.js';
@@ -56,6 +56,7 @@ router.post('/api/campaigns/:CampaignId/users', addUsersToCampaign);
 router.get('/teams', getTeams);
 router.get('/teams/:TeamId', getTeam);
 router.post('/teams', addTeam);
+router.delete('/teams/:TeamId', deleteTeam);
 router.get('/cars', getCars);
 router.get('/drivers', getDrivers);
 router.post('/passengers', getPassengers);

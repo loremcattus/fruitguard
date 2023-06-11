@@ -233,7 +233,7 @@ export const getTeam = async (req, res) => {
 
     return res.render('index.html', { formattedTeam, fileHTML, title, single });
   } catch (error) {
-    console.error('Error al obtener equipos: ', error);
+    console.error('Error al obtener equipo: ', error);
     return res.sendStatus(500);
   }
 }
@@ -368,7 +368,7 @@ export const getCars = async (req, res) => {
 
     return res.status(200).json(formattedCars);
   } catch (error) {
-    console.error('Error al obtener equipos: ', error);
+    console.error('Error al obtener autos: ', error);
     return res.sendStatus(500);
   }
 };
@@ -409,7 +409,7 @@ export const getDrivers = async (req, res) => {
 
     return res.status(200).json(formattedDrivers);
   } catch (error) {
-    console.error('Error al obtener equipos: ', error);
+    console.error('Error al obtener conductores: ', error);
     return res.sendStatus(500);
   }
 };
@@ -474,6 +474,25 @@ export const addTeam = async (req, res) => {
     return res.sendStatus(200);
   } catch (error) {
     console.error('Error al crear equipo: ', error);
+    return res.sendStatus(500);
+  }
+};
+
+export const deleteTeam = async (req, res) => {
+  try {
+    const { TeamId } = req.params;
+
+    await UserRegistration.update({ TeamId: null }, {
+      where: { TeamId }
+    });
+    await Car.update({ TeamId: null }, { 
+      where: { TeamId }
+    });
+    await Team.destroy({ where: { id: TeamId } });
+
+    return res.sendStatus(200);
+  } catch (error) {
+    console.error('Error al eliminar equipo: ', error);
     return res.sendStatus(500);
   }
 };
