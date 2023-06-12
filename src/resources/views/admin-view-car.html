@@ -1,6 +1,6 @@
 <main>
     <section class="breadcrumbs">
-        <a href="#">Inicio</a>
+        <a href="/admin/">Inicio</a>
         <a href="/adminCars/">Administracion de autos</a>
         <p>Ver auto</p>
     </section>
@@ -17,7 +17,7 @@
             <p class="key-post">Patente</p>
             <div class="value-post">
                 <p><%= formattedCar.patent %></p>
-                <input placeholder="<%= formattedCar.patent %>" id="patent" type="text" style="display: none;">
+                <input placeholder="<%= formattedCar.patent %>" maxlength="6" id="patent" type="text" style="display: none;">
             </div>
         </div>
         <div class="item-post">

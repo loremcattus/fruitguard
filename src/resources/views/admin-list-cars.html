@@ -1,55 +1,69 @@
-<h1 class="custom-section-title">Administracion de autos</h1>
-<section class="cards">
-    <h3 class="custom-section-title">Registrar Auto</h3>
-    <form id="registerCarPost">
-        <input class="full" required type="text" id="patent" placeholder="Patente">
-        <input class="full" required type="number" id="capacity" placeholder="Capacidad">
-        <button type="submit" class="button-green-default">Registrar</button>
-    </form>
-</section>
-<section class="cards">
-    <h3 class="custom-section-title">Buscar Auto</h3>
-    <form id="searchPost">
-        <input class="full" type="text" id="patentSearch" placeholder="Patente">
-        <input class="full" type="number" id="capacitySearch" placeholder="Capacidad">
-        <div class="bottom-crud">
-            <div class="check-container">
-                <label for="carSearch">Mostrar no disponible</label>
-                <input id="carSearch" type="checkbox">
+<main>
+    <section class="breadcrumbs">
+        <a href="/admin/">Inicio</a>
+        <p>Administracion de autos</p>
+    </section>
+    <h1 class="custom-section-title">Administracion de autos</h1>
+    <section class="cards">
+        <h3 class="custom-section-title">Registrar Auto</h3>
+        <form id="registerCarPost">
+            <input class="full" required type="text" id="patent" placeholder="Patente">
+            <input class="full" required type="number" id="capacity" placeholder="Capacidad">
+            <button type="submit" class="button-green-default">Registrar</button>
+        </form>
+    </section>
+    <section class="cards">
+        <h3 class="custom-section-title">Buscar Auto</h3>
+        <form id="searchPost">
+            <input class="full" type="text" id="patentSearch" placeholder="Patente">
+            <input class="full" type="number" id="capacitySearch" placeholder="Capacidad">
+            <div class="bottom-crud">
+                <div class="check-container">
+                    <label for="carSearch">Mostrar no disponible</label>
+                    <input id="carSearch" type="checkbox">
+                </div>
+                <button type="submit" class="button-green-crud">Buscar</button>
             </div>
-            <button type="submit" class="button-green-crud">Buscar</button>
-        </div>
-    </form>
-</section>
-<h1 class="card-title">Autos</h1>
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="cards">
-                <table>
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Patente</th>
-                        <th>Capacidad</th>
-                        <th>Disponible</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% formattedData.forEach(function(car) { %>
-                        <tr>
-                          <td><%= car.id %></td>
-                          <td><a  href="/adminCars/<%= car.id %>"><%= car.patent %></a></td>
-                          <td><%= car.capacity %></td>
-                          <td><%= car.available %></td>
-                        </tr>
-                      <% }); %>
-                    </tbody>
-                  </table>
+        </form>
+    </section>
+    <h1 class="card-title">Autos</h1>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="cards">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patente</th>
+                                <th>Capacidad</th>
+                                <th>Disponible</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% formattedData.forEach(function(car) { %>
+                                <tr>
+                                    <td>
+                                        <%= car.id %>
+                                    </td>
+                                    <td><a href="/adminCars/<%= car.id %>">
+                                            <%= car.patent %>
+                                        </a></td>
+                                    <td>
+                                        <%= car.capacity %>
+                                    </td>
+                                    <td>
+                                        <%= car.available %>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
 
+                </div>
             </div>
-        </div>
-    </div> <!-- end col -->
-</div> <!-- end row -->
-<div id="message" class="alert" role="alert"></div>
-<script src="/js/adminCars.js" type="module"></script>
+        </div> <!-- end col -->
+    </div> <!-- end row -->
+    <div id="message" class="alert" role="alert"></div>
+    <script src="/js/adminCars.js" type="module"></script>
+</main>

@@ -1,0 +1,83 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="/admin/">Inicio</a>
+        <a href="/adminUsers/">Administracion de Usuarios</a>
+        <p>Ver Usuario</p>
+    </section>
+    <hr>
+    <h1>Información Usuario</h1>
+    <form id="editPost" class="info-post">
+        <div class="item-post">
+            <p class="key-post">ID</p>
+            <div class="value-post">
+                <p><%= formattedUser.id %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Nombre</p>
+            <div class="value-post">
+                <p><%= formattedUser.name %></p>
+                <input placeholder="<%= formattedUser.name %>" id="name" type="text" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Rut</p>
+            <div class="value-post">
+                <p><%= formattedUser.run %>-<%= formattedUser.dvRun %></p>
+                <input placeholder="<%= formattedUser.run %>-<%= formattedUser.dvRun %>" id="rut" type="text" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Correo electrónico</p>
+            <div class="value-post">
+                <p><%= formattedUser.email %></p>
+                <input placeholder="<%= formattedUser.email %>" id="email" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Tiene licencia</p>
+            <div class="value-post">
+                <p><%= formattedUser.hasLicense ? 'Si' : 'No' %></p>
+                <input type="checkbox" <%= formattedUser.hasLicense ? 'checked' : '' %> name="" id="hasLicense" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Rol</p>
+            <div class="value-post">
+                <p><%= formattedUser.role %></p>
+                <input placeholder="<%= formattedUser.role %>" id="role" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Creado</p>
+            <div class="value-post">
+                <p><%= formattedUser.createdAt %></p>
+                <input placeholder="<%= formattedUser.createdAt %>" id="createdAt" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Actualizado</p>
+            <div class="value-post">
+                <p><%= formattedUser.updatedAt %></p>
+                <input placeholder="<%= formattedUser.updatedAt %>" id="updatedAt" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Cuenta Desactivada</p>
+            <div class="value-post">
+                <p><%= formattedUser.deletedAt ? 'Si' : 'No' %></p>
+                <input type="checkbox" <%= formattedUser.deletedAt ? 'checked' : '' %> name="" id="available" style="display: none;">
+            </div>
+        </div>
+        <hr>
+        <button id="edit" class="button-green-default button-60">Editar</button>
+        <div class="buttons-edit" style="display: none;">
+            <button type="submit" class="button-40">Guardar</button>
+            <button id="cancel-edit" class="button-green-default button-60">Cancelar</button>
+        </div>
+    </form>
+</main>
+<div id="message" class="alert" role="alert"></div>
+
+<script src="/js/locations.js"></script>
+<script src="/js/adminUser.js" type="module"></script>

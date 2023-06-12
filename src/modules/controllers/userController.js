@@ -1,6 +1,7 @@
 import models from '../models/index.js';
 import { validateRequestBody, validateFieldsDataType, validateRUT } from '../../helpers/validators.js';
 import { roles } from '../../helpers/enums.js';
+import helpers from '../../lib/helpers.js';
 
 const { User, force, Sequelize } = models;
 
@@ -15,38 +16,66 @@ const formatUser = (user) => {
 };
 
 // Obtener todos los usuarios
-export const getUsers = async (__, res) => {
-  try {
-    // Obtener todos los usuarios con las propiedades definidas
-    const users = await User.findAll({ attributes: userProps, paranoid: false } );
+export const getAdminUsers = async (req, res) => {
+  const fileHTML = 'admin-list-users';
+  const title = 'Administrar Usuarios';
 
-    // Si no existen usuarios, lanzar un error para capturarlo en el bloque catch
-    if (!users[0]) throw new Error('No hay usuarios registrados');
+  try {
+    const { name, run, email, hasLicense, role } = req.query; // Obtener los parámetros de búsqueda de la URL
+    console.log(req.query);
+    // Convertir el valor de openString a booleano
+    const licenseBoolean = hasLicense === true;
+
+    // Construir el objeto de búsqueda dinámicamente
+    const searchOptions = {
+      ...(name && { name }),
+      ...(run && { run }),
+      ...(email && { email }),
+      ...(hasLicense && { hasLicense: licenseBoolean }),
+      ...(role && { role }),
+    };
+    // Obtener todos los usuarios con las propiedades definidas
+    const users = await User.findAll({ 
+      attributes: userProps, 
+      order: [['id', 'DESC']],
+      where: searchOptions,
+      paranoid: false 
+    });
+
+    const data = users.length > 0 ? users : 'No hay usuarios registrados o que coincidan con tu búsqueda';
 
     // Dar formato a cada usuario y crear un nuevo array
-    const formattedUsers = users.map(formatUser);
+    const formattedUsers = formatDataValues(data);
+
     // Enviar el array con los usuarios formateados
-    return res.status(200).json(formattedUsers);
+    return res.render('index.html', { formattedUsers, fileHTML, title, roles });
   } catch (error) {
     return res.status(404).send({ error: error.message });
   }
 };
 
 // Obtener un usuario por su ID
-export const getUser = async (req, res) => {
+export const getAdminUser = async (req, res) => {
+  const fileHTML = 'admin-view-user';
+  const title = 'Ver Usuario';
+  const single = true;
   try {
     // Obtener el ID desde los parámetros de la solicitud
     const { id } = req.params;
+
     // Buscar el usuario por su ID y obtener sus propiedades definidas
-    const user = await User.findByPk(id,{ paranoid: false });
+    const user = await User.findByPk(req.params.UserId, {
+      paranoid: false 
+    });
 
-    // Si el usuario no existe, lanzar un error para capturarlo en el bloque catch
-    if (!user) throw new Error('El usuario no existe');
+    if (user) {
+      const { ...formattedUser } = user.dataValues;
+      console.log(formattedUser);
+      return res.render('index.html', { formattedUser, fileHTML, title, single });
+    } else {
+      return res.render('error.html', { error: 404 });
+    }
 
-    // Dar formato al usuario y crear un nuevo objeto
-    const formattedUser = formatUser(user);
-    // Enviar el usuario formateado
-    return res.json(formattedUser);
   } catch (error) {
     return res.status(404).send({ error: error.message });
   }
@@ -61,15 +90,24 @@ export const addUser = async (req, res) => {
       return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío.' });
     }
 
+    const { name, rut, email, hasLicense, role } = req.body;
+    console.log(rut);
+
+    const { run, dvRun } = helpers.separarRut(rut);
+    
+    const runToInt = parseInt(run);
+
+    const userData = {name, run: runToInt, dvRun, email, hasLicense, role};
+    console.log(userData);
     // Filtrar y validar el cuerpo de la solicitud
-    const validatedObject = await validateRequestBody(req.body, User);
+    const validatedObject = await validateFieldsDataType(userData, User);
     // Comprobar errores de validación
-    if (validatedObject.error) {
+    console.log(validatedObject);
+    if (validatedObject.error) { 
+      console.log(validatedObject.error);
       return res.status(400).json(validatedObject);
     }
 
-    // Obtener el valor del campo run y dvRun del objeto validado
-    const { run, dvRun } = validatedObject;
     // Validar el RUT
     if (!validateRUT(`${run}-${dvRun}`)) {
       return res.status(400).json({ errors: `El RUT '${run}-${dvRun}' es inválido` });
@@ -82,7 +120,7 @@ export const addUser = async (req, res) => {
     }
 
     // Crear un nuevo usuario en la base de datos y devolverlo como respuesta
-    const user = await User.create(validatedObject);
+    const user = await User.create(userData);
     return res.status(201).json(user.toJSON());
   } catch (error) {
     console.error('Error al insertar usuario', error);
@@ -96,31 +134,24 @@ export const updateUser = async (req, res) => {
   try {
     // Valida que vengan datos en el cuerpo
     if (Object.keys(req.body).length === 0) {
-      return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío.' });
-    }
-    // Obtener el ID del usuario de los parámetros de la solicitud
-    const { id } = req.params;
-
-    // Obtener los campos que se desean actualizar desde el cuerpo de la solicitud
-    let fieldsToUpdate = req.body;
-
-    // Validar el cuerpo de la solicitud
-    const fieldsValidated = validateFieldsDataType(fieldsToUpdate, User);
-    if (!fieldsValidated.success) {
-      return res.status(400).json(fieldsValidated.data);
+      return res.status(400).json('El cuerpo de la solicitud está vacío.');
     }
 
-    // Buscar el usuario por su ID
-    const user = await User.findByPk(id);
-    // Si el usuario no existe retorna 404
-    if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+    // Filtrar y validar el cuerpo de la solicitud
+    const validatedObject = await validateFieldsDataType(req.body, User);
+
+    // Comprobar errores de validación
+    if (validatedObject.errors) {
+      return res.status(400).json(validatedFields.errors);
     }
 
-    // Actualizar el usuario con los campos recibidos en la solicitud
-    await user.update(fieldsToUpdate);
-    // Devolver el usuario actualizado como respuesta
-    return res.status(200).json(user.toJSON());
+    await User.update(req.body, {
+      where: {
+        id: req.params.UserId
+      }
+    });
+
+    return res.sendStatus(200);
   } catch (error) {
     console.error('Error al actualizar usuario', error);
     return res.status(500).json({ error: 'Ha ocurrido un error al intentar actualizar el usuario' });
@@ -180,4 +211,8 @@ export const getOtherManagers = async (req, res) => {
     console.log(error);
     return res.status(404).send({ error: error.message });
   }
+}
+
+function formatDataValues(data) {
+  return data.map(item => item.dataValues);
 }

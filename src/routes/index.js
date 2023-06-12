@@ -2,13 +2,13 @@ import express from 'express';
 import passport from 'passport';
 import { getLogin, getRegister, resetPassword, getHome } from '../modules/controllers/loginController.js'
 import { getTeams, getTeam, addTeam, deleteTeam, getCars, getDrivers, getPassengers, getTasks } from '../modules/controllers/teamController.js';
-import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
+import { getAdminUser, addUser, updateUser, deleteUser, getOtherManagers, getAdminUsers } from '../modules/controllers/userController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign } from '../modules/controllers/campaignController.js';
 import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockRegistrationController.js';
 import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
 import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration,updateTreeRegistration } from '../modules/controllers/treeSpeciesRegistrationController.js'
-import { getAdmin, getLoginAdmin, getAdminUsers } from '../modules/controllers/adminController.js';
+import { getAdmin, getLoginAdmin } from '../modules/controllers/adminController.js';
 import { getAdminCars, getCar, addCar, updateCar } from '../modules/controllers/carController.js';
 
 export const router = express.Router();
@@ -37,10 +37,7 @@ router.post('/register', passport.authenticate('localStrategyRegister', {
 
 
 // Usuarios
-router.get('/api/users', getUsers);
-router.get('/api/users/:id', getUser);
-router.post('/api/users', addUser);
-router.patch('/api/users/:id', updateUser);
+
 router.delete('/api/users/:id', deleteUser);
 router.post('/api/users/reset-password', resetPassword);
 router.get('/api/managers/:currentManagerId', getOtherManagers);
@@ -98,8 +95,13 @@ router.post('/loginAdmin', passport.authenticate('localStrategyLoginAdmin', {
     failureRedirect: '/',
 }));
 router.get('/admin', getAdmin);
+
 router.get('/adminCars', getAdminCars);
 router.get('/adminCars/:CarId', getCar);
 router.post('/adminCars', addCar)
 router.patch('/api/cars/:CarId', updateCar);
+
 router.get('/adminUsers', getAdminUsers);
+router.get('/adminUsers/:UserId', getAdminUser);
+router.post('/adminUsers', addUser);
+router.patch('/api/users/:UserId', updateUser);

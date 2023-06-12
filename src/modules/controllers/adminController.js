@@ -12,8 +12,3 @@ export const getAdmin = async (req, res) => {
   return res.render('not-logged.html', { fileHTML, title });
 }
 
-export const getAdminUsers = async (req, res) => {
-  const fileHTML = 'admin-list-users';
-  const title = 'Administrar Usuarios';
-  return res.render('not-logged.html', { fileHTML, title });
-}
