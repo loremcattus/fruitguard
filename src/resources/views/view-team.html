@@ -10,7 +10,7 @@
         <div class="item-post">
             <p class="key-post">ID</p>
             <div class="value-post">
-                <p><%= formattedTeam.id %></p>
+                <p id="team-id"><%= formattedTeam.id %></p>
             </div>
         </div>
         <div class="item-post">
@@ -57,6 +57,18 @@
         <button type="button" id="deleteTeam" class="button-green-default option-button">Disolver equipo</button>
     </div>
 </main>
+
+<div class="modal-backdrop" style="display: none;" id="modalBackdropRemove"></div>
+<div class="add-modal" style="display: none;" id="removeModal" role="form" aria-labelledby="removeModalLabel">
+    <div class="modal-items">
+        <div class="close-modal" data-dismiss="modalRemove"></div>
+        <p id="modal-message" class="modal-message"></p>
+        <div class="bottom-crud">
+            <button class="button-40" id="confirmRemove">Confirmar</button>
+            <button class="button-green-default button-60" id="cancelRemove">Cancelar</button>
+        </div>
+    </div>
+</div>
 
 <div id="message" class="alert" role="alert"></div>
 

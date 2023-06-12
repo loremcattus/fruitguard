@@ -8,6 +8,7 @@ import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controlle
 import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
 import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration,updateTreeRegistration } from '../modules/controllers/treeSpeciesRegistrationController.js'
+import { getProspects } from '../modules/controllers/prospectusController.js';
 import { getAdmin, getLoginAdmin, getAdminUsers } from '../modules/controllers/adminController.js';
 import { getAdminCars, getCar, addCar, updateCar } from '../modules/controllers/carController.js';
 
@@ -90,6 +91,9 @@ router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees/:TreeSpeciesRegistrationId', getTreeRegistration);
 router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees', addTreeSpeciesRegistration);
 router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees/:TreeSpeciesRegistrationId', updateTreeRegistration);
+
+// Analista
+router.get('/prospects', getProspects);
 
 // Admin 
 router.get('/loginAdmin', getLoginAdmin);

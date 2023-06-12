@@ -483,3 +483,15 @@ input[type="checkbox" i]:checked {
   justify-content: center;
   align-items: center;
 }
+
+.has-fly {
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.1));
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  background-image: url('/images/danger.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 80%;
+}

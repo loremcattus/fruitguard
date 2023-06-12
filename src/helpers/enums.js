@@ -24,4 +24,12 @@ export const treeStates = {
   UNRIPE: 'fruta verde',
   FRUITLESS: 'sin fruta',
   SAPLING: 'arból nuevo'
-}
+};
+
+export const permissionLevel = {
+  ADMIN:      4,
+  MANAGER:    3,
+  SUPERVISOR: 2,
+  PROSPECTOR: 1,
+  ANALYST:    0,
+};

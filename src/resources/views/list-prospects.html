@@ -1,0 +1,35 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <p>Listar prospectos</p>
+    </section>
+    <hr>
+    <h1>Buscar prospecto</h1>
+    <form id="searchPost" method="get">
+        <input class="half" type="number" name="prospectusId" placeholder="ID del prospecto">
+        <button type="submit" class="button-green-crud">Buscar</button>
+    </form>
+    <hr>
+    <section class="cards">
+        <% if (typeof formattedProspectus === 'object') { %>
+            <a href="/prospects/<%= formattedProspectus.id %>">
+                <div class="card-left-side">
+                    <p class="card-left-side-top">
+                        <%= formattedProspectus.id %> |
+                        <span class="card-left-side-top-highlight">
+                            <%= formattedProspectus.species.charAt(0).toUpperCase() + formattedProspectus.species.slice(1).toLowerCase() %>
+                        </span>
+                    </p>
+                    <p class="card-left-side-bottom">
+                        <%= formattedProspectus.analyst ? formattedProspectus.analyst : 'Sin analizar' %>
+                    </p>
+                </div>
+                <div class="card-right-side">
+                    <div class="<%= !formattedProspectus.hasFly ? '' : 'has-fly' %>"></div>
+                </div>
+            </a>
+        <% } else { %>
+            <p><%- formattedProspectus %></p>
+        <% } %>
+    </section>
+</main>

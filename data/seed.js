@@ -457,6 +457,7 @@ export const seed = async (models) => {
   ]);
 
   async function encryptPasswords() {
+    console.log('Encrypting passwords...');
     const promises = users.map(async (user) => {
       const oldPassword = user.dataValues.password;
       try {
@@ -469,12 +470,12 @@ export const seed = async (models) => {
     });
   
     await Promise.all(promises);
-    console.log('The passwords were encrypted');
+    console.log('Passwords were encrypted.');
   };
 
   await models.User.destroy({where: {id: 49}});
   
-  encryptPasswords();
+  // encryptPasswords();
 
   const campaigns = await models.Campaign.bulkCreate([
     {

@@ -1,6 +1,7 @@
 import moment from 'moment';
 import 'moment/locale/es.js';
 import 'moment-timezone';
+import { roles, permissionLevel } from './enums.js';
 
 // Un objeto que mapea los tipos de datos de Sequelize a tipos de datos más genéricos
 const dataTypeMap = {
@@ -248,3 +249,18 @@ export const validateRUT = (rut) => {
     return true;
   }
 }
+
+/**
+ * Obtiene el nivel de permiso asociado a un rol dado.
+ *
+ * @param {string} role - El rol para el cual se desea obtener el nivel de permiso.
+ * @returns {number} - El nivel de permiso asociado al rol. Si no se encuentra el rol, devuelve -1.
+ */
+export const getPermissionLevel = (role) => {
+  for (const key in roles) {
+    if (roles[key] === role) {
+      return permissionLevel[key];
+    }
+  }
+  return -1;
+};
