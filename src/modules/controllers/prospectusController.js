@@ -68,8 +68,9 @@ export const getProspectus = async (req, res) => {
     const { TreeSpecyId } = (await TreeSpeciesRegistration.findByPk(prospectus.treeSpeciesRegistrationId, { attributes: ['TreeSpecyId'] })).dataValues;
     const { species } = (await TreeSpecies.findByPk(TreeSpecyId, { attributes: ['species'] })).dataValues;
 
-    let { id, units_per_sample, has_fly, analyst, weight, updatedAt } = prospectus;
+    let { id, number_of_samples, units_per_sample, has_fly, analyst, weight, updatedAt } = prospectus;
 
+    const numberOfSamples = number_of_samples;
     const unitsPerSample = units_per_sample;
 
     const hasFly = !!has_fly;
@@ -84,7 +85,7 @@ export const getProspectus = async (req, res) => {
 
     updatedAt = formatDate(updatedAt);
 
-    const formattedProspectus = { id, species, unitsPerSample, hasFly, analyst, weight, updatedAt };
+    const formattedProspectus = { id, species, numberOfSamples, unitsPerSample, hasFly, analyst, weight, updatedAt };
 
     return res.render('index.html', { formattedProspectus, fileHTML, title, single });
   } catch (error) {

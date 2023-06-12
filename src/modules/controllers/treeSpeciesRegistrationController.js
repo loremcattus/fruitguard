@@ -106,7 +106,7 @@ export const getTreeRegistration = async(req, res) =>{
     }));
     // Obtener todas las propiedades del treeRegistrations
     const prospectus = await Prospectus.findOne({
-      attributes: ['id','units_per_sample','TreeSpeciesRegistrationId'],
+      attributes: ['id', 'number_of_samples', 'units_per_sample', 'TreeSpeciesRegistrationId'],
       where:{
         treeSpeciesRegistrationId: req.params.TreeSpeciesRegistrationId
       }
@@ -119,10 +119,12 @@ export const getTreeRegistration = async(req, res) =>{
     })
 
     let prospectusId = 0;
+    let number_of_samples = 0;
     let units_per_sample = 0;
 
     if (prospectus){
       prospectusId =  prospectus.dataValues.id;
+      number_of_samples = prospectus.dataValues.number_of_samples;
       units_per_sample = prospectus.dataValues.units_per_sample;
     }
 
@@ -137,7 +139,7 @@ export const getTreeRegistration = async(req, res) =>{
 
     if (tree) {
       const { ...data } = tree;
-      return res.render('index.html', { formattedTreeRegistration: data, fileHTML, title, single, treeStates, breadcrumbs, formattedTreeSpecies, prospectusId, units_per_sample});
+      return res.render('index.html', { formattedTreeRegistration: data, fileHTML, title, single, treeStates, breadcrumbs, formattedTreeSpecies, prospectusId, units_per_sample, number_of_samples});
     } else {
       return res.render('error.html', { error: 404 });
     }
@@ -154,10 +156,12 @@ export const addProspectus = async (req,res)=>{
     if(Object.keys(req.body).length === 0 ){
       return res.status(400).json({ error: 'El cuerpo de la solicitud esta vacio'});
     }
+    const  number_of_samples  = parseInt(req.body.number_of_samples);
     const  units_per_sample  = parseInt(req.body.units_per_sample);
     const treeSpeciesRegistrationId = parseInt(req.params.TreeSpeciesRegistrationId, 10);
 
-    const object = { 
+    const object = {
+      number_of_samples,
       units_per_sample,
       treeSpeciesRegistrationId
     }
@@ -278,10 +282,18 @@ export const updateTreeRegistration = async (req, res) => {
       }
     });
 
-    let { units_per_sample } = req.body;
+    let { number_of_samples, units_per_sample } = req.body;
+    number_of_samples = number_of_samples ? parseInt(number_of_samples) : '';
     units_per_sample = units_per_sample ? parseInt(units_per_sample) : '';
-    if ( units_per_sample ) {
-      await Prospectus.update({ units_per_sample }, {
+    if ( number_of_samples || units_per_sample ) {
+      const prospectusUpdateOptions = {
+        ...(number_of_samples && {number_of_samples}),
+        ...(units_per_sample && {units_per_sample}),
+      };
+      console.log({number_of_samples});
+      console.log({units_per_sample});
+      console.log(prospectusUpdateOptions);
+      await Prospectus.update(prospectusUpdateOptions, {
         where: {
           treeSpeciesRegistrationId: req.params.TreeSpeciesRegistrationId
         }

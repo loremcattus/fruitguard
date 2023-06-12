@@ -13,6 +13,7 @@ if (message) {
 // Obtener referencia a los elementos del formulario 
 const formAdd = document.getElementById('addPost');
 const units_per_sampleInputAdd = document.getElementById('units_per_sample');
+const number_of_samplesInputAdd = document.getElementById('number_of_samples');
 let wasCreated = false;
 if (units_per_sampleInputAdd && units_per_sampleInputAdd.value != 0) {
   wasCreated = true;
@@ -30,9 +31,11 @@ if (formAdd) {
     }
     try {
       // Obtener los valores de los campos del formulario
+      const number_of_samples = number_of_samplesInputAdd.value;
       const units_per_sample = units_per_sampleInputAdd.value;
 
       const object = {
+        number_of_samples,
         units_per_sample
       };
 

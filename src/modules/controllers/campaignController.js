@@ -2,7 +2,7 @@ import models from '../models/index.js';
 import { validateRequestBody, formatDate, validateFieldsDataType } from '../../helpers/validators.js';
 import { roles, states, treeStates } from '../../helpers/enums.js';
 
-const { Campaign, User, UserRegistration, Focus, BlockRegistration, HouseRegistration, TreeSpeciesRegistration, Prospectus, Sequelize } = models;
+const { Campaign, User, UserRegistration, Focus, BlockRegistration, HouseRegistration, TreeSpeciesRegistration, Prospectus, TreeSpecies, Sequelize } = models;
 
 const isNumeric = (str) => {
   return /^\d+$/.test(str);
@@ -373,18 +373,66 @@ export const generateReport = async (req, res) => {
     for (const prospectus of prospects) {
       treeSpeciesRegistrationHaveFruitSampleIds.push(prospectus.dataValues.treeSpeciesRegistrationId);
     }
-    const treeSpeciesRegistrationMustHaveFruitSampleAndDoesntHaveIds = treeSpeciesRegistrationMustHaveFruitSampleIds.filter(id => !treeSpeciesRegistrationHaveFruitSampleIds.includes(id));
+    const treeSpeciesRegistrationWithoutSampleAndWhichShouldHave = treeSpeciesRegistrationMustHaveFruitSampleIds.filter(id => !treeSpeciesRegistrationHaveFruitSampleIds.includes(id));
 
     const prospectsAnalyzed = await Prospectus.findAll({
-      attributes: ['id'],
+      attributes: ['id', 'number_of_samples', 'units_per_sample', 'weight', 'has_fly'],
       where: {
         treeSpeciesRegistrationId: { [Sequelize.Op.in]: treeSpeciesRegistrationMustHaveFruitSampleIds },
         analyst: { [Sequelize.Op.not]: null }
       }
     });
+
+    let numberOfFruitSampleAnalyzed = 0;
+    let numberOfFruitUnitsAnalyzed = 0;
+    let numberOfFruitKilosAnalyzed = 0;
+    const fruitSpeciesAnalyzed = [];
+    let unitsOfInfestedFruit = 0;
+    const fruitSpeciesInfested = [];
     const prospectusAnalyzedIds = [];
+    const prospectusAnalyzedWithInfestedFruitIds = [];
     for (const prospectusAnalyzed of prospectsAnalyzed) {
-      prospectusAnalyzedIds.push(prospectusAnalyzed.dataValues.id);
+      const prospectusAnalyzedId = prospectusAnalyzed.dataValues.id
+      prospectusAnalyzedIds.push(prospectusAnalyzedId);
+      const numberOfSamples = prospectusAnalyzed.dataValues.number_of_samples;
+      const unitsPerSample = prospectusAnalyzed.dataValues.units_per_sample;
+      const { weight } = prospectusAnalyzed.dataValues;
+      const hasFly = prospectusAnalyzed.dataValues.has_fly;
+
+      const fruitUnits = numberOfSamples * unitsPerSample;
+      numberOfFruitSampleAnalyzed += numberOfSamples;
+      numberOfFruitUnitsAnalyzed += fruitUnits;
+      numberOfFruitKilosAnalyzed += numberOfSamples * weight;
+      if (hasFly) {
+        prospectusAnalyzedWithInfestedFruitIds.push(prospectusAnalyzedId);
+        unitsOfInfestedFruit += fruitUnits;
+      }
+    }
+
+    for (const prospectusAnalyzedId of prospectusAnalyzedIds) {
+      const { treeSpeciesRegistrationId } = (await Prospectus.findByPk(prospectusAnalyzedId, {
+        attributes: ['treeSpeciesRegistrationId']
+      })).dataValues;
+      const { TreeSpecyId } = (await TreeSpeciesRegistration.findByPk(treeSpeciesRegistrationId, {
+        attributes: ['TreeSpecyId']
+      })).dataValues;
+      const { species } = (await TreeSpecies.findByPk(TreeSpecyId, {
+        attributes: ['species']
+      })).dataValues;
+      if(!fruitSpeciesAnalyzed.includes(species)) fruitSpeciesAnalyzed.push(species);
+    }
+
+    for (const prospectusAnalyzedWithInfestedFruitId of prospectusAnalyzedWithInfestedFruitIds) {
+      const { treeSpeciesRegistrationId } = (await Prospectus.findByPk(prospectusAnalyzedWithInfestedFruitId, {
+        attributes: ['treeSpeciesRegistrationId']
+      })).dataValues;
+      const { TreeSpecyId } = (await TreeSpeciesRegistration.findByPk(treeSpeciesRegistrationId, {
+        attributes: ['TreeSpecyId']
+      })).dataValues;
+      const { species } = (await TreeSpecies.findByPk(TreeSpecyId, {
+        attributes: ['species']
+      })).dataValues;
+      if(!fruitSpeciesInfested.includes(species)) fruitSpeciesInfested.push(species);
     }
 
     const dateFirstDetection = campaign.createdAt;
@@ -401,13 +449,13 @@ export const generateReport = async (req, res) => {
       numberOfWeeksSinceFirstDetection: calcularDiferenciaDeSemanas(dateFirstDetection, today),
       numberOfPlacesVisited: houseRegistrations.length,
       numberOfPlacesWithFruitSamples: houseRegistrationWithFruitSamplesIds.length,
-      numberOfTreeSpeciesRegistrationWithoutSampleAndWhichShouldHave: treeSpeciesRegistrationMustHaveFruitSampleAndDoesntHaveIds.length,
-      numberOfFruitSampleAnalyzed: '', // TODO: Añadir atributo "cantidad de muestras al prospecto"
-      numberOfFruitUnitsAnalyzed: '',
-      numberOfFruitKilosAnalyzed: '',
-      numberOfFruitSpeciesAnalyzed: '',
-      unitsOfInfestedFruit: '',
-      numberOfFruitSpeciesInfested: '',
+      treeSpeciesRegistrationWithoutSampleAndWhichShouldHave,
+      numberOfFruitSampleAnalyzed,
+      numberOfFruitUnitsAnalyzed,
+      numberOfFruitKilosAnalyzed,
+      fruitSpeciesAnalyzed,
+      unitsOfInfestedFruit,
+      fruitSpeciesInfested,
     };
 
     return res.status(200).json(report);

@@ -20,16 +20,22 @@
             </div>
         </div>
         <div class="item-post">
+            <p class="key-post">Cantidad de muestras</p>
+            <div class="value-post">
+                <p><%= formattedProspectus.numberOfSamples %></p>
+            </div>
+        </div>
+        <div class="item-post">
             <p class="key-post">Unidades por muestra</p>
             <div class="value-post">
                 <p><%= formattedProspectus.unitsPerSample %></p>
             </div>
         </div>
         <div class="item-post">
-            <p class="key-post">Peso de la muestra</p>
+            <p class="key-post">Peso de cada muestra</p>
             <div class="value-post">
                 <p><%= formattedProspectus.weight ? formattedProspectus.weight+' Kg.' : 'No registrado' %></p>
-                <input placeholder="<%= formattedProspectus.weight ? formattedProspectus.weight : 'Ingresar peso' %>" id="weight" type="number" style="display: none;">
+                <input <%= !formattedProspectus.weight ? 'required' : '' %> placeholder="<%= formattedProspectus.weight ? formattedProspectus.weight : 'Ingresar peso' %>" id="weight" type="number" style="display: none;">
             </div>
         </div>
         <div class="item-post">

@@ -5,6 +5,7 @@ const prospectusModel = (sequelize) => {
   class Prospectus extends Model { };
 
   Prospectus.init({
+    number_of_samples: DataTypes.INTEGER,
     // Unidades de fruta por muestra asociada al prospecto
     units_per_sample: DataTypes.INTEGER,
     // Indica si se ha encontrado mosca en la fruta de la muestra, por defecto no se ha encontrado

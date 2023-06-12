@@ -809,18 +809,22 @@ export const seed = async (models) => {
 
   const prospectus = await models.Prospectus.bulkCreate([
     {
+      number_of_samples: 4,
       units_per_sample: 194,
       treeSpeciesRegistrationId: treeSpeciesRegistrations[0].dataValues.id
     },
     {
+      number_of_samples: 3,
       units_per_sample: 170,
       treeSpeciesRegistrationId: treeSpeciesRegistrations[2].dataValues.id
     },
     {
+      number_of_samples: 2,
       units_per_sample: 231,
       treeSpeciesRegistrationId: treeSpeciesRegistrations[8].dataValues.id,
     },
     {
+      number_of_samples: 3,
       units_per_sample: 213,
       treeSpeciesRegistrationId: treeSpeciesRegistrations[11].dataValues.id
     },

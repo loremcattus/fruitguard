@@ -51,15 +51,6 @@
                 <input placeholder="<%= formattedTreeRegistration.tree_number %>" id="numberTrees" type="number" style="display: none;">
             </div>
         </div>
-        <!-- 
-        <div class="item-post">
-            <p class="key-post">Unidades por muestra</p>
-            <div class="value-post">
-                <p><%=// formattedTreeRegistration.units_per_sample %></p>
-                <input placeholder="<%= //formattedTreeRegistration.units_per_sample %>" id="units_per_sample" type="text" style="display: none;">
-            </div>
-        </div>
-    -->
         <hr>
         <button id="edit" class="button-green-default button-60">Editar</button>
         <div class="buttons-edit" style="display: none;">
@@ -91,8 +82,12 @@
                 </div>
             </div>
             <div class="input-number">
+                <label for="units_per_sample">Número de muestras</label>
+                <input required value="<%= number_of_samples %>" type="number" id="number_of_samples" min="1">
+            </div>
+            <div class="input-number">
                 <label for="units_per_sample">Unidades por muestra</label>
-                <input value="<%= units_per_sample %>" type="number" id="units_per_sample" min="1">
+                <input required value="<%= units_per_sample %>" type="number" id="units_per_sample" min="1">
             </div>
             <hr>
             <div class="buttons-options">
