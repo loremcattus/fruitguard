@@ -1,8 +1,8 @@
 import models from '../models/index.js';
 import { validateRequestBody, formatDate, validateFieldsDataType } from '../../helpers/validators.js';
-import { roles } from '../../helpers/enums.js';
+import { roles, states, treeStates } from '../../helpers/enums.js';
 
-const { Campaign, User, UserRegistration, Sequelize } = models;
+const { Campaign, User, UserRegistration, Focus, BlockRegistration, HouseRegistration, TreeSpeciesRegistration, Prospectus, Sequelize } = models;
 
 const isNumeric = (str) => {
   return /^\d+$/.test(str);
@@ -282,3 +282,148 @@ export const addUsersToCampaign = async (req, res) => {
     return res.sendStatus(500);
   }
 };
+
+export const generateReport = async (req, res) => {
+
+  try {
+    const campaignId = parseInt(req.params.CampaignId);
+
+    const campaign = (await Campaign.findByPk(campaignId, {
+      attributes: ['id', 'createdAt']
+    })).dataValues;
+    const focuses = await Focus.findAll({
+      attributes: ['id', 'createdAt'],
+      order: [['createdAt', 'DESC']],
+      where: {
+        CampaignId: campaign.id
+      }
+    });
+
+    const focusIds = [];
+    for (const focus of focuses) {
+      focusIds.push(focus.dataValues.id);
+    }
+    const blockRegistrations = await BlockRegistration.findAll({
+      attributes: ['id'],
+      where: {
+        FocuId: { [Sequelize.Op.in]: focusIds },
+      }
+    });
+
+    const blockRegistrationIds = [];
+    for (const blockRegistration of blockRegistrations) {
+      blockRegistrationIds.push(blockRegistration.dataValues.id);
+    }
+    const houseRegistrations = await HouseRegistration.findAll({
+      attributes: ['id'],
+      where: {
+        BlockRegistrationId: { [Sequelize.Op.in]: blockRegistrationIds },
+      }
+    });
+    const houseRegistrationIds = [];
+    for (const houseRegistration of houseRegistrations) {
+      houseRegistrationIds.push(houseRegistration.dataValues.id);
+    }
+
+    const houseRegistrationsOpen = await HouseRegistration.findAll({
+      attributes: ['id'],
+      where: {
+        BlockRegistrationId: { [Sequelize.Op.in]: blockRegistrationIds },
+        state: states.OPEN,
+      }
+    });
+
+    const houseRegistrationWithFruitSamplesIds = [];
+    const treeSpeciesRegistrationMustHaveFruitSampleIds = [];
+    for (const houseRegistrationOpen of houseRegistrationsOpen) {
+      const treeSpeciesRegistrationsMustHaveFruitSample = await TreeSpeciesRegistration.findAll({
+        where: {
+          HouseRegistrationId: houseRegistrationOpen.dataValues.id,
+          tree_state: { [Sequelize.Op.in]: [treeStates.RIPE, treeStates.UNRIPE] },
+        }
+      });
+      if (treeSpeciesRegistrationsMustHaveFruitSample.length) {
+        for (const treeSpeciesRegistrationMustHaveFruitSample of treeSpeciesRegistrationsMustHaveFruitSample) {
+          treeSpeciesRegistrationMustHaveFruitSampleIds.push(treeSpeciesRegistrationMustHaveFruitSample.dataValues.id);
+        }
+      };
+    }
+
+    const prospects = await Prospectus.findAll({
+      attributes: ['id', 'treeSpeciesRegistrationId'],
+      where: {
+        treeSpeciesRegistrationId: { [Sequelize.Op.in]: treeSpeciesRegistrationMustHaveFruitSampleIds },
+      }
+    });
+    const prospectsIds = [];
+    for (const prospectus of prospects) {
+      prospectsIds.push(prospectus.dataValues.id);
+    }
+    for (const prospectusId of prospectsIds) {
+      const { treeSpeciesRegistrationId } = (await Prospectus.findByPk(prospectusId, {
+        attributes: ['treeSpeciesRegistrationId']
+      })).dataValues;
+      const { HouseRegistrationId } = (await TreeSpeciesRegistration.findByPk(treeSpeciesRegistrationId, {
+        attributes: ['HouseRegistrationId'],
+      })).dataValues;
+      if(!houseRegistrationWithFruitSamplesIds.includes(HouseRegistrationId)) houseRegistrationWithFruitSamplesIds.push(HouseRegistrationId);
+    }
+
+    const treeSpeciesRegistrationHaveFruitSampleIds = [];
+    for (const prospectus of prospects) {
+      treeSpeciesRegistrationHaveFruitSampleIds.push(prospectus.dataValues.treeSpeciesRegistrationId);
+    }
+    const treeSpeciesRegistrationMustHaveFruitSampleAndDoesntHaveIds = treeSpeciesRegistrationMustHaveFruitSampleIds.filter(id => !treeSpeciesRegistrationHaveFruitSampleIds.includes(id));
+
+    const prospectsAnalyzed = await Prospectus.findAll({
+      attributes: ['id'],
+      where: {
+        treeSpeciesRegistrationId: { [Sequelize.Op.in]: treeSpeciesRegistrationMustHaveFruitSampleIds },
+        analyst: { [Sequelize.Op.not]: null }
+      }
+    });
+    const prospectusAnalyzedIds = [];
+    for (const prospectusAnalyzed of prospectsAnalyzed) {
+      prospectusAnalyzedIds.push(prospectusAnalyzed.dataValues.id);
+    }
+
+    const dateFirstDetection = campaign.createdAt;
+    const dateLastDetection = focuses[0].dataValues.createdAt;
+    const today = new Date();
+
+    const format = 'D/MM/YYYY';
+    const report = {
+      todayDate: formatDate(today, format),
+      dateFirstDetection: formatDate(dateFirstDetection, format),
+      dateLastDetection: formatDate(dateLastDetection, format),
+      numberTotalDetections: focuses.length,
+      numberOfWeeksSinceLastDetection: calcularDiferenciaDeSemanas(dateLastDetection, today),
+      numberOfWeeksSinceFirstDetection: calcularDiferenciaDeSemanas(dateFirstDetection, today),
+      numberOfPlacesVisited: houseRegistrations.length,
+      numberOfPlacesWithFruitSamples: houseRegistrationWithFruitSamplesIds.length,
+      numberOfTreeSpeciesRegistrationWithoutSampleAndWhichShouldHave: treeSpeciesRegistrationMustHaveFruitSampleAndDoesntHaveIds.length,
+      numberOfFruitSampleAnalyzed: '', // TODO: Añadir atributo "cantidad de muestras al prospecto"
+      numberOfFruitUnitsAnalyzed: '',
+      numberOfFruitKilosAnalyzed: '',
+      numberOfFruitSpeciesAnalyzed: '',
+      unitsOfInfestedFruit: '',
+      numberOfFruitSpeciesInfested: '',
+    };
+
+    return res.status(200).json(report);
+
+  } catch (error) {
+    console.error('Error al generar el reporte: ', error);
+    return res.sendStatus(404);
+  }
+
+};
+
+const calcularDiferenciaDeSemanas = (fechaInicio, fechaFin) => {
+  // Calcula la diferencia en milisegundos entre las fechas
+  const diferenciaMilisegundos = fechaFin - fechaInicio;
+
+  // Convierte la diferencia en semanas
+  const unaSemanaEnMilisegundos = 1000 * 60 * 60 * 24 * 7;
+  return Math.floor(diferenciaMilisegundos / unaSemanaEnMilisegundos);
+}

@@ -3,7 +3,7 @@ import passport from 'passport';
 import { getLogin, getRegister, resetPassword, getHome } from '../modules/controllers/loginController.js'
 import { getTeams, getTeam, addTeam, deleteTeam, getCars, getDrivers, getPassengers, getTasks } from '../modules/controllers/teamController.js';
 import { getUsers, getUser, addUser, updateUser, deleteUser, getOtherManagers } from '../modules/controllers/userController.js';
-import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign } from '../modules/controllers/campaignController.js';
+import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign, generateReport } from '../modules/controllers/campaignController.js';
 import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockRegistrationController.js';
 import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
@@ -51,6 +51,8 @@ router.get('/campaigns', getCampaigns);
 router.get('/campaigns/:CampaignId', getCampaign);
 router.post('/api/campaigns', addCampaign);
 router.patch('/api/campaigns/:CampaignId', updateCampaign);
+// Informe
+router.get('/api/campaigns/:CampaignId', generateReport);
 // Usuarios de campañas
 router.delete('/api/campaigns/:CampaignId/users/:UserRegistrationId', deleteUserFromCampaign);
 router.get('/api/campaigns/:CampaignId/users/not-in', getNonCampaignUsers);
