@@ -26,12 +26,8 @@
                 <option value="<%= state %>"><%= state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() %></option>
             <% }); %>
         </select>
-        <div class="bottom-crud">
-            <div class="check-container">
-                <label for="sampledSearch">Mostrar casas sin remuestrear</label>
-                <input id="sampledSearch" type="checkbox">
-            </div>
-            <button type="submit" class="button-green-crud">Buscar</button>
+        <div class="bottom-crud" style="justify-content: center;">
+            <button type="submit" class="button-60 button-green-crud">Buscar</button>
         </div>
     </form>
     <hr>
@@ -69,15 +65,15 @@
             <input class="full" type="number" id="gridAdd" placeholder="Grilla">
             <select class="half" id="areaAdd">
                 <option value="" disabled selected>Area</option>
-              <% Object.entries(areas).forEach(([key, value]) => { %>
-                <option value="<%= value %>"><%= value %></option>
+              <% Object.values(areas).forEach(area => { %>
+                <option value="<%= area %>"><%= area %></option>
               <% }); %>
             </select>
             <select class="half" id="stateAdd">
                 <option value="" disabled selected>Estado</option>
-              <% Object.entries(states).forEach(([key, value]) => { %>
-                <option value="<%= value %>"><%= value %></option>
-              <% }); %>
+                <% Object.values(states).forEach(state => { %>
+                    <option value="<%= state %>"><%= state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() %></option>
+                <% }); %>
             </select>
             <textarea class="full" type="text" cols="30" rows="10" id="commentAdd" placeholder="Comentario" ></textarea>
             <hr>
@@ -89,5 +85,5 @@
     </div>
 </div>
 <div id="message" class="alert" role="alert"></div>
-<script src="/js/locations.js"></script>
+
 <script src="/js/houseRegistrations.js" type="module"></script>

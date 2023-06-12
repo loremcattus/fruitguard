@@ -63,6 +63,8 @@ formEdit.addEventListener('submit', async (event) => {
             return response.text().then( errorMessage => {
                 showMessage(errorMessage, 'error');
             });
+        } else if ( response.status === 409 ){
+            return showMessage('La especie de árbol ya fue registrada previamente', 'error');
         } else {
             throw new Error('Error al enviar el formulario');
         }

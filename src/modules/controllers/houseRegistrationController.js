@@ -16,6 +16,8 @@ const isStringAddress = (data) => {
 };
 
 export const getHouseRegistrations = async (req, res) => {
+  const fileHTML = 'list-houseRegistration';
+  const title = 'Registro de Casas';
   try {
     const breadcrumbs = {
       CampaignId: req.params.CampaignId,
@@ -23,11 +25,9 @@ export const getHouseRegistrations = async (req, res) => {
       BlockRegistrationId: req.params.BlockRegistrationId,
     };
 
-    const fileHTML = 'list-houseRegistration';
-    const title = 'Registro de Casas';
     let blockRegistration;
     let searchOptions = {};
-    const BlockRegistrationId = parseInt(req.params.BlockRegistrationId, 10);
+    const BlockRegistrationId = parseInt(req.params.BlockRegistrationId);
     try {
       const { idOrAddress, grid, area, state } = req.query;
 
@@ -38,6 +38,7 @@ export const getHouseRegistrations = async (req, res) => {
       } else if (isStringAddress(idOrAddress)) {
         address = { address: { [Sequelize.Op.substring]: idOrAddress } };
       }
+      
       // Realizar la consulta utilizando la dirección
       blockRegistration = await BlockRegistration.findOne({
         order: [['id', 'DESC']],
@@ -57,44 +58,46 @@ export const getHouseRegistrations = async (req, res) => {
       }
 
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return res.render('error.html', { error: 500 });
     }
 
     let i = 0;
     const formattedHouseRegistrations = []
-    blockRegistration.Houses.filter(house => {
-      const address = house.dataValues.address;
-      const id = house.HouseRegistration.id;
-      //console.log("id houseRegistration " + id);
-      const { grid, area, state } = house.HouseRegistration;
-      const isOpen = state == states.OPEN; 
-      const params = { address, grid, area, isOpen, id };
-      // Verificar si al menos una opción de búsqueda está presente
-      if (Object.keys(searchOptions).length > 0) {
-        // Verificar cada criterio de búsqueda si está presente y coincide con el valor correspondiente
-        if (
-          (!searchOptions.grid || grid == searchOptions.grid) &&
-          (!searchOptions.area || area === searchOptions.area) &&
-          (!searchOptions.state || state === searchOptions.state) &&
-          (!searchOptions.id || id == searchOptions.id)
-        ) {
+    if (blockRegistration) {
+      blockRegistration.Houses.filter(house => {
+        const address = house.dataValues.address;
+        const id = house.HouseRegistration.id;
+
+        const { grid, area, state } = house.HouseRegistration;
+        const isOpen = state == states.OPEN; 
+        const params = { address, grid, area, isOpen, id };
+        // Verificar si al menos una opción de búsqueda está presente
+        if (Object.keys(searchOptions).length > 0) {
+          // Verificar cada criterio de búsqueda si está presente y coincide con el valor correspondiente
+          if (
+            (!searchOptions.grid || grid == searchOptions.grid) &&
+            (!searchOptions.area || area === searchOptions.area) &&
+            (!searchOptions.state || state === searchOptions.state) &&
+            (!searchOptions.id || id == searchOptions.id)
+          ) {
+            formattedHouseRegistrations[i] = params;
+            i++;
+            return true;
+          };
+        } else {
           formattedHouseRegistrations[i] = params;
           i++;
+          // Si no hay opciones de búsqueda, devolver todas las casas sin filtrar
           return true;
-        };
-      } else {
-        formattedHouseRegistrations[i] = params;
-        i++;
-        // Si no hay opciones de búsqueda, devolver todas las casas sin filtrar
-        return true;
-      }
-    });
-    formattedHouseRegistrations.reverse();
+        }
+      });
+      formattedHouseRegistrations.reverse();
+    }
     return res.render('index.html', { formattedHouseRegistrations, fileHTML, title, breadcrumbs, areas, states });
 
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.render('error.html', { error: 404 });
   }
 };
@@ -135,17 +138,22 @@ export const getHouseRegistration = async (req, res) => {
       address: houseAddress.dataValues.address
     };
 
-
+    
+    
     if (house) {
       const { createdAt, updatedAt, ...data } = house;
       data.createdAt = formatDate(createdAt);
       data.updatedAt = formatDate(updatedAt);
+      data.isOpen = false;
+      if (house.state == states.OPEN){
+        data.isOpen = true;
+      }
       return res.render('index.html', { formattedHouseRegistrationns: data, fileHTML, areas, states, title, single, breadcrumbs });
     } else {
       return res.render('error.html', { error: 404 });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.render('error.html', { error: 500 });
   }
 };
@@ -192,7 +200,7 @@ export const addHouseRegistration = async (req, res) => {
     if (await blockRegistration.hasHouse(house)) { return res.sendStatus(409); };
 
     const houseRegistration = await blockRegistration.addHouse(house, { through: houseRegistrationInfo });
-    console.log(houseRegistration);
+
     const formatedHouseRegistrations = {
       id: houseRegistration[0].dataValues.id,
       address,

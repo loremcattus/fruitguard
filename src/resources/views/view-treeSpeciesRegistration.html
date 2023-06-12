@@ -9,7 +9,9 @@
         <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks">Listar manzanas</a>
         <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>">Ver manzana</a>
         <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>/houses">Listar casas</a>
-        <p>Ver casa</p>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>/houses/<%= breadcrumbs.HouseRegistrationId %>">Ver casa</a>
+        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>/houses/<%= breadcrumbs.HouseRegistrationId %>/trees">Listar árboles</a>
+        <p>Ver árbol</p>
     </section>
     <hr>
 
@@ -46,7 +48,7 @@
             <p class="key-post">Cantidad de árboles</p>
             <div class="value-post">
                 <p><%= formattedTreeRegistration.tree_number %></p>
-                <input placeholder="<%= formattedTreeRegistration.tree_number %>" id="numberTrees" type="text" style="display: none;">
+                <input placeholder="<%= formattedTreeRegistration.tree_number %>" id="numberTrees" type="number" style="display: none;">
             </div>
         </div>
         <!-- 

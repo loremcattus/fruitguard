@@ -17,19 +17,19 @@
         <select class="half" id="speciesSearch">
             <option value="" disabled selected>Especie</option>
             <% for (let i = 0; i < formattedTreeSpecies.length; i++) { %>
-                <option value="<%= formattedTreeSpecies[i].id %>"><%= formattedTreeSpecies[i].species %></option>
+                <option value="<%= formattedTreeSpecies[i].id %>"><%= formattedTreeSpecies[i].species.charAt(0).toUpperCase() + formattedTreeSpecies[i].species.slice(1).toLowerCase() %></option>
             <% } %>
         </select>
         <select class="half" id="treeStateSearch">
             <option value="" disabled selected>Estado</option>
-          <% Object.entries(treeStates).forEach(([key, value]) => { %>
-            <option value="<%= value %>"><%= value %></option>
-          <% }); %>
+            <% Object.values(treeStates).forEach(treeState => { %>
+                <option value="<%= treeState %>"><%= treeState.charAt(0).toUpperCase() + treeState.slice(1).toLowerCase() %></option>
+            <% }); %>
         </select>
         <div class="bottom-crud">
             <div class="check-container">
-                <label for="sampledSearch">Mostrar con fruta</label>
-                <input id="sampledSearch" type="checkbox">
+                <label for="hasFruitSearch">Mostrar con fruta</label>
+                <input id="hasFruitSearch" type="checkbox">
             </div>
             <button type="submit" class="button-green-crud">Buscar</button>
         </div>
@@ -40,7 +40,7 @@
             <% for (let i = 0; i < formatedTreeSpeciesRegistration.length; i++) { %>
                 <a href="trees/<%=formatedTreeSpeciesRegistration[i].treeRegistrationId %>">
                     <div class="card-left-side">
-                        <p class="card-left-side-top"><%= formatedTreeSpeciesRegistration[i].species %></p>
+                        <p class="card-left-side-top"><%= formatedTreeSpeciesRegistration[i].species.charAt(0).toUpperCase() + formatedTreeSpeciesRegistration[i].species.slice(1).toLowerCase() %></p>
                         <p class="card-left-side-bottom"><%= formatedTreeSpeciesRegistration[i].tree_state %></p>
                     </div>
                 </a>
@@ -84,5 +84,5 @@
     </div>
 </div>
 <div id="message" class="alert" role="alert"></div>
-<script src="/js/locations.js"></script>
+
 <script src="/js/treeRegistrations.js" type="module"></script>

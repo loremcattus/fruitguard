@@ -27,7 +27,7 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
     
     let searchOptions = {};
     const houseRegistrationId = parseInt(req.params.HouseRegistrationId, 10);
-    const { species, treeState } = req.query;
+    const { species, treeState, hasFruit } = req.query;
     const speciesId = species ? { id: parseInt(species, 10)} : '';
     searchOptions = {
       ...(species && { species }),
@@ -55,6 +55,7 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
           if (searchOptions.treeState && tree_state != searchOptions.treeState ){
             continue;
           }
+          if (hasFruit && ![treeStates.RIPE, treeStates.UNRIPE].includes(tree_state)) { continue; }
           const params = { tree_state, species, treeRegistrationId };
           formatedTreeSpeciesRegistration.push(params);
         }
@@ -66,6 +67,7 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
           if (searchOptions.treeState && tree_state != searchOptions.treeState ){
             continue;
           }
+          if (hasFruit && ![treeStates.RIPE, treeStates.UNRIPE].includes(tree_state)) { continue; }
           const params = { tree_state, species, treeRegistrationId };
           formatedTreeSpeciesRegistration.push(params);
         }
@@ -74,7 +76,7 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
     
     return res.render('index.html', { formatedTreeSpeciesRegistration, fileHTML, title, breadcrumbs, treeStates, formattedTreeSpecies, houseRegistrationId });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.render('error.html', { error: 404 });
   }
 };
@@ -102,8 +104,6 @@ export const getTreeRegistration = async(req, res) =>{
       id: species.id,
       species: species.species
     }));
-    // console.log({formattedTreeSpecies});
-    // console.log(req.params);
     // Obtener todas las propiedades del treeRegistrations
     const prospectus = await Prospectus.findOne({
       attributes: ['id','units_per_sample','TreeSpeciesRegistrationId'],
@@ -118,7 +118,6 @@ export const getTreeRegistration = async(req, res) =>{
       attributes: ['id','species']
     })
 
-    console.log(prospectus);
     let prospectusId = 0;
     let units_per_sample = 0;
 
@@ -135,7 +134,6 @@ export const getTreeRegistration = async(req, res) =>{
       species: treeSpecy.dataValues.species,
 
     }
-    console.log(tree);
 
     if (tree) {
       const { ...data } = tree;
@@ -144,7 +142,7 @@ export const getTreeRegistration = async(req, res) =>{
       return res.render('error.html', { error: 404 });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.render('error.html', { error: 500 });
   }
 };
@@ -158,9 +156,6 @@ export const addProspectus = async (req,res)=>{
     }
     const  units_per_sample  = parseInt(req.body.units_per_sample);
     const treeSpeciesRegistrationId = parseInt(req.params.TreeSpeciesRegistrationId, 10);
-    
-    console.log('REQUEST BODY',typeof units_per_sample , units_per_sample);
-    console.log('REQUEST PARAMS',typeof  req.params.TreeSpeciesRegistrationId ,req.params.TreeSpeciesRegistrationId);
 
     const object = { 
       units_per_sample,
@@ -170,16 +165,14 @@ export const addProspectus = async (req,res)=>{
     // Filtrar y validar el cuerpo de la solicitud
     const validatedObject = await validateRequestBody(object, Prospectus);
 
-    // console.log( validatedObject );
-
     // Comprobar objetos de la validacion
-    console.log(validatedObject);
     if(validatedObject.error){
       return res.status(400).json(validatedObject);
     }
 
     // Crear un nuevo prospecto em la BBDD y volverla como respuesta
     const prospectus  = await Prospectus.create(validatedObject);
+    
     return res.status(201).json(prospectus.toJSON());
   }catch( error ){
     console.error('Error al insertar un prospecto', error );
@@ -189,12 +182,8 @@ export const addProspectus = async (req,res)=>{
 
 
 export const addTreeSpeciesRegistration = async (req, res) => {
-  console.log(" - - - - - - - - post - - - - - - - -")
   try {
 
-    console.log("cuerpo req " + req.body.species );
-    console.log("cuerpo req " + req.body.treeState );
-    console.log("cuerpo req " + req.body.numberTrees );
     
     // Valida que vengan datos en el cuerpo
     if (Object.keys(req.body).length == 0) {
@@ -217,44 +206,21 @@ export const addTreeSpeciesRegistration = async (req, res) => {
 
     if (created || !(await houseRegistration.hasTreeSpecies(treeSpecies))) {
 
-      console.log("-------------------");
-      console.log(treeSpecies.species);
-      console.log(req.body.treeState);
-      console.log(houseRegistrationId);
-
       const idTreeSpeciesRegistration = treeSpecies.id;
       const species  = treeSpecies.species;
       const tree_state = req.body.treeState;
       const tree_number = req.body.numberTrees;
 
       if (species && tree_state && tree_number) {
-        const treeSpeciesRegistration = await houseRegistration.addTreeSpecies(treeSpecies, {through:{ species, tree_state, tree_number }});
-        console.log(treeSpeciesRegistration);
+        await houseRegistration.addTreeSpecies(treeSpecies, {through:{ species, tree_state, tree_number }});
         let formatedTreeSpeciesRegistration = { idTreeSpeciesRegistration, species, tree_state, tree_number, houseRegistrationId }
-        // crear formattedHouseRegistration para mandarle los datos que quiero mostrar en el front 
-        //luego en front houseregistration.js escribir las variables
         return res.status(201).json(formatedTreeSpeciesRegistration);
       } else {
         return res.status(400).json({ error: 'Faltan datos del formulario' });
       }
 
     } else {
-      console.log('La especie ya existe en el TreeSpeciesRegistration');
-
-      console.log(req.body);
-      // Filtrar y validar el cuerpo de la solicitud
-      const validatedObject = await validateRequestBody(req.body, TreeSpeciesRegistration);
-      
-      // Comprobar errores de validación
-      if (validatedObject.error) {
-        console.log(validatedObject.error);
-        return res.status(400).json(validatedObject);
-      }
-
-      // Crear una nueva campaña en la base de datos y devolverla como respuesta
-      const treeSpeciesRegistration = await TreeSpeciesRegistration.create(validatedObject);
-      return res.status(201).json(treeSpeciesRegistration.toJSON());
-
+      return res.sendStatus(409);
     }
 
   } catch (error) {
@@ -280,9 +246,7 @@ export const updateTreeRegistration = async (req, res) => {
       return res.status(400).json(validatedFields.errors);
     }
 
-    const { tree_state } = req.body;
-    const { tree_number } = req.body;
-    const { species } = req.body;
+    const { tree_state, tree_number, species } = req.body;
     
     let TreeSpecyId = 0;
     if (species) {
@@ -297,19 +261,32 @@ export const updateTreeRegistration = async (req, res) => {
       ...(tree_state && { tree_state }),
       ...(TreeSpecyId && { TreeSpecyId }),
     };
-    console.log(infoToUpdate);
 
-    let tree = await TreeSpeciesRegistration.update(infoToUpdate,{
+    // Revisa que no haya sido ingresado previamente en el registro de casa
+    const treeSpeciesRegistration = await TreeSpeciesRegistration.findOne({
+      attributes: ['id'],
+      where: {
+        HouseRegistrationId: req.params.HouseRegistrationId,
+        TreeSpecyId: TreeSpecyId
+      }
+    });
+    if(treeSpeciesRegistration) return res.sendStatus(409);
+
+    let tree = await TreeSpeciesRegistration.update(infoToUpdate, {
       where:{
         id: req.params.TreeSpeciesRegistrationId
       }
     });
 
-    let prospectus = await Prospectus.update(req.body,{
-      where:{
-        id: req.params.TreeSpeciesRegistrationId
-      }
-    })
+    let { units_per_sample } = req.body;
+    units_per_sample = units_per_sample ? parseInt(units_per_sample) : '';
+    if ( units_per_sample ) {
+      await Prospectus.update({ units_per_sample }, {
+        where: {
+          treeSpeciesRegistrationId: req.params.TreeSpeciesRegistrationId
+        }
+      });
+    }
 
 
     return res.status(200).json(tree);

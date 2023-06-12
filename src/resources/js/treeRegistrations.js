@@ -56,7 +56,10 @@ formAdd.addEventListener('submit', async (event) => {
     if (response.status === 201) {
       // Procesar la respuesta del servidor
       const data = await response.json();
-      showMessage(`Casa "${data.species}" creada correctamente`);
+
+      data.species = data.species.charAt(0).toUpperCase() + data.species.slice(1).toLowerCase();
+
+      showMessage(`Especie de árbol "${data.species}" registrado correctamente`);
 
       // Obtener el contenedor de las campañas
       const treeContainer = document.querySelector('.cards');
@@ -66,10 +69,10 @@ formAdd.addEventListener('submit', async (event) => {
       if (treeContainer.firstElementChild.tagName === 'P') {
         treeContainer.innerHTML = '';
       }
-      console.log('DATAZO',data);
+
       // Crear un nuevo elemento de campaña con los datos recibidos
       const newTreeElement = document.createElement('a');
-      newTreeElement.href = `/houses/${data.houseRegistrationId}`;
+      newTreeElement.href = `trees/${data.houseRegistrationId}`;
       newTreeElement.insertAdjacentHTML('beforeend', `
 			<div class="card-left-side">
 				<p class="card-left-side-top">${data.species}</p>
@@ -81,12 +84,14 @@ formAdd.addEventListener('submit', async (event) => {
       // Agregar el nuevo elemento de campaña al contenedor existente
       treeContainer.prepend(newTreeElement);
 
+    } else if (response.status === 409) {
+      return showMessage('La especie de árbol ya fue registrada previamente', 'error');
     } else {
+      showMessage('Error al enviar el formulario', 'error');
       throw new Error('Error al enviar el formulario');
     }
   } catch (error) {
     // Manejar el error
-    showMessage('Error al enviar el formulario', 'error');
     console.error('Error al enviar el formulario:', error);
   }
 });
@@ -98,6 +103,7 @@ formAdd.addEventListener('submit', async (event) => {
 const formSearch = document.getElementById('searchPost');
 const speciesInputSearch = document.getElementById('speciesSearch');
 const treeStateInputSearch = document.getElementById('treeStateSearch');
+const hasFruitCheckboxSearch = document.getElementById('hasFruitSearch');
 
 // Evento de envío del formulario
 formSearch.addEventListener('submit', async (event) => {
@@ -107,11 +113,13 @@ formSearch.addEventListener('submit', async (event) => {
     // Obtener los valores de los campos del formulario
     const species = speciesInputSearch.value;
     const treeState = treeStateInputSearch.value;
+    const hasFruit = hasFruitCheckboxSearch.checked;
 
     // Crear el objeto con los valores del formulario
     const object = {
       ...(species && { species }),
-      ...(treeState && { treeState })
+      ...(treeState && { treeState }),
+      ...(hasFruit && { hasFruit })
     };
 
     // Serializar el objeto en formato de consulta de URL

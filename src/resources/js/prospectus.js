@@ -13,6 +13,10 @@ if (message) {
 // Obtener referencia a los elementos del formulario 
 const formAdd = document.getElementById('addPost');
 const units_per_sampleInputAdd = document.getElementById('units_per_sample');
+let wasCreated = false;
+if (units_per_sampleInputAdd && units_per_sampleInputAdd.value != 0) {
+  wasCreated = true;
+}
 
 // Evento de envio del formulario 
 if (formAdd) {
@@ -43,9 +47,12 @@ if (formAdd) {
       // Componer la URL completa para la solicitud
       const url = `${baseUrl}/api${pathName}`;
 
+      let method = 'POST';
+      if (wasCreated) { method = 'PATCH'} 
+
       // Enviar el objeto al servidor 
       const response = await fetch(url, {
-        method: 'POST',
+        method,
         body: JSON.stringify(object),
         headers: {
           'Content-Type': 'application/json'
@@ -53,7 +60,11 @@ if (formAdd) {
       });
 
       if (response.status === 201) {
-        localStorage.setItem('message', 'Campaña actualizada con éxito');
+        localStorage.setItem('message', 'Prospecto creado con éxito');
+        // Recargar la página
+        location.reload();
+      } else if (response.status === 200) {
+        localStorage.setItem('message', 'Prospecto actualizado con éxito');
         // Recargar la página
         location.reload();
       } else {
@@ -68,12 +79,13 @@ if (formAdd) {
 }
 
 const formEdit = document.getElementById('editPost');
-const wasChecked = document.getElementById('has-fly').checked;
+let wasChecked = document.getElementById('has-fly');
 
 if (formEdit) {
   formEdit.addEventListener('submit', async (event) => {
     event.preventDefault(); // Evitar el envío del formulario por defecto
-  
+    
+    wasChecked = wasChecked.checked;
     const id = document.getElementById('prospectus-id').textContent;
     const weight = document.getElementById('weight').value;
     let hasFly = document.getElementById('has-fly').checked;

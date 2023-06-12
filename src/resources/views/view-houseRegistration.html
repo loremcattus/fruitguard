@@ -32,7 +32,7 @@
             <p class="key-post">Grilla</p>
             <div class="value-post">
                 <p><%= formattedHouseRegistrationns.grid %></p>
-                <input placeholder="<%= formattedHouseRegistrationns.grid %>" id="grid" type="text" style="display: none;">
+                <input placeholder="<%= formattedHouseRegistrationns.grid %>" id="grid" type="number" style="display: none;">
             </div>
         </div>
         <!-- SE EDITA  -->
@@ -89,10 +89,11 @@
         </div>
     </form>
     <hr>
-    <div class="buttons-options">
-        <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
-        <a href="<%= formattedHouseRegistrationns.id %>/trees" class="button-green-default option-button">VER ÁRBOLES</a>
-    </div>
+    <% if (formattedHouseRegistrationns.isOpen) { %>
+        <div class="buttons-options">
+            <a href="<%= formattedHouseRegistrationns.id %>/trees" class="button-green-default option-button">VER ÁRBOLES</a>
+        </div>
+    <% } %>
 </main>
 <div id="message" class="alert" role="alert"></div>
 <script src="/js/houseRegistration.js" type="module"></script>

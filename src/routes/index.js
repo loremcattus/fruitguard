@@ -7,7 +7,7 @@ import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromC
 import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockRegistrationController.js';
 import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
-import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration,updateTreeRegistration } from '../modules/controllers/treeSpeciesRegistrationController.js'
+import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration,updateTreeRegistration, addProspectus } from '../modules/controllers/treeSpeciesRegistrationController.js'
 import { getProspects, getProspectus, updateProspectus } from '../modules/controllers/prospectusController.js';
 import { getAdmin, getLoginAdmin, getAdminUsers } from '../modules/controllers/adminController.js';
 import { getAdminCars, getCar, addCar, updateCar } from '../modules/controllers/carController.js';
@@ -89,8 +89,10 @@ router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrat
 // registro de árbol
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees', getTreeSpeciesRegistrations);
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees/:TreeSpeciesRegistrationId', getTreeRegistration);
-router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees', addTreeSpeciesRegistration);
+router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees/', addTreeSpeciesRegistration);
 router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees/:TreeSpeciesRegistrationId', updateTreeRegistration);
+// prospecto
+router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses/:HouseRegistrationId/trees/:TreeSpeciesRegistrationId', addProspectus);
 
 // Analista
 router.get('/prospects', getProspects);
