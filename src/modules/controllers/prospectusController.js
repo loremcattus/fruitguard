@@ -1,6 +1,12 @@
+import { formatDate } from '../../helpers/validators.js';
 import models from '../models/index.js';
 
 const { Prospectus, TreeSpeciesRegistration, TreeSpecies, User } = models;
+
+// TODO: Obtener el id del supervisor desde la sesión
+const getAnalystId = async () => {
+  return 4;
+};
 
 export const getProspects = async (req, res) => {
   const fileHTML = 'list-prospects';
@@ -10,14 +16,14 @@ export const getProspects = async (req, res) => {
   try {
     let { prospectusId } = req.query; // Obtener los parámetros de búsqueda de la URL
     prospectusId = parseInt(prospectusId);
-    
+
     if (prospectusId) {
       const prospectusData = await Prospectus.findByPk(prospectusId, {
         attributes: ['id', 'analyst', 'has_fly', 'treeSpeciesRegistrationId']
       });
-      if(prospectusData){
+      if (prospectusData) {
 
-        const prospectus = prospectusData.dataValues
+        const prospectus = prospectusData.dataValues;
         const { id } = prospectus;
 
         const { TreeSpecyId } = (await TreeSpeciesRegistration.findByPk(prospectus.treeSpeciesRegistrationId, { attributes: ['TreeSpecyId'] })).dataValues;
@@ -46,3 +52,73 @@ export const getProspects = async (req, res) => {
     return res.render('error.html', { error: 500 });
   }
 };
+
+
+export const getProspectus = async (req, res) => {
+  const fileHTML = 'view-prospectus';
+  const title = 'Ver prospecto';
+  const single = true;
+
+  try {
+    let { ProspectusId } = req.params; // Obtener los parámetros de búsqueda de la URL
+    ProspectusId = parseInt(ProspectusId);
+
+    const prospectus = (await Prospectus.findByPk(ProspectusId)).dataValues;
+
+    const { TreeSpecyId } = (await TreeSpeciesRegistration.findByPk(prospectus.treeSpeciesRegistrationId, { attributes: ['TreeSpecyId'] })).dataValues;
+    const { species } = (await TreeSpecies.findByPk(TreeSpecyId, { attributes: ['species'] })).dataValues;
+
+    let { id, units_per_sample, has_fly, analyst, weight, updatedAt } = prospectus;
+
+    const unitsPerSample = units_per_sample;
+
+    const hasFly = !!has_fly;
+
+    analyst = !!analyst;
+    if (analyst) {
+      const { name } = (await User.findByPk(prospectus.analyst, { attributes: ['name'], paranoid: false })).dataValues;
+      analyst = name;
+    }
+
+    weight = weight ? weight : false;
+
+    updatedAt = formatDate(updatedAt);
+
+    const formattedProspectus = { id, species, unitsPerSample, hasFly, analyst, weight, updatedAt };
+
+    return res.render('index.html', { formattedProspectus, fileHTML, title, single });
+  } catch (error) {
+    console.error('Error al ver detalle del prospecto : ', error);
+    return res.redirect('/prospects');
+  }
+};
+
+export const updateProspectus = async (req, res) => {
+  const id = parseInt(req.params.ProspectusId);
+  try {
+    let { weight, hasFly } = req.body;
+    const analyst = await getAnalystId();
+
+    weight = weight ? parseInt(weight) : false;
+
+    let updatedOptions = {
+      ...( weight && { weight } ),
+      ...( hasFly != null && { has_fly: hasFly} ),
+    }
+
+    if (Object.keys(updatedOptions).length) {
+      updatedOptions.analyst = analyst; 
+    }
+
+    const wasUpdated = await Prospectus.update(updatedOptions, {
+      where: { id }
+    });
+
+    if(!wasUpdated) return res.sendStatus(404);
+
+    return res.sendStatus(200);
+  } catch (error) {
+    console.error('Error al actualizar prospecto : ', error);
+    return res.sendStatus(500);
+  }
+}

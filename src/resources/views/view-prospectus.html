@@ -1,0 +1,67 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="#">Inicio</a>
+        <a href="/prospects/">Listar prospectos</a>
+        <p>Ver prospecto</p>
+    </section>
+    <hr>
+    <h1>Información del prospecto</h1>
+    <form id="editPost" class="info-post">
+        <div class="item-post">
+            <p class="key-post">ID</p>
+            <div class="value-post">
+                <p id="prospectus-id"><%= formattedProspectus.id %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Especie</p>
+            <div class="value-post">
+                <p><%= formattedProspectus.species.charAt(0).toUpperCase() + formattedProspectus.species.slice(1).toLowerCase() %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Unidades por muestra</p>
+            <div class="value-post">
+                <p><%= formattedProspectus.unitsPerSample %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Peso de la muestra</p>
+            <div class="value-post">
+                <p><%= formattedProspectus.weight ? formattedProspectus.weight+' Kg.' : 'No registrado' %></p>
+                <input placeholder="<%= formattedProspectus.weight ? formattedProspectus.weight : 'Ingresar peso' %>" id="weight" type="number" style="display: none;">
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Tiene mosca</p>
+            <div class="value-post">
+                <p><%= formattedProspectus.hasFly ? 'Sí' : 'No' %></p>
+                <input type="checkbox" <%= formattedProspectus.hasFly ? 'checked' : '' %> id="has-fly" style="display: none;">
+            </div>
+        </div>
+        <% if (formattedProspectus.analyst) { %>
+        <div class="item-post">
+            <p class="key-post">Analista</p>
+            <div class="value-post">
+                <p><%= formattedProspectus.analyst %></p>
+            </div>
+        </div>
+        <% } %>
+        <div class="item-post">
+            <p class="key-post">Fecha de modificación</p>
+            <div class="value-post">
+                <p><%= formattedProspectus.updatedAt %></p>
+            </div>
+        </div>
+        <hr>
+        <button id="edit" class="button-green-default button-60">Editar</button>
+        <div class="buttons-edit" style="display: none;">
+            <button type="submit" class="button-40">Guardar</button>
+            <button id="cancel-edit" class="button-green-default button-60">Cancelar</button>
+        </div>
+    </form>
+</main>
+
+<div id="message" class="alert" role="alert"></div>
+
+<script src="/js/prospectus.js" type="module"></script>

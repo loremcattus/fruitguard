@@ -8,7 +8,7 @@ import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controlle
 import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
 import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration,updateTreeRegistration } from '../modules/controllers/treeSpeciesRegistrationController.js'
-import { getProspects } from '../modules/controllers/prospectusController.js';
+import { getProspects, getProspectus, updateProspectus } from '../modules/controllers/prospectusController.js';
 import { getAdmin, getLoginAdmin, getAdminUsers } from '../modules/controllers/adminController.js';
 import { getAdminCars, getCar, addCar, updateCar } from '../modules/controllers/carController.js';
 
@@ -94,6 +94,8 @@ router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrat
 
 // Analista
 router.get('/prospects', getProspects);
+router.get('/prospects/:ProspectusId', getProspectus);
+router.patch('/prospects/:ProspectusId', updateProspectus);
 
 // Admin 
 router.get('/loginAdmin', getLoginAdmin);
