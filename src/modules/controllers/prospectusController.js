@@ -1,7 +1,7 @@
 import { formatDate } from '../../helpers/validators.js';
 import models from '../models/index.js';
 
-const { Prospectus, TreeSpeciesRegistration, TreeSpecies, User } = models;
+const { Prospectus, TreeSpeciesRegistration, TreeSpecies, User, HouseRegistration, House, BlockRegistration, Focus } = models;
 
 // TODO: Obtener el id del supervisor desde la sesión
 const getAnalystId = async () => {
@@ -115,6 +115,36 @@ export const updateProspectus = async (req, res) => {
     });
 
     if(!wasUpdated) return res.sendStatus(404);
+
+    if(wasUpdated && ('has_fly' in updatedOptions)) {
+      const { treeSpeciesRegistrationId } = (await Prospectus.findByPk(id, {
+        attributes: ['treeSpeciesRegistrationId']
+      })).dataValues;
+      const { HouseRegistrationId } = (await TreeSpeciesRegistration.findByPk(treeSpeciesRegistrationId, {
+        attributes: ['HouseRegistrationId'],
+      })).dataValues;
+      const { HouseId, BlockRegistrationId } = (await HouseRegistration.findByPk(HouseRegistrationId, {
+        attributes: ['HouseId', 'BlockRegistrationId'],
+      })).dataValues;
+      const { address } = (await House.findByPk(HouseId, {
+        attributes: ['address'],
+      })).dataValues;
+      const { FocuId } = (await BlockRegistration.findByPk(BlockRegistrationId, {
+        attributes: ['FocuId'],
+      })).dataValues;
+      const { CampaignId } = (await Focus.findByPk(FocuId, {
+        attributes: ['CampaignId'],
+      })).dataValues;
+
+      if (updatedOptions.has_fly) {
+        const [focus, created] = await Focus.findOrCreate({ where: { CampaignId, address }});
+        if (!created) focus.update({active: true});
+      } else {
+        await Focus.update({active: false}, {
+          where: { CampaignId, address }
+        });
+      }
+    }
 
     return res.sendStatus(200);
   } catch (error) {
