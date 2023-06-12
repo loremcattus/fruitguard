@@ -475,7 +475,7 @@ export const seed = async (models) => {
 
   await models.User.destroy({where: {id: 49}});
   
-  // encryptPasswords();
+  encryptPasswords();
 
   const campaigns = await models.Campaign.bulkCreate([
     {
