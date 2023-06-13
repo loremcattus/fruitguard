@@ -369,3 +369,52 @@ if (addModal) {
     });
   }
 }
+
+// GENERATE REPORT
+
+// 1. Escucha el evento de clic en tu botón
+const generateReportButton = document.getElementById('generateReport');
+generateReportButton.addEventListener('click', fetchDataAndDownloadExcel);
+
+function fetchDataAndDownloadExcel() {
+  fetch(`/api/campaigns/${CampaignId}`)
+    .then(response => response.json())
+    .then(data => {
+      // Convierte el JSON en un formato de tabla de Excel XLSX
+      const workbook = convertJsonToXlsx(data);
+
+      // Crea un archivo XLSX
+      const excelBuffer = window.XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'datos.xlsx';
+
+      link.click();
+      window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+      console.error('Error al obtener los datos:', error);
+    });
+}
+
+// Asegúrate de que la librería SheetJS esté cargada antes de ejecutar este código
+function convertJsonToXlsx(jsonData) {
+  const workbook = XLSX.utils.book_new();
+  const sheetData = [];
+  
+  // Convertir cada clave-valor del objeto JSON en una fila vertical
+  for (const key in jsonData) {
+    if (jsonData.hasOwnProperty(key)) {
+      const row = [key, jsonData[key]];
+      sheetData.push(row);
+    }
+  }
+  
+  const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+  
+  return workbook;
+}
+

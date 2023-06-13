@@ -85,7 +85,7 @@
     </form>
     <hr>
     <div class="buttons-options">
-        <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
+        <button type="submit" class="button-green-default option-button" id="generateReport">GENERAR INFORME</button>
         <a href="<%= formattedCampaign.id %>/focuses" class="button-green-default option-button">VER FOCOS</a>
     </div>
     <% if (formattedCampaign.open) { %>
@@ -161,4 +161,5 @@
 <div id="message" class="alert" role="alert"></div>
 
 <script src="/js/locations.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
 <script src="/js/campaign.js" type="module"></script>

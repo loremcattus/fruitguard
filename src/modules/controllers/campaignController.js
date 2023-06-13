@@ -289,7 +289,7 @@ export const generateReport = async (req, res) => {
     const campaignId = parseInt(req.params.CampaignId);
 
     const campaign = (await Campaign.findByPk(campaignId, {
-      attributes: ['id', 'createdAt']
+      attributes: ['id', 'name', 'createdAt']
     })).dataValues;
     const focuses = await Focus.findAll({
       attributes: ['id', 'createdAt'],
@@ -373,7 +373,7 @@ export const generateReport = async (req, res) => {
     for (const prospectus of prospects) {
       treeSpeciesRegistrationHaveFruitSampleIds.push(prospectus.dataValues.treeSpeciesRegistrationId);
     }
-    const treeSpeciesRegistrationWithoutSampleAndWhichShouldHave = treeSpeciesRegistrationMustHaveFruitSampleIds.filter(id => !treeSpeciesRegistrationHaveFruitSampleIds.includes(id));
+    // const treeSpeciesRegistrationWithoutSampleAndWhichShouldHave = treeSpeciesRegistrationMustHaveFruitSampleIds.filter(id => !treeSpeciesRegistrationHaveFruitSampleIds.includes(id));
 
     const prospectsAnalyzed = await Prospectus.findAll({
       attributes: ['id', 'number_of_samples', 'units_per_sample', 'weight', 'has_fly'],
@@ -441,6 +441,8 @@ export const generateReport = async (req, res) => {
 
     const format = 'D/MM/YYYY';
     const report = {
+      campaignId: campaign.id,
+      campaignName: campaign.name,
       todayDate: formatDate(today, format),
       dateFirstDetection: formatDate(dateFirstDetection, format),
       dateLastDetection: formatDate(dateLastDetection, format),
@@ -449,7 +451,7 @@ export const generateReport = async (req, res) => {
       numberOfWeeksSinceFirstDetection: calcularDiferenciaDeSemanas(dateFirstDetection, today),
       numberOfPlacesVisited: houseRegistrations.length,
       numberOfPlacesWithFruitSamples: houseRegistrationWithFruitSamplesIds.length,
-      treeSpeciesRegistrationWithoutSampleAndWhichShouldHave,
+      // treeSpeciesRegistrationWithoutSampleAndWhichShouldHave,
       numberOfFruitSampleAnalyzed,
       numberOfFruitUnitsAnalyzed,
       numberOfFruitKilosAnalyzed,
