@@ -7,6 +7,10 @@ node_modules/
 # Ignora el archivo .env
 .env
 
+# Ignora multimedia
+data/evidence/*
+data/maps/*
+
 # Ignora los archivos de respaldo de VS Code
 .vscode/
 

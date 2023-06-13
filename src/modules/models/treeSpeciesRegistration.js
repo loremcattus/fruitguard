@@ -26,10 +26,6 @@ const treeSpeciesRegistrationModel = (sequelize) => {
         },
       },
     },
-    tree_evidence_id: {
-      type: DataTypes.INTEGER,
-      defaultValue: null,
-    },
   }, {
     sequelize,
     modelName: 'TreeSpeciesRegistration',

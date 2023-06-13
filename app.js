@@ -5,8 +5,11 @@ import morgan from 'morgan';
 import { renderFile } from 'ejs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { router } from './src/routes/index.js';
 import session from 'express-session';
+import multer from 'multer';
+import sharp from 'sharp';
+import { promises as fsPromises } from 'fs';
+import { router } from './src/routes/index.js';
 import { localStrategyRegister, localStrategyLogin, localStrategyLoginAdmin } from './src/lib/passport.js';
 
 // Cargar variables de entorno desde el archivo .env
@@ -21,6 +24,7 @@ const PORT = process.env.PORT || 3000;
 
 // Obtener la ruta a la carpeta de vistas
 const VIEWS_PATH = path.join(__dirname, '/src/resources/views/layouts');
+const EVIDENCE_PATH = path.join(__dirname, 'data', 'evidence');
 
 // Crear una aplicación Express
 const app = express();
@@ -65,6 +69,39 @@ app.use(router);
 
 // Servir archivos estáticos desde la carpeta src/resources
 app.use(express.static(path.join(__dirname, 'src/resources')));
+// Servir archivos estáticos desde la carpeta "evidence"
+app.use('/evidence', express.static(EVIDENCE_PATH));
+
+// Evidencias
+const upload = multer({
+  fileFilter: (req, file, cb) => {
+    const isImage = file.mimetype.startsWith('image/');
+    if (isImage) {
+      cb(null, true);
+    } else {
+      cb(new Error('¡Archivo no válido! Debe ser una imagen.'));
+    }
+  }
+});
+
+app.post('/evidences/:id', upload.single('evidence'), async (req, res) => {
+  try {
+    const id = req.params.id;
+    const outputPath = `${EVIDENCE_PATH}/${id}.webp`;
+
+    const transform = sharp().webp({ quality: 70 });
+
+    const buffer = await sharp(req.file.buffer)
+      .pipe(transform)
+      .toBuffer();
+
+    await fsPromises.writeFile(outputPath, buffer);
+
+    res.sendStatus(200);
+  } catch (error) {
+    res.status(500).send('Error al procesar la imagen: ' + error.message);
+  }
+});
 
 // Escuchar en el puerto especificado y registrar un mensaje en la consola
 app.listen(PORT, () => {
