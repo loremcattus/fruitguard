@@ -1,3 +1,4 @@
+import { promises as fsPromises } from 'fs';
 import models from '../models/index.js';
 import { validateRequestBody, formatDate, validateFieldsDataType } from '../../helpers/validators.js';
 import { roles, states, treeStates } from '../../helpers/enums.js';
@@ -149,13 +150,58 @@ export const updateCampaign = async (req, res) => {
         id: req.params.CampaignId
       }
     });
-    // TODO: If !req.body.open delete evidences with if of houseRegistration of campaign
-    if (!req.body.open) {
+
+    if (typeof req.body.open != 'undefined' && !req.body.open) {
       await UserRegistration.destroy({
         where: {
           CampaignId: req.params.CampaignId
         }
       });
+
+      const getIds = async (ids, model) => {
+        const archive = await model.findAll({
+          attributes: ['id'],
+          where: ids,
+          raw: true
+        });
+        return archive.map(single => single.id);
+      }
+      // Limpiar evidencias de la campaña
+      const { CampaignId } = req.params;
+      let ids = { CampaignId };
+      const focusesIds = await getIds(ids, Focus);
+      if (focusesIds.length > 0) {
+        ids = { FocuId: { [Sequelize.Op.in]: focusesIds } };
+        const blockRegistrationIds = await getIds(ids, BlockRegistration);
+        if (blockRegistrationIds.length > 0) {
+          ids = { BlockRegistrationId: { [Sequelize.Op.in]: blockRegistrationIds } };
+          const houseRegistrationIds = await getIds(ids, HouseRegistration);
+          if (houseRegistrationIds.length > 0) {
+            ids = { HouseRegistrationId: { [Sequelize.Op.in]: houseRegistrationIds } };
+            const treeSpeciesRegistrationIds = await getIds(ids, TreeSpeciesRegistration);
+            if (treeSpeciesRegistrationIds.length > 0) {
+              ids = treeSpeciesRegistrationIds.map(id => id.toString());
+              const EVIDENCE_PATH = 'data/evidence';
+              try {
+                const files = await fsPromises.readdir(EVIDENCE_PATH);
+
+                for (const file of files) {
+                  const nombreArchivo = file.split('.')[0];
+                  if (ids.includes(nombreArchivo)) {
+                    const filePath = `${EVIDENCE_PATH}/${file}`;
+                    await fsPromises.unlink(filePath);
+                  }
+                }
+
+                console.log('Limpieza de evidencias completada.');
+              } catch (error) {
+                console.error('Error al limpiar las evidencias:', error);
+              }
+            }
+          }
+        }
+      }
+
     }
 
     return res.sendStatus(200);
@@ -366,7 +412,7 @@ export const generateReport = async (req, res) => {
       const { HouseRegistrationId } = (await TreeSpeciesRegistration.findByPk(treeSpeciesRegistrationId, {
         attributes: ['HouseRegistrationId'],
       })).dataValues;
-      if(!houseRegistrationWithFruitSamplesIds.includes(HouseRegistrationId)) houseRegistrationWithFruitSamplesIds.push(HouseRegistrationId);
+      if (!houseRegistrationWithFruitSamplesIds.includes(HouseRegistrationId)) houseRegistrationWithFruitSamplesIds.push(HouseRegistrationId);
     }
 
     const treeSpeciesRegistrationHaveFruitSampleIds = [];
@@ -419,7 +465,7 @@ export const generateReport = async (req, res) => {
       const { species } = (await TreeSpecies.findByPk(TreeSpecyId, {
         attributes: ['species']
       })).dataValues;
-      if(!fruitSpeciesAnalyzed.includes(species)) fruitSpeciesAnalyzed.push(species);
+      if (!fruitSpeciesAnalyzed.includes(species)) fruitSpeciesAnalyzed.push(species);
     }
 
     for (const prospectusAnalyzedWithInfestedFruitId of prospectusAnalyzedWithInfestedFruitIds) {
@@ -432,7 +478,7 @@ export const generateReport = async (req, res) => {
       const { species } = (await TreeSpecies.findByPk(TreeSpecyId, {
         attributes: ['species']
       })).dataValues;
-      if(!fruitSpeciesInfested.includes(species)) fruitSpeciesInfested.push(species);
+      if (!fruitSpeciesInfested.includes(species)) fruitSpeciesInfested.push(species);
     }
 
     const dateFirstDetection = campaign.createdAt;
