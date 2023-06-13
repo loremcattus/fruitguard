@@ -24,4 +24,12 @@ helpers.matchRole = (role, savedRole) => {
     }
 }
 
+helpers.separarRut = (rutCompleto) => {
+    const partes = rutCompleto.split('-');
+    const run = partes[0];
+    const dvRun = partes[1];
+  
+    return { run, dvRun };
+  }
+
 export default helpers;

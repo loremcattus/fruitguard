@@ -44,7 +44,7 @@ export const localStrategyRegister = new LocalStrategy({
   passwordField: 'password',
   passReqToCallback: true
 }, async (req, email, password, done) => {
-  const { run, dvRun } = separarRun(req.body.run);
+  const { run, dvRun } = helpers.separarRut(req.body.run);
   const { name } = req.body;
   const newUser = {
     name,
@@ -100,13 +100,5 @@ passport.deserializeUser(async (id, done) => {
     done(error);
   }
 });
-
-function separarRun(rutCompleto) {
-  const partes = rutCompleto.split('-');
-  const run = partes[0];
-  const dvRun = partes[1];
-
-  return { run, dvRun };
-}
 
 // Exportar las estrategias como un objeto

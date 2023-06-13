@@ -27,23 +27,22 @@ export const getAdminCars = async (req, res) => {
       where: searchOptions
     });
 
-    const data = cars.length > 0 ? cars : 'No hay autos registrados o que coincidan con tu búsqueda';
-
-    const formattedData = formattedCars(data);
+    let formattedData = [];
+    if (cars.length > 0) {
+      formattedData = formattedCars(cars);
+    }
 
     return res.render('index.html', { formattedData, fileHTML, title });
   } catch (error) {
+    console.error(error);
     return res.render('error.html', { error: 500 });
   }
 
-  return res.render('not-logged.html', { fileHTML, title });
 }
 
 // Agregar Auto
 export const addCar = async (req, res) => {
   try {
-    console.log(req.body.patent);
-    console.log(req.body.capacity);
     // Valida que vengan datos en el cuerpo
     if (Object.keys(req.body).length === 0) {
       return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío.' });
@@ -59,9 +58,8 @@ export const addCar = async (req, res) => {
     if (!validatedObject.success) {
       return res.status(400).json(validatedObject.error);
     }
-    // Crear una nueva campaña en la base de datos y devolverla como respuesta
+    // Crear en la base de datos y devolverla como respuesta
     const car = await Car.create(carData);
-    console.log(car);
     return res.status(201).json(car.toJSON());
   } catch (error) {
     console.error('Error al insertar una campaña', error);
@@ -74,9 +72,10 @@ export const addCar = async (req, res) => {
 export const getCar = async (req, res) => {
   const fileHTML = 'admin-view-car';
   const title = 'Ver Auto';
+  const single = true;
 
   try {
-    // Obtener todas las campañas con las propiedades definidas
+
     const car = await Car.findByPk(req.params.CarId, {
       attributes: ['id', 'patent', 'capacity', 'available', 'TeamId']
     });
@@ -84,7 +83,7 @@ export const getCar = async (req, res) => {
     if (car) {
       const { ...formattedCar } = car.dataValues;
 
-      return res.render('index.html', { formattedCar, fileHTML, title });
+      return res.render('index.html', { formattedCar, fileHTML, title, single });
     } else {
       return res.render('error.html', { error: 404 });
     }
@@ -96,7 +95,7 @@ export const getCar = async (req, res) => {
 };
 
 
-// Editar campaña
+// Editar auto
 export const updateCar = async (req, res) => {
   try {
     // Valida que vengan datos en el cuerpo
@@ -104,18 +103,10 @@ export const updateCar = async (req, res) => {
       return res.status(400).json('El cuerpo de la solicitud está vacío.');
     }
 
-    const { capacity, patent } = req.body;
+    const { capacity, patent, available } = req.body;
     const capacityToInt = parseInt(capacity);
 
-    const carData = {capacity: capacityToInt, patent};
-    // Filtrar y validar el cuerpo de la solicitud
-    const validatedObject = await validateFieldsDataType(carData, Car);
-    // Comprobar errores de validación
-    if (validatedObject.errors) {
-      return res.status(400).json(validatedFields.errors);
-    }
-
-    console.log(validatedObject);
+    const carData = {capacity: capacityToInt, patent, available};
 
     await Car.update(carData, {
       where: {

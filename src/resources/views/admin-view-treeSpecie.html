@@ -1,0 +1,34 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="/admin/">Inicio</a>
+        <a href="/admin-tree-species/">Administración de Especies de Árbol</a>
+        <p>Ver auto</p>
+    </section>
+    <hr>
+    <h1>Información de la especie de árbol</h1>
+    <form id="editPost" class="info-post">
+        <div class="item-post">
+            <p class="key-post">ID</p>
+            <div class="value-post">
+                <p><%= formattedTreeSpecies.id %></p>
+            </div>
+        </div>
+        <div class="item-post">
+            <p class="key-post">Especie</p>
+            <div class="value-post">
+                <p><%= formattedTreeSpecies.species %></p>
+                <input placeholder="<%= formattedTreeSpecies.species %>" maxlength="6" id="species" type="text" style="display: none;">
+            </div>
+        </div>
+        <hr>
+        <button id="edit" class="button-green-default button-60">Editar</button>
+        <div class="buttons-edit" style="display: none;">
+            <button type="submit" class="button-40">Guardar</button>
+            <button id="cancel-edit" class="button-green-default button-60">Cancelar</button>
+        </div>
+    </form>
+</main>
+<div id="message" class="alert" role="alert"></div>
+
+<script src="/js/locations.js"></script>
+<script src="/js/adminTreeSpecie.js" type="module"></script>

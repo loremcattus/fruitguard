@@ -7,31 +7,48 @@ const port = window.location.port;
 // Construir la URL base
 const baseUrl = `http://${host}:${port}`;
 
-// REGISTRAR AUTO
+const message = localStorage.getItem('message');
+
+if (message) {
+  showMessage(message);
+  // Limpiar el mensaje almacenado después de mostrarlo
+  localStorage.removeItem('message');
+}
+
+// REGISTRAR USUARIO
 
 // Obtener referencias a los elementos del formulario
-const formAdd = document.getElementById('registerCarPost');
-const patentInputAdd = document.getElementById('patent');
-const capacityInputAdd = document.getElementById('capacity');
+const formAdd = document.getElementById('registerPost');
+const emailInputAdd = document.getElementById('email');
+const nameInputAdd = document.getElementById('name');
+const rutInputAdd = document.getElementById('rut');
+const licenseInputAdd = document.getElementById('license');
+const roleInputAdd = document.getElementById('role');
 
 // Evento de envío del formulario
 formAdd.addEventListener('submit', async (event) => {
     event.preventDefault(); // Evitar el envío del formulario por defecto
     // Validar los campos del formulario
-    if ( !patentInputAdd.value || !capacityInputAdd.value ) {
+    if ( !emailInputAdd.value || !nameInputAdd.value || !rutInputAdd.value || !roleInputAdd.value ) {
       showMessage('Por favor, complete todos los campos', 'error');
       return;
     }
   
     try {
       // Obtener los valores de los campos del formulario
-      const patent = patentInputAdd.value;
-      const capacity = capacityInputAdd.value;
+      const name = nameInputAdd.value;
+      const rut = rutInputAdd.value.replace(/\./g, '');
+      const email = emailInputAdd.value;
+      const role = roleInputAdd.value;
+      const hasLicense = licenseInputAdd.checked;
   
       // Crear el objeto con los valores del formulario
       const object = {
-        patent,
-        capacity
+        name,
+        rut,
+        email,
+        hasLicense,
+        role
       };
   
       // Obtener el host y el puerto del servidor actual
@@ -42,9 +59,7 @@ formAdd.addEventListener('submit', async (event) => {
       const baseUrl = `http://${host}:${port}`;
   
       // Componer la URL completa para la solicitud
-      const url = `${baseUrl}/adminCars`;
-  
-      //campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses
+      const url = `${baseUrl}/admin-users`;
   
       // Enviar el objeto al servidor
       const response = await fetch(url, {
@@ -57,8 +72,12 @@ formAdd.addEventListener('submit', async (event) => {
 
       if (response.status === 201) {
         // Procesar la respuesta del servidor
-        return showMessage(`Auto creado correctamente`);
+        localStorage.setItem('message','Usuario creado correctamente');
+        // Recargar la página
+        location.reload();
   
+      } else if (response.status === 409) {
+        return showMessage('El rut ya está registrado', 'error');
       } else {
         throw new Error('Error al enviar el formulario');
       }
@@ -74,9 +93,11 @@ formAdd.addEventListener('submit', async (event) => {
 
 // Obtener referencias a los elementos del formulario
 const formSearch = document.getElementById('searchPost');
-const patentInputSearch = document.getElementById('patentSearch');
-const capacityInputSearch = document.getElementById('capacitySearch');
-const carInputSearch = document.getElementById('carSearch');
+const emailInputSearch = document.getElementById('emailSearch');
+const nameInputSearch = document.getElementById('nameSearch');
+const runInputSearch = document.getElementById('runSearch');
+const roleInputSearch = document.getElementById('roleSearch');
+const licenseInputSearch = document.getElementById('licenseSearch');
 
 // Evento de envío del formulario
 formSearch.addEventListener('submit', async (event) => {
@@ -84,15 +105,19 @@ formSearch.addEventListener('submit', async (event) => {
 
   try {
     // Obtener los valores de los campos del formulario
-    const patent = patentInputSearch.value;
-    const capacity = capacityInputSearch.value;
-    const available = carInputSearch.checked ? false : undefined;
+    const name = nameInputSearch.value;
+    const run = runInputSearch.value;
+    const email = emailInputSearch.value;
+    const hasLicense = licenseInputSearch.checked ? false : undefined;
+    const role = roleInputSearch.value;
 
     // Crear el objeto con los valores del formulario
     const object = {
-      ...(patent && { patent }),
-      ...(capacity && { capacity }),
-      ...(available !== undefined && { available })
+      ...(name && { name }),
+      ...(run && { run }),
+      ...(email && { email }),
+      ...(hasLicense !== undefined && { hasLicense }),
+      ...(role && { role }),
     };
 
     // Serializar el objeto en formato de consulta de URL
@@ -108,3 +133,38 @@ formSearch.addEventListener('submit', async (event) => {
   }
 
 });
+
+const rutInputRegister = document.getElementById('rut');
+
+rutInputRegister.addEventListener('input', validateRut)
+
+function validateRut() {
+  var rutInput = document.getElementById('rut');
+  var rut = rutInput.value.trim().replace(/\./g, '').replace(/-/g, '').toUpperCase();
+  
+  var isValid = false;
+  
+  // Validar formato del RUT
+  if (/^[0-9]+-[0-9kK]{1}$/.test(rut)) {
+    var rutDigits = rut.split('-')[0];
+    var rutVerifier = rut.split('-')[1];
+    
+    // Validar dígito verificador
+    var sum = 0;
+    var multiplier = 2;
+    for (var i = rutDigits.length - 1; i >= 0; i--) {
+      sum += parseInt(rutDigits.charAt(i)) * multiplier;
+      multiplier = multiplier === 7 ? 2 : multiplier + 1;
+    }
+    
+    var remainder = sum % 11;
+    var calculatedVerifier = String(11 - remainder === 11 ? 0 : 11 - remainder);
+    
+    if (calculatedVerifier === rutVerifier) {
+      isValid = true;
+    }
+  }
+  
+  // Aplicar estilo al campo de entrada
+  rutInput.style.borderColor = isValid ? 'red' : 'green';
+}
