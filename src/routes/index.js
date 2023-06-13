@@ -10,6 +10,7 @@ import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, upda
 import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration,updateTreeRegistration } from '../modules/controllers/treeSpeciesRegistrationController.js'
 import { getAdmin, getLoginAdmin } from '../modules/controllers/adminController.js';
 import { getAdminCars, getCar, addCar, updateCar } from '../modules/controllers/carController.js';
+import { getAdminTreeSpecies, getAdminTreeSpecie, addTreeSpecies, updateTreeSpecies  } from '../modules/controllers/treeSpeciesController.js';
 
 export const router = express.Router();
 
@@ -96,12 +97,20 @@ router.post('/loginAdmin', passport.authenticate('localStrategyLoginAdmin', {
 }));
 router.get('/admin', getAdmin);
 
-router.get('/adminCars', getAdminCars);
-router.get('/adminCars/:CarId', getCar);
-router.post('/adminCars', addCar)
+// Admin Autos
+router.get('/admin-cars', getAdminCars);
+router.get('/admin-cars/:CarId', getCar);
+router.post('/admin-cars', addCar)
 router.patch('/api/cars/:CarId', updateCar);
 
-router.get('/adminUsers', getAdminUsers);
-router.get('/adminUsers/:UserId', getAdminUser);
-router.post('/adminUsers', addUser);
+// Admin Usuarios
+router.get('/admin-users', getAdminUsers);
+router.get('/admin-users/:UserId', getAdminUser);
+router.post('/admin-users', addUser);
 router.patch('/api/users/:UserId', updateUser);
+
+//Admin Especies de árbol
+router.get('/admin-tree-species', getAdminTreeSpecies);
+router.get('/admin-tree-species/:TreeSpeciesId', getAdminTreeSpecie);
+router.post('/admin-tree-species', addTreeSpecies);
+router.patch('/api/admin-tree-species/:TreeSpeciesId', updateTreeSpecies);

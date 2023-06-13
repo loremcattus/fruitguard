@@ -1,22 +1,22 @@
 <main>
     <section class="breadcrumbs">
         <a href="/admin/">Inicio</a>
-        <p>Administracion de autos</p>
+        <p>Administración de autos</p>
     </section>
-    <h1 class="custom-section-title">Administracion de autos</h1>
+    <h1 class="custom-section-title">Administración de autos</h1>
     <section class="cards">
         <h3 class="custom-section-title">Registrar Auto</h3>
         <form id="registerCarPost">
-            <input class="full" required type="text" id="patent" placeholder="Patente">
-            <input class="full" required type="number" id="capacity" placeholder="Capacidad">
+            <input class="full" required type="text" id="patent" minlength="6" maxlength="6" placeholder="Patente">
+            <input class="full" required type="number" min="1" id="capacity" placeholder="Capacidad">
             <button type="submit" class="button-green-default">Registrar</button>
         </form>
     </section>
     <section class="cards">
         <h3 class="custom-section-title">Buscar Auto</h3>
         <form id="searchPost">
-            <input class="full" type="text" id="patentSearch" placeholder="Patente">
-            <input class="full" type="number" id="capacitySearch" placeholder="Capacidad">
+            <input class="full" type="text" minlength="6" maxlength="6" id="patentSearch" placeholder="Patente">
+            <input class="full" type="number" min="0" id="capacitySearch" placeholder="Capacidad">
             <div class="bottom-crud">
                 <div class="check-container">
                     <label for="carSearch">Mostrar no disponible</label>
@@ -27,43 +27,29 @@
         </form>
     </section>
     <h1 class="card-title">Autos</h1>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="cards">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Patente</th>
-                                <th>Capacidad</th>
-                                <th>Disponible</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% formattedData.forEach(function(car) { %>
-                                <tr>
-                                    <td>
-                                        <%= car.id %>
-                                    </td>
-                                    <td><a href="/adminCars/<%= car.id %>">
-                                            <%= car.patent %>
-                                        </a></td>
-                                    <td>
-                                        <%= car.capacity %>
-                                    </td>
-                                    <td>
-                                        <%= car.available %>
-                                    </td>
-                                </tr>
-                                <% }); %>
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
-        </div> <!-- end col -->
-    </div> <!-- end row -->
+    <section class="cards">
+        <% if (formattedData.length > 0) { %>
+            <% for (let i = 0; i < formattedData.length; i++) { %>
+                <a href="/admin-cars/<%= formattedData[i].id %>">
+                    <div class="card-left-side">
+                        <p>Patente: <span class="card-left-side-top-highlight" class="card-left-side-top"><%= formattedData[i].patent %></span> </p>
+                        <p class="card-left-side-top">Capacidad: <%= formattedData[i].capacity %></p>                        
+                    </div>
+                    <div class="card-right-side">
+                        <% if (formattedData[i].available) { %>
+                            <p>Disponible </p>
+                            <div style="margin-left: 0.5rem;" class="green-ball"></div>
+                        <% } else { %>
+                            <p>No disponible </p>
+                            <div style="margin-left: 0.5rem;" class="red-ball"></div>
+                        <% } %>                        
+                    </div>
+                </a>
+            <% } %>
+        <% } else { %>
+            <p>No hay autos registrados o que coincidan con tu búsqueda</p>
+        <% } %>
+    </section>
     <div id="message" class="alert" role="alert"></div>
     <script src="/js/adminCars.js" type="module"></script>
 </main>

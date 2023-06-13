@@ -27,23 +27,22 @@ export const getAdminCars = async (req, res) => {
       where: searchOptions
     });
 
-    const data = cars.length > 0 ? cars : 'No hay autos registrados o que coincidan con tu búsqueda';
-
-    const formattedData = formattedCars(data);
+    let formattedData = [];
+    if (cars.length > 0) {
+      formattedData = formattedCars(cars);
+    }
 
     return res.render('index.html', { formattedData, fileHTML, title });
   } catch (error) {
+    console.error(error);
     return res.render('error.html', { error: 500 });
   }
 
-  return res.render('not-logged.html', { fileHTML, title });
 }
 
 // Agregar Auto
 export const addCar = async (req, res) => {
   try {
-    console.log(req.body.patent);
-    console.log(req.body.capacity);
     // Valida que vengan datos en el cuerpo
     if (Object.keys(req.body).length === 0) {
       return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío.' });

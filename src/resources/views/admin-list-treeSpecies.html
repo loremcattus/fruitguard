@@ -1,0 +1,45 @@
+<main>
+    <section class="breadcrumbs">
+        <a href="/admin/">Inicio</a>
+        <p>Administración de Especies de Árbol</p>
+    </section>
+        <h1 class="custom-section-title">Administración de Especies de Árbol</h1>
+    <section class="not-logged-card">
+        <h3 class="custom-section-title">Registrar Especie de Árbol</h3>
+        <form id="registerPost">
+            <input class="full" required type="text" id="species" placeholder="Nombre Especie de Árbol">
+            <div class="bottom-crud">
+                <button type="submit" class="button-green-crud">Registrar</button>
+            </div>
+        </form>
+    </section>
+    <section class="not-logged-card">
+        <h3 class="custom-section-title">Buscar Especie de Árbol</h3>
+        <form id="searchPost">
+            <input class="full" type="text" id="speciesSearch" placeholder="Nombre Especie de Árbol">
+            <div class="bottom-crud">
+                <button type="submit" class="button-green-crud">Buscar</button>
+            </div>
+        </form>
+    </section>
+    <h1 class="card-title">Especies de Árbol</h1>
+    <section class="cards">
+        <% if (Array.isArray(data) && data.length > 0) { %>
+            <% for (let i = 0; i < data.length; i++) { %>
+                <a href="/admin-tree-species/<%= data[i].id %>">
+                    <div class="card-left-side">
+                        <p class="card-left-side-top">ID <%= data[i].id %> | </p>
+                    
+                    </div>
+                    <div>
+                        <p><span class="card-left-side-top-highlight"><%= data[i].species %></span></p>
+                    </div>
+                </a>
+            <% } %>
+        <% } else { %>
+            <p><%= data %></p>
+        <% } %>
+    </section>
+    <div id="message" class="alert" role="alert"></div>
+    <script src="/js/adminTreeSpecies.js" type="module"></script>
+</main>

@@ -7,6 +7,14 @@ const port = window.location.port;
 // Construir la URL base
 const baseUrl = `http://${host}:${port}`;
 
+const message = localStorage.getItem('message');
+
+if (message) {
+  showMessage(message);
+  // Limpiar el mensaje almacenado después de mostrarlo
+  localStorage.removeItem('message');
+}
+
 // REGISTRAR USUARIO
 
 // Obtener referencias a los elementos del formulario
@@ -51,7 +59,7 @@ formAdd.addEventListener('submit', async (event) => {
       const baseUrl = `http://${host}:${port}`;
   
       // Componer la URL completa para la solicitud
-      const url = `${baseUrl}/adminUsers`;
+      const url = `${baseUrl}/admin-users`;
   
       // Enviar el objeto al servidor
       const response = await fetch(url, {
@@ -64,8 +72,12 @@ formAdd.addEventListener('submit', async (event) => {
 
       if (response.status === 201) {
         // Procesar la respuesta del servidor
-        return showMessage(`Usuario creado correctamente`);
+        localStorage.setItem('message','Usuario creado correctamente');
+        // Recargar la página
+        location.reload();
   
+      } else if (response.status === 409) {
+        return showMessage('El rut ya está registrado', 'error');
       } else {
         throw new Error('Error al enviar el formulario');
       }

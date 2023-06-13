@@ -7,39 +7,28 @@ const port = window.location.port;
 // Construir la URL base
 const baseUrl = `http://${host}:${port}`;
 
-const message = localStorage.getItem('message');
-
-if (message) {
-  showMessage(message);
-  // Limpiar el mensaje almacenado después de mostrarlo
-  localStorage.removeItem('message');
-}
-
-// REGISTRAR AUTO
+// REGISTRAR ESPECIE DE ÁRBOL
 
 // Obtener referencias a los elementos del formulario
-const formAdd = document.getElementById('registerCarPost');
-const patentInputAdd = document.getElementById('patent');
-const capacityInputAdd = document.getElementById('capacity');
+const formAdd = document.getElementById('registerPost');
+const speciesInputAdd = document.getElementById('species');
 
 // Evento de envío del formulario
 formAdd.addEventListener('submit', async (event) => {
     event.preventDefault(); // Evitar el envío del formulario por defecto
     // Validar los campos del formulario
-    if ( !patentInputAdd.value || !capacityInputAdd.value ) {
+    if ( !speciesInputAdd.value ) {
       showMessage('Por favor, complete todos los campos', 'error');
       return;
     }
   
     try {
       // Obtener los valores de los campos del formulario
-      const patent = patentInputAdd.value;
-      const capacity = capacityInputAdd.value;
-      
+      const species = speciesInputAdd.value;
+  
       // Crear el objeto con los valores del formulario
       const object = {
-        patent,
-        capacity
+        species,
       };
   
       // Obtener el host y el puerto del servidor actual
@@ -50,7 +39,7 @@ formAdd.addEventListener('submit', async (event) => {
       const baseUrl = `http://${host}:${port}`;
   
       // Componer la URL completa para la solicitud
-      const url = `${baseUrl}/admin-cars`;
+      const url = `${baseUrl}/admin-tree-species`;
   
       //campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses
   
@@ -65,9 +54,7 @@ formAdd.addEventListener('submit', async (event) => {
 
       if (response.status === 201) {
         // Procesar la respuesta del servidor
-        localStorage.setItem('message','Auto creado correctamente');
-        // Recargar la página
-        location.reload();
+        return showMessage(`Especie de árbol creada correctamente`);
   
       } else {
         throw new Error('Error al enviar el formulario');
@@ -84,9 +71,7 @@ formAdd.addEventListener('submit', async (event) => {
 
 // Obtener referencias a los elementos del formulario
 const formSearch = document.getElementById('searchPost');
-const patentInputSearch = document.getElementById('patentSearch');
-const capacityInputSearch = document.getElementById('capacitySearch');
-const carInputSearch = document.getElementById('carSearch');
+const speciesInputSearch = document.getElementById('speciesSearch');
 
 // Evento de envío del formulario
 formSearch.addEventListener('submit', async (event) => {
@@ -94,15 +79,11 @@ formSearch.addEventListener('submit', async (event) => {
 
   try {
     // Obtener los valores de los campos del formulario
-    const patent = patentInputSearch.value;
-    const capacity = capacityInputSearch.value;
-    const available = carInputSearch.checked ? false : undefined;
+    const species = speciesInputSearch.value;
 
     // Crear el objeto con los valores del formulario
     const object = {
-      ...(patent && { patent }),
-      ...(capacity && { capacity }),
-      ...(available !== undefined && { available })
+      ...(species && { species }),
     };
 
     // Serializar el objeto en formato de consulta de URL

@@ -5,7 +5,7 @@ const host = window.location.hostname;
 const port = window.location.port;
 // Construir la URL base
 const baseUrl = `http://${host}:${port}`;
-const UserId = window.location.href.split('/').reverse()[0].split('?')[0];
+const TreeSpeciesId = window.location.href.split('/').reverse()[0].split('?')[0];
 
 const message = localStorage.getItem('message');
 
@@ -15,42 +15,21 @@ if (message) {
   localStorage.removeItem('message');
 }
 
-function isNumeric(str) {
-  return /\d/.test(str);
-}
-
 // UPDATE
 // Obtener referencias a los elementos del formulario
 const formEdit = document.getElementById('editPost');
-const nameInputEdit = document.getElementById('name');
-const rutSelectEdit = document.getElementById('rut');
-const emailSelectEdit = document.getElementById('email');
-const licenseCheckboxEdit = document.getElementById('hasLicense');
-const roleSelectEdit = document.getElementById('role');
-const availableInput = document.getElementById('available');
-
-const wasLicense = licenseCheckboxEdit.checked ? true : false;
+const speciesInputEdit = document.getElementById('species');
 
 // Evento de envío del formulario
 formEdit.addEventListener('submit', async (event) => {
   event.preventDefault(); // Evitar el envío del formulario por defecto
 
   // Obtener los valores de los campos del formulario
-  const name = nameInputEdit.value;
-  const rut = rutSelectEdit.value;
-  const email = emailSelectEdit.value;
-  const hasLicense = licenseCheckboxEdit.checked ? true : false;
-  const role = roleSelectEdit.value;
-
-  // TODO: separar rut en run y dvRun
+  const species = speciesInputEdit.value;
 
   // Crear el objeto solo con los valores que vengan del formulario
   const object = {
-    ...(name && { name }),
-    ...(rut && { rut }),
-    ...(email && { email }),
-    ...(wasLicense != hasLicense && { hasLicense }),
-    ...(role && { role }),
+    ...(species && { species }),
   };
 
   if (Object.keys(object).length === 0) {
@@ -60,20 +39,20 @@ formEdit.addEventListener('submit', async (event) => {
 
   try {
     // Componer la URL completa para la solicitud
-    const url = `${baseUrl}/api/users/${UserId}`;
+    const url = `${baseUrl}/api/admin-tree-species/${TreeSpeciesId}`;
 
     // Enviar el objeto al servidor
     const response = await fetch(url, {
       method: 'PATCH',
       body: JSON.stringify(object),
       headers: {
-        'Content-Type': 'application/json' 
+        'Content-Type': 'application/json'
       }
     })
 
     if (response.status === 200) {
       // Guardar el mensaje en el almacenamiento local
-      localStorage.setItem('message', 'Usuario actualizado con éxito');
+      localStorage.setItem('message', 'Especie de árbol actualizada con éxito');
       // Recargar la página
       location.reload();
     } else if (response.status === 400) {

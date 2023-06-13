@@ -1,5 +1,5 @@
 import models from '../models/index.js';
-import { validateRequestBody, validateFieldsDataType, validateRUT } from '../../helpers/validators.js';
+import { validateRequestBody, validateFieldsDataType, validateRUT, formatDate } from '../../helpers/validators.js';
 import { roles } from '../../helpers/enums.js';
 import helpers from '../../lib/helpers.js';
 
@@ -42,10 +42,11 @@ export const getAdminUsers = async (req, res) => {
       paranoid: false 
     });
 
-    const data = users.length > 0 ? users : 'No hay usuarios registrados o que coincidan con tu búsqueda';
-
+    let formattedUsers = [];
+    if (users.length > 0) {
+      formattedUsers = formatDataValues(users);
+    }
     // Dar formato a cada usuario y crear un nuevo array
-    const formattedUsers = formatDataValues(data);
 
     // Enviar el array con los usuarios formateados
     return res.render('index.html', { formattedUsers, fileHTML, title, roles });
@@ -70,8 +71,9 @@ export const getAdminUser = async (req, res) => {
 
     if (user) {
       const { ...formattedUser } = user.dataValues;
-      console.log(formattedUser);
-      return res.render('index.html', { formattedUser, fileHTML, title, single });
+      formattedUser.createdAt = formatDate(formattedUser.createdAt);
+      formattedUser.updatedAt = formatDate(formattedUser.updatedAt);
+      return res.render('index.html', { formattedUser, fileHTML, title, single, roles  });
     } else {
       return res.render('error.html', { error: 404 });
     }
@@ -139,7 +141,7 @@ export const updateUser = async (req, res) => {
 
     // Filtrar y validar el cuerpo de la solicitud
     const validatedObject = await validateFieldsDataType(req.body, User);
-
+    
     // Comprobar errores de validación
     if (validatedObject.errors) {
       return res.status(400).json(validatedFields.errors);

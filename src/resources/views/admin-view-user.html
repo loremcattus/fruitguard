@@ -1,7 +1,7 @@
 <main>
     <section class="breadcrumbs">
         <a href="/admin/">Inicio</a>
-        <a href="/adminUsers/">Administracion de Usuarios</a>
+        <a href="/admin-users/">Administración de Usuarios</a>
         <p>Ver Usuario</p>
     </section>
     <hr>
@@ -45,21 +45,25 @@
             <p class="key-post">Rol</p>
             <div class="value-post">
                 <p><%= formattedUser.role %></p>
-                <input placeholder="<%= formattedUser.role %>" id="role" style="display: none;">
-            </div>
+                <select id="role" style="display: none;">
+                    <option disabled value="" selected><%= formattedUser.role %></option>
+                    <% Object.keys(roles).forEach(function(key) { %>
+                        <option value="<%= roles[key] %>"><%= roles[key] %></option>
+                    <% }); %>
+                </select>
+            </div>  
         </div>
+        
         <div class="item-post">
             <p class="key-post">Creado</p>
             <div class="value-post">
                 <p><%= formattedUser.createdAt %></p>
-                <input placeholder="<%= formattedUser.createdAt %>" id="createdAt" style="display: none;">
             </div>
         </div>
         <div class="item-post">
             <p class="key-post">Actualizado</p>
             <div class="value-post">
                 <p><%= formattedUser.updatedAt %></p>
-                <input placeholder="<%= formattedUser.updatedAt %>" id="updatedAt" style="display: none;">
             </div>
         </div>
         <div class="item-post">

@@ -1,138 +1,99 @@
 import models from '../models/index.js';
-import { areas, states } from '../../helpers/enums.js';
+import { validateRequestBody, formatDate, validateFieldsDataType } from '../../helpers/validators.js';
+import { roles } from '../../helpers/enums.js';
 
-const { HouseRegistration } = models;
+const { TreeSpecies } = models;
 
-export const getHouseRegistrations = async (req, res) => {
-  const fileHTML = 'list-houseRegistration';
-  const title = 'Registro de Casas';
-  let houseRegistration = '';
-  let formattedHouseRegistration;
-  let data = 'No hay casas registradas o que coincidan con tu búsqueda';
-  let searchOptions = {};
-  try {
-  const { idOrAddress, grid, area_id, state_id } = req.query;
-  
-  console.log(req.query);
-  
-  if (isNumericId(idOrAddress)) {
-  // Realizar la consulta utilizando la ID
-  console.log('Es un numero');
-  try {
-  // Construir el objeto de búsqueda dinámicamente
-    searchOptions = {
-      ...(idOrAddress &&  { id: idOrAddress } ),
-      ...(grid && { grid }),
-      ...(area_id && { area_id }),
-      ...(state_id && { state_id })
-    };
-    } catch (error) {
-      console.log(error);
-      return res.render('error.html', { error: 404 });
-    }
+export const getAdminTreeSpecies = async (req, res) => {
+    const fileHTML = 'admin-list-treeSpecies';
+    const title = 'Administrar Especies de Árbol';
 
-  } else if (isStringAddress(idOrAddress)) {
-    // Realizar la consulta utilizando la dirección
-    console.log('Es una direccion');
-    try{
-      // Construigridarea_idr el objeto de búsqueda dinámicamente
-      searchOptions = {
-        //...(idOrAddress &&  { idOrAddress }),
-        ...(grid && { grid }),
-        ...(area_id && { area_id }),
-        ...(state_id && { state_id })
-        //...(sampled !== undefined && { sampled })
-      };
-
+    try {
+        const { species } = req.query; // Obtener los parámetros de búsqueda de la URL
     
+        // Construir el objeto de búsqueda dinámicamente
+        const searchOptions = {
+          ...(species && { species }),
+        };
+    
+        // Obtener todas las campañas con las propiedades definidas
+        const treeSpecies = await TreeSpecies.findAll({
+          order: [['id', 'DESC']],
+          where: searchOptions
+        });
+    
+        const data = treeSpecies.length > 0 ? treeSpecies : 'No hay autos registrados o que coincidan con tu búsqueda';
+
+        return res.render('index.html', { data, fileHTML, title });
+      } catch (error) {
+        return res.render('error.html', { error: 500 });
+      }
+
+  }
+  
+  export const getAdminTreeSpecie = async (req, res) => {
+    const fileHTML = 'admin-view-treeSpecie';
+    const title = 'Administrar Especies de Árbol';
+    const single = true;
+  
+    try {
+  
+      const treeSpecies = await TreeSpecies.findByPk(req.params.TreeSpeciesId, {
+        attributes: ['id', 'species']
+      });
+  
+      if (treeSpecies) {
+        const { ...formattedTreeSpecies } = treeSpecies.dataValues;
+  
+        return res.render('index.html', { formattedTreeSpecies, fileHTML, title, single });
+      } else {
+        return res.render('error.html', { error: 404 });
+      }
+  
     } catch (error) {
-      console.log(error);
-      return res.render('error.html', { error: 404 });
-    }
-  } else {
-
-    // Construigridarea_idr el objeto de búsqueda dinámicamente
-    searchOptions = {
-      ...(grid && { grid }),
-      ...(area_id && { area_id }),
-      ...(state_id && { state_id })
-      //...(sampled !== undefined && { sampled })
-    };
-  }
-  } catch (error) {
+      console.error(error);
       return res.render('error.html', { error: 500 });
+    }
   }
 
-  // Obtener todas las campañas con las propiedades definidas
-  houseRegistration = await HouseRegistration.findAll({
-    order: [['id', 'DESC']],
-    attributes: ['id', 'grid', 'area_id', 'state_id'],
-    where: searchOptions
-  });
-
-  formattedHouseRegistration = houseRegistration.map((houseRegistration) => {
-    const { id, grid, area_id, state_id } = houseRegistration;
-    return { id, grid, area_id, state_id };
-  });
-
-  data = houseRegistration.length > 0 ? formattedHouseRegistration : 'No hay casas registradas o que coincidan con tu búsqueda';
-
-  return res.render('index.html', { formattedHouseRegistration: data, fileHTML, title, areas, states });
-
-};
-
-
-
-
-// Obtener una campaña en específico
-export const getHouseRegistration = async (req, res) => {
-  const fileHTML = 'view-HouseRegistration';
-  const title = 'Ver Registro de Casa';
-  const single = true;
-
-  // try {
-  //   // Obtener todas las campañas con las propiedades definidas
-  //   const campaign = await Campaign.findByPk( req.params.CampaignId, {
-  //     attributes: ['id', 'name', 'region', 'commune', 'open', 'mapId', 'createdAt', 'updatedAt']
-  //   });
-
-  //   if (campaign) {
-  //     const { createdAt, updatedAt, ...data } = campaign.dataValues;
-  //     data.createdAt = formatDate(createdAt);
-  //     data.updatedAt = formatDate(updatedAt);
-  //     return res.render('index.html', { formattedCampaign: data, fileHTML, title, single });
-  //   } else {
-  //     return res.render('error.html', { error: 404 });
-  //   }
-
-  // } catch (error) {
-  //   console.log(error);
-  //   return res.render('error.html', { error: 500 });
-  // }
-};
-
-
-
-// Agregar una campaña
-export const addHouseRegistration = async (req, res) => {
-  try {
-    // Valida que vengan datos en el cuerpo
-    if (Object.keys(req.body).length === 0) {
-      return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío.' });
-    }
-
-    // Filtrar y validar el cuerpo de la solicitud
-    const validatedObject = await validateRequestBody(req.body, HouseRegistration);
-    // Comprobar errores de validación
-    if (validatedObject.error) {
-      return res.status(400).json(validatedObject);
-    }
-
-    // Crear una nueva campaña en la base de datos y devolverla como respuesta
-    const houseRegistration = await HouseRegistration.create(validatedObject);
-    return res.status(201).json(houseRegistration.toJSON());
-  } catch (error) {
-    console.error('Error al insertar una casa', error);
-    return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
+  export const addTreeSpecies = async (req, res) => {
+    try {
+        // Valida que vengan datos en el cuerpo
+        if (Object.keys(req.body).length === 0) {
+          return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío.' });
+        }
+    
+        // Filtrar y validar el cuerpo de la solicitud
+        const validatedObject = await validateFieldsDataType(req.body, TreeSpecies);
+        // Comprobar errores de validación
+        if (!validatedObject.success) {
+          return res.status(400).json(validatedObject.error);
+        }
+        // Crear en la base de datos y devolverla como respuesta
+        const treeSpecies = await TreeSpecies.create(req.body);
+        return res.status(201).json(treeSpecies.toJSON());
+      } catch (error) {
+        console.error('Error al insertar una campaña', error);
+        return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
+      }
   }
-};
+
+  export const updateTreeSpecies = async (req, res) => {
+    try {
+        // Valida que vengan datos en el cuerpo
+        if (Object.keys(req.body).length === 0) {
+          return res.status(400).json('El cuerpo de la solicitud está vacío.');
+        }
+
+        await TreeSpecies.update(req.body, {
+          where: {
+            id: req.params.TreeSpeciesId
+          }
+        });
+    
+        return res.sendStatus(200);
+      } catch (error) {
+        console.error('Error al actualizar auto', error);
+        return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
+      }
+  }

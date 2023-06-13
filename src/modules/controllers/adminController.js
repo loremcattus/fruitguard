@@ -9,6 +9,6 @@ export const getLoginAdmin = async (req, res) => {
 export const getAdmin = async (req, res) => {
   const fileHTML = 'admin-home';
   const title = 'Administrador';
-  return res.render('not-logged.html', { fileHTML, title });
+  return res.render('index.html', { fileHTML, title });
 }
 
