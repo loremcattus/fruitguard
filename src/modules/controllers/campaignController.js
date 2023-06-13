@@ -149,7 +149,7 @@ export const updateCampaign = async (req, res) => {
         id: req.params.CampaignId
       }
     });
-
+    // TODO: If !req.body.open delete evidences with if of houseRegistration of campaign
     if (!req.body.open) {
       await UserRegistration.destroy({
         where: {
