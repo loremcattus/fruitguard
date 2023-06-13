@@ -403,18 +403,24 @@ function fetchDataAndDownloadExcel() {
 function convertJsonToXlsx(jsonData) {
   const workbook = XLSX.utils.book_new();
   const sheetData = [];
-  
-  // Convertir cada clave-valor del objeto JSON en una fila vertical
+
   for (const key in jsonData) {
     if (jsonData.hasOwnProperty(key)) {
-      const row = [key, jsonData[key]];
+      let value = jsonData[key];
+      
+      // Si el valor es un array, conviértelo en una cadena separada por comas
+      if (Array.isArray(value)) {
+        value = value.join(', ');
+      }
+      
+      // Agrega la fila vertical a la hoja de datos
+      const row = [key, value];
       sheetData.push(row);
     }
   }
-  
+
   const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-  
+
   return workbook;
 }
-
