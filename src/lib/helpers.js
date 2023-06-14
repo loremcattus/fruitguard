@@ -30,6 +30,19 @@ helpers.separarRut = (rutCompleto) => {
     const dvRun = partes[1];
   
     return { run, dvRun };
-  }
+}
+
+helpers.generatePassword = () => {
+    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let string = '';
+
+    for (let i = 0; i < 15; i++) {
+        const indice = Math.floor(Math.random() * characters.length);
+        string += characters.charAt(indice);
+    }
+
+    return string;
+}
+  
 
 export default helpers;

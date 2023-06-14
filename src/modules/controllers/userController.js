@@ -1,7 +1,9 @@
+import nodemailer from 'nodemailer';
 import models from '../models/index.js';
 import { validateRequestBody, validateFieldsDataType, validateRUT, formatDate } from '../../helpers/validators.js';
 import { roles } from '../../helpers/enums.js';
 import helpers from '../../lib/helpers.js';
+
 
 const { User, force, Sequelize } = models;
 
@@ -96,7 +98,7 @@ export const addUser = async (req, res) => {
 
     const { run, dvRun } = helpers.separarRut(rut);
 
-    const password = generatePassword();
+    const password = helpers.generatePassword();
     
     const runToInt = parseInt(run);
 
@@ -239,9 +241,6 @@ function formatDataValues(data) {
   return data.map(item => item.dataValues);
 }
 
-//-----------------------------------------------------------
-import nodemailer from 'nodemailer';
-
 function sendCredentials(name, mail, password){
   // Configuración del transporte de correo
   const transporter = nodemailer.createTransport({
@@ -283,17 +282,4 @@ function sendCredentials(name, mail, password){
       console.log('Correo electrónico enviado: ' + info.response);
     }
   });
-}
-
-
-function generatePassword() {
-  const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let string = '';
-
-  for (let i = 0; i < 15; i++) {
-    const indice = Math.floor(Math.random() * characters.length);
-    string += characters.charAt(indice);
-  }
-
-  return string;
 }

@@ -78,7 +78,7 @@ function validateEmail(email) {
 
 const resetPassword = document.getElementById('reset-password');
 resetPassword.addEventListener('click', () => {
-  const email = emailInput.value.trim();
+  const email = emailInputAdd.value.trim();
   if (!email) return showMessage('Por favor, ingresa tu correo', 'error');
   if (!validateEmail(email)) return showMessage('Correo inválido', 'error');
 

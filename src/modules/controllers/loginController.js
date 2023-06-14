@@ -1,5 +1,7 @@
+import nodemailer from 'nodemailer';
 import { roles } from '../../helpers/enums.js';
 import { getPermissionLevel } from '../../helpers/validators.js';
+import helpers from '../../lib/helpers.js';
 import models from '../models/index.js';
 const { User, UserRegistration } = models;
 
@@ -21,13 +23,19 @@ export const resetPassword = async (req, res) => {
     if (!email) throw new Error('El correo no se recibió correctamente');
 
     const user = await User.findOne({
-      attributes: ['id'],
+      attributes: ['id','email','name'],
       where: { email }
     });
     if(!user) return res.sendStatus(404);
 
-    const password = Math.random().toString(36).slice(-12);
+    const newPassword = helpers.generatePassword();
 
+    // Enviar credenciales a usuario
+    sendResetPassword(user.name, user.email, newPassword);
+
+    const password = await helpers.encryptPassword(newPassword);
+
+    // Crear un nuevo usuario en la base de datos y devolverlo como respuesta
     // 1. Enviar correo con nueva contraseña...
     // 2. Encriptar nueva contraseña
 
@@ -71,3 +79,46 @@ export const getHome = async (req, res) => {
 
   return res.render('index.html', { fileHTML, title, roles, permissionLevel, CampaignId, TeamId });
 };
+
+function sendResetPassword(name, mail, password){
+  // Configuración del transporte de correo
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: 'jhon.valenzuela.vera@gmail.com',
+      pass: 'qqceuznyzgzjujrs',
+    },
+  });
+
+  // Detalles del correo electrónico
+  const mailOptions = {
+    from: 'jhon.valenzuela.vera@gmail.com',
+    to: mail,
+    subject: 'Recuperación de contraseña para Fruitguard - Acceso a la aplicación del SAG',
+    html: `
+    <p>Estimado/a ` + name + `,</p>
+    <p>Recibimos tu solicitud de recuperación de contraseña para Fruitguard del Servicio Agrícola Ganadero. Hemos generado una nueva contraseña para tu cuenta: </p>
+    <p>Contraseña: ` + password + `</p>
+    <p>Te recomendamos iniciar sesión lo antes posible utilizando estos datos y cambiar la contraseña temporal por una de tu elección.</p>
+    <p>Si necesitas ayuda, no dudes en contactarnos.</p>
+    <p>Saludos cordiales,</p>
+    <p>Equipo de Fruit Guard</p>
+    <img src="cid:imagen1">
+  `,
+    attachments: [
+      {
+        filename: 'Sag-footer.jpg',
+        path: 'src/resources/images/Sag-footer.jpg',
+        cid: 'imagen1',
+      },
+    ],
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Correo electrónico enviado: ' + info.response);
+    }
+  });
+}

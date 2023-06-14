@@ -32,7 +32,6 @@ router.get('/logout', function (req, res, next) {
     });
   });
 
-
 // Registrarse
 router.get('/register', isNotLoggedIn, getRegister);
 router.post('/register', passport.authenticate('localStrategyRegister', {

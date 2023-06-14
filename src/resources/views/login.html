@@ -3,12 +3,14 @@
     <form id="loginPost">
         <input required class="full" id="email" name="correo" type="email" placeholder="Correo electrónico">
         <input required class="full" id="password" type="password" placeholder="Contraseña">
+        <button type="submit" class="button-green-default">Iniciar sesión</button>
+    </form>
+    <form action="reset-password">
         <div class="reset-password">
             <p id="reset-password">Recuperar contraseña</p>
         </div>
-        <button type="submit" class="button-green-default">Iniciar sesión</button>
     </form>
-    <p>¿Aún no tienes una cuenta? <a href="/register">Regístrate</a></p>
+    <!-- <p>¿Aún no tienes una cuenta? <a href="/register">Regístrate</a></p> -->
 </section>
 <div id="message" class="alert" role="alert"></div>
 <script src="/js/login.js" type="module"></script>
