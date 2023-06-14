@@ -93,18 +93,18 @@ export const addUser = async (req, res) => {
     }
 
     const { name, rut, email, hasLicense, role } = req.body;
-    console.log(rut);
 
     const { run, dvRun } = helpers.separarRut(rut);
+
+    const password = generatePassword();
     
     const runToInt = parseInt(run);
 
-    const userData = {name, run: runToInt, dvRun, email, hasLicense, role};
-    console.log(userData);
+    const userData = {name, run: runToInt, dvRun, email, password, hasLicense, role};
     // Filtrar y validar el cuerpo de la solicitud
     const validatedObject = await validateFieldsDataType(userData, User);
+
     // Comprobar errores de validación
-    console.log(validatedObject);
     if (validatedObject.error) { 
       console.log(validatedObject.error);
       return res.status(400).json(validatedObject);
@@ -121,10 +121,10 @@ export const addUser = async (req, res) => {
       return res.status(409).json({ error: `El valor de run '${run}' ya está registrado` });
     }
 
-
+    userData.password = await helpers.encryptPassword(userData.password);
 
     // Crear un nuevo usuario en la base de datos y devolverlo como respuesta
-    //const user = await User.create(userData);
+    const user = await User.create(userData);
 
     return res.status(201).json(user.toJSON());
   } catch (error) {
