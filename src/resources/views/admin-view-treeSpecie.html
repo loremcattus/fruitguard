@@ -1,8 +1,8 @@
 <main>
     <section class="breadcrumbs">
         <a href="/admin/">Inicio</a>
-        <a href="/admin-tree-species/">Administración de Especies de Árbol</a>
-        <p>Ver auto</p>
+        <a href="/admin-tree-species/">Listar especies de árbol</a>
+        <p>Ver especie de árbol</p>
     </section>
     <hr>
     <h1>Información de la especie de árbol</h1>
@@ -16,8 +16,8 @@
         <div class="item-post">
             <p class="key-post">Especie</p>
             <div class="value-post">
-                <p><%= formattedTreeSpecies.species %></p>
-                <input placeholder="<%= formattedTreeSpecies.species %>" maxlength="6" id="species" type="text" style="display: none;">
+                <p id="speciesName"><%= formattedTreeSpecies.species.charAt(0).toUpperCase() + formattedTreeSpecies.species.slice(1).toLowerCase() %></p>
+                <input placeholder="<%= formattedTreeSpecies.species.charAt(0).toUpperCase() + formattedTreeSpecies.species.slice(1).toLowerCase() %>" maxlength="6" id="species" type="text" style="display: none;">
             </div>
         </div>
         <hr>
@@ -26,6 +26,11 @@
             <button type="submit" class="button-40">Guardar</button>
             <button id="cancel-edit" class="button-green-default button-60">Cancelar</button>
         </div>
+        <% if (couldBeDelete) { %>
+            <div class="buttons-options">
+                <button type="button" id="deleteSpecies" class="button-40 button-green-default">Eliminar especie</button>
+            </div>
+        <% } %>
     </form>
 </main>
 <div id="message" class="alert" role="alert"></div>

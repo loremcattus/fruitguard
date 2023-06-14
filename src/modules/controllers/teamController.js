@@ -335,7 +335,7 @@ export const getTasks = async (req, res) => {
         };
       }).filter(({ tasks }) => tasks.length > 0);
     }
-
+    console.log(tasksToDo);
     return res.status(200).json(tasksToDo);
   } catch (error) {
     console.error('Error al obtener tareas: ', error);

@@ -1,5 +1,5 @@
 import models from '../models/index.js';
-import { validateRequestBody, validateFieldsDataType, formatDate } from '../../helpers/validators.js';
+import { validateRequestBody, validateFieldsDataType, getPermissionLevel, formatDate } from '../../helpers/validators.js';
 import { Sequelize } from 'sequelize';
 
 const { Focus, Block, BlockRegistration, Campaign } = models;
@@ -42,8 +42,8 @@ export const getBlocks = async (req, res) => {
       }
     };
     data.reverse();
-
-    return res.render('index.html', { formattedBlocks: data, fileHTML, title, breadcrumbs });
+    const permissionLevel = getPermissionLevel(req.user.role);
+    return res.render('index.html', { formattedBlocks: data, fileHTML, title, breadcrumbs, permissionLevel });
   } catch (error) {
     console.log(error);
     return res.render('error.html', { error: 404 });
@@ -79,7 +79,8 @@ export const getBlock = async (req, res) => {
     if (block) {
       const { createdAt, ...data } = block;// createdAt, updatedAt,
       data.createdAt = formatDate(createdAt);
-      return res.render('index.html', { formattedBlock: data, fileHTML, title, single, breadcrumbs });
+      const permissionLevel = getPermissionLevel(req.user.role);
+      return res.render('index.html', { formattedBlock: data, fileHTML, title, single, breadcrumbs, permissionLevel });
     } else {
       return res.render('error.html', { error: 404 });
     }

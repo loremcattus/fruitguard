@@ -1,11 +1,14 @@
 <main>
     <section class="breadcrumbs">
         <a href="/home">Inicio</a>
-        <a href="/campaigns/">Listar campañas</a>
-        <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
-        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
-        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
-        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks">Listar manzanas</a>
+        <% if (permissionLevel >= 3) { %>
+            <a href="/campaigns/">Listar campañas</a>
+        <% } else if (permissionLevel >= 2) { %>
+            <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
+            <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
+            <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
+            <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks">Listar manzanas</a>
+        <% } %>
         <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>">Ver manzana</a>
         <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>/houses">Listar casas</a>
         <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>/houses/<%= breadcrumbs.HouseRegistrationId %>">Ver casa</a>
@@ -31,11 +34,11 @@
         <div class="item-post">
             <p class="key-post">Estado</p>
             <div class="value-post">
-                <p><%= formattedTreeRegistration.tree_state %></p>
+                <p><%= formattedTreeRegistration.tree_state.charAt(0).toUpperCase() + formattedTreeRegistration.tree_state.slice(1).toLowerCase() %></p>
                 <select class="" id="treeState" style="display: none;">
-                    <option value="" disabled selected><%= formattedTreeRegistration.tree_state %></option>
+                    <option value="" disabled selected><%= formattedTreeRegistration.tree_state.charAt(0).toUpperCase() + formattedTreeRegistration.tree_state.slice(1).toLowerCase() %></option>
                     <% Object.values(treeStates).forEach(treeStates => { %>
-                        <option value="<%= treeStates %>"><%= treeStates %></option>
+                        <option value="<%= treeStates %>"><%= treeStates.charAt(0).toUpperCase() + treeStates.slice(1).toLowerCase() %></option>
                     <% }); %>
                 </select>
             </div>

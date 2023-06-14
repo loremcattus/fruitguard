@@ -1,11 +1,14 @@
 <main>
     <section class="breadcrumbs">
         <a href="/home">Inicio</a>
-        <a href="/campaigns/">Listar campañas</a>
-        <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
-        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
-        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
-        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks">Listar manzanas</a>
+        <% if (permissionLevel >= 3) { %>
+            <a href="/campaigns/">Listar campañas</a>
+        <% } else if (permissionLevel >= 2) { %>
+            <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
+            <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
+            <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
+            <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks">Listar manzanas</a>
+        <% } %>
         <p>Ver manzana</p>
     </section>
     <hr>
@@ -47,8 +50,10 @@
                 <p><%= formattedBlock.createdAt %></p>
             </div>
         </div>
-        <hr>
-        <button id="edit" class="button-green-default button-60">Editar</button>
+        <% if (permissionLevel >= 2) { %>
+            <hr>
+            <button id="edit" class="button-green-default button-60">Editar</button>
+        <% } %>
         <div class="buttons-edit" style="display: none;">
             <button type="submit" class="button-40">Guardar</button>
             <button id="cancel-edit" class=" button-green-default button-60">Cancelar</button>

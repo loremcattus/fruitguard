@@ -389,7 +389,7 @@ function fetchDataAndDownloadExcel() {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'datos.xlsx';
+      link.download = `campaign_${CampaignId}.xlsx`;
 
       link.click();
       window.URL.revokeObjectURL(url);

@@ -1,7 +1,9 @@
 <main>
     <section class="breadcrumbs">
         <a href="/home">Inicio</a>
-        <a href="/campaigns/">Listar campañas</a>
+        <% if (permissionLevel >= 3) { %>
+            <a href="/campaigns/">Listar campañas</a>
+        <% } %>
         <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
         <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
         <p>Ver foco</p>

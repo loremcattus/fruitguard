@@ -13,7 +13,7 @@ import { getProspects, getProspectus, updateProspectus } from '../modules/contro
 import { getAdmin, getLoginAdmin } from '../modules/controllers/adminController.js';
 import { getAdminUser, addUser, updateUser, deleteUser, getOtherManagers, getAdminUsers } from '../modules/controllers/userController.js';
 import { getAdminCars, getCar, addCar, updateCar } from '../modules/controllers/carController.js';
-import { getAdminTreeSpecies, getAdminTreeSpecie, addTreeSpecies, updateTreeSpecies } from '../modules/controllers/treeSpeciesController.js';
+import { getAdminTreeSpecies, getAdminTreeSpecie, addTreeSpecies, updateTreeSpecies, deleteTreeSpecies } from '../modules/controllers/treeSpeciesController.js';
 import { getAccount, updatedAccount } from '../modules/controllers/accountController.js';
 
 
@@ -43,7 +43,7 @@ router.post('/register', passport.authenticate('localStrategyRegister', {
 
 // Cuenta
 router.get('/account', isLoggedIn, getAccount);
-router.patch('api/account/:userId', isLoggedIn, updatedAccount);
+router.patch('/api/account', isLoggedIn, updatedAccount);
 
 // Usuarios
 router.delete('/api/users/:id', permissiveActionLink(roles.ADMIN), deleteUser);
@@ -54,7 +54,7 @@ router.get('/api/managers/:currentManagerId', permissiveActionLink(roles.MANAGER
 router.get('/campaigns', permissiveActionLink(roles.MANAGER), getCampaigns);
 router.get('/campaigns/:CampaignId', permissiveActionLink(roles.SUPERVISOR), getCampaign);
 router.post('/api/campaigns', permissiveActionLink(roles.MANAGER), addCampaign);
-router.patch('/api/campaigns/:CampaignId', permissiveActionLink(roles.SUPERVISOR), updateCampaign);
+router.patch('/api/campaigns/:CampaignId', permissiveActionLink(roles.MANAGER), updateCampaign);
 // Informe
 router.get('/api/campaigns/:CampaignId', permissiveActionLink(roles.SUPERVISOR), generateReport);
 // Usuarios de campañas
@@ -127,3 +127,4 @@ router.get('/admin-tree-species', permissiveActionLink(roles.SUPERVISOR), getAdm
 router.get('/admin-tree-species/:TreeSpeciesId', permissiveActionLink(roles.SUPERVISOR), getAdminTreeSpecie);
 router.post('/admin-tree-species', permissiveActionLink(roles.SUPERVISOR), addTreeSpecies);
 router.patch('/api/admin-tree-species/:TreeSpeciesId', permissiveActionLink(roles.SUPERVISOR), updateTreeSpecies);
+router.delete('/api/admin-tree-species/:TreeSpeciesId', permissiveActionLink(roles.SUPERVISOR), deleteTreeSpecies);

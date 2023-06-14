@@ -10,12 +10,12 @@ if (message) {
 
 const formEdit = document.getElementById('editPost');
 let wasChecked = document.getElementById('has-fly');
+wasChecked = wasChecked.checked;
 
 if (formEdit) {
   formEdit.addEventListener('submit', async (event) => {
     event.preventDefault(); // Evitar el envío del formulario por defecto
     
-    wasChecked = wasChecked.checked;
     const id = document.getElementById('prospectus-id').textContent;
     const weight = document.getElementById('weight').value;
     let hasFly = document.getElementById('has-fly').checked;

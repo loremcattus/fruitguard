@@ -5,7 +5,12 @@ const host = window.location.hostname;
 const port = window.location.port;
 
 // Construir la URL base
-const baseUrl = `http://${host}:${port}`;
+const message = localStorage.getItem('message');
+if (message) {
+  showMessage(message);
+  // Limpiar el mensaje almacenado después de mostrarlo
+  localStorage.removeItem('message');
+}
 
 // REGISTRAR ESPECIE DE ÁRBOL
 
@@ -24,7 +29,8 @@ formAdd.addEventListener('submit', async (event) => {
   
     try {
       // Obtener los valores de los campos del formulario
-      const species = speciesInputAdd.value;
+      let species = speciesInputAdd.value;
+      species = species.toLowerCase();
   
       // Crear el objeto con los valores del formulario
       const object = {
@@ -53,16 +59,15 @@ formAdd.addEventListener('submit', async (event) => {
       });
 
       if (response.status === 201) {
-        // Procesar la respuesta del servidor
-        return showMessage(`Especie de árbol creada correctamente`);
-  
+        localStorage.setItem('message', 'Especie de árbol creada correctamente');
+        location.reload();
       } else {
         throw new Error('Error al enviar el formulario');
       }
     } catch (error) {
       // Manejar el error
-      showMessage('Error al enviar el formulario', 'error');
       console.error('Error al enviar el formulario:', error);
+      return showMessage('Error al enviar el formulario', 'error');
     }
   });
 
@@ -79,7 +84,8 @@ formSearch.addEventListener('submit', async (event) => {
 
   try {
     // Obtener los valores de los campos del formulario
-    const species = speciesInputSearch.value;
+    let species = speciesInputSearch.value;
+    species = species.toLowerCase();
 
     // Crear el objeto con los valores del formulario
     const object = {

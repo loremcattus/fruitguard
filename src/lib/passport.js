@@ -24,7 +24,6 @@ export const localStrategyLogin = new LocalStrategy({
       if (validPassword) {
         //Modificar mensaje
         const user = userData.dataValues;
-        console.log(user);
         console.log("Contraseña correcta");
         done(null, user);
       } else {
@@ -91,7 +90,6 @@ export const localStrategyLoginAdmin = new LocalStrategy({
 });
 
 passport.serializeUser((usuario, done) => {
-  console.log('Serializando el ID: '+usuario.id);
   done(null, usuario.id);
   console.log('Serialización completada correctamente.');
 });
@@ -99,7 +97,6 @@ passport.serializeUser((usuario, done) => {
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findByPk(id);
-    console.log('Deserializando el ID: '+user.dataValues.id);
     done(null, user);
   } catch (error) {
     done(error);

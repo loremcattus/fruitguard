@@ -495,3 +495,8 @@ input[type="checkbox" i]:checked {
   background-position: center;
   background-size: 80%;
 }
+
+/* ADMIN VIEWS */
+.custom-section-title {
+  margin-bottom: 0.5rem;
+}
