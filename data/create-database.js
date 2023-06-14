@@ -12,19 +12,15 @@ const {
   DB_CHARSET: charset = 'utf8mb4',
 } = process.env;
 
-const force = process.argv.slice(2).includes('--force');
-
 // Crear la conexión de MySQL
 const connection = mysql.createConnection({ host, user, password });
 
 try {
-  if (force) {
-    await connection.promise().query(`DROP DATABASE IF EXISTS \`${database}\`;`);
-    console.log(`Database '${database}' was dropped or did not exist.`);
-  }
+  await connection.promise().query(`DROP DATABASE IF EXISTS \`${database}\`;`);
+  console.log(`Database '${database}' was dropped or did not exist.`);
 
   await connection.promise().query(`CREATE DATABASE IF NOT EXISTS \`${database}\` DEFAULT CHARACTER SET \`${charset}\`;`);
-  console.log(`Database '${database}' was created or already exists.`);
+  console.log(`Database '${database}' was created`);
 } catch (error) {
   throw console.error(`There was an error creating the database '${database}':`, error);
 } finally {

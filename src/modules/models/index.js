@@ -4,7 +4,6 @@ import { seed } from '../../../data/seed.js';
 import userModel from './user.js';
 import campaignModel from './campaign.js';
 import userRegistrationModel from './userRegistration.js';
-import attendanceModel from './attendance.js';
 import teamModel from './team.js';
 import treeSpeciesModel from './treeSpecies.js';
 import prospectusModel from './prospectus.js';
@@ -21,20 +20,16 @@ dotenv.config();
 // Obtener las variables de entorno
 const {
   HOST: host,
-  DB_FORCE: db_force,
   DB_NAME: database,
   DB_USERNAME: user,
   DB_PASSWORD: password,
   DB_DIALECT: dialect,
 } = process.env;
 
-
-let force = false
-// Verifica si el valor de force existe y no está vacío
-if (db_force && db_force === "true") {
+let force = false;
+if (process.env.FORCE) {
   force = true;
-};
-
+}
 // Crear la conexión de Sequelize
 const sequelize = new Sequelize(database, user, password, { host, dialect, logging: false });
 

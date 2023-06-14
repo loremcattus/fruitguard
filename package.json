@@ -5,9 +5,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "setup": "node ./data/create-database.js --force && node app.js",
-    "start": "node ./data/create-database.js && node app.js",
-    "dev": "nodemon app.js"
+    "setup": "SET FORCE=true && node ./data/create-database.js && node app.js",
+    "start": "node app.js",
+    "dev": "SET FORCE=true && nodemon app.js"
   },
   "keywords": [],
   "author": "",
