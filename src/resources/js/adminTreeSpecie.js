@@ -25,7 +25,8 @@ formEdit.addEventListener('submit', async (event) => {
   event.preventDefault(); // Evitar el envío del formulario por defecto
 
   // Obtener los valores de los campos del formulario
-  const species = speciesInputEdit.value;
+  let species = speciesInputEdit.value;
+  species = species.toLowerCase();
 
   // Crear el objeto solo con los valores que vengan del formulario
   const object = {
@@ -67,5 +68,39 @@ formEdit.addEventListener('submit', async (event) => {
     showMessage('Error al enviar el formulario', 'error');
   }
 });
+
+// DELETE
+
+const deleteSpeciesButton = document.getElementById('deleteSpecies');
+
+if (deleteSpeciesButton) {
+  deleteSpeciesButton.addEventListener('click', async () => {
+    try {
+      const response = await fetch(`/api/admin-tree-species/${TreeSpeciesId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+  
+      if (response.status === 200) {
+        const species = document.getElementById('speciesName');
+        // Guardar el mensaje en el almacenamiento local
+        localStorage.setItem('message', `Especie de árbol "${species.textContent}" eliminada con éxito`);
+        // Recargar la página
+        window.location.href = '/admin-tree-species';
+      } else if (response.status === 400) {
+        return response.text().then(errorMessage => {
+          showMessage(errorMessage, 'error');
+        });
+      } else {
+        throw new Error('Error al enviar el formulario');
+      }
+    } catch (error) {
+      // Manejar el error
+      showMessage('Error al enviar el formulario', 'error');
+    }
+  });
+}
 
 

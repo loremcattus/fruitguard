@@ -7,7 +7,7 @@ export const roles = {
 };
 
 export const areas = {
-  200: '100',
+  200: '200',
   400: '400',
   800: '800',
 };

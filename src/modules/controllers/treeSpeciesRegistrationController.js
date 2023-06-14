@@ -1,6 +1,6 @@
 import models from '../models/index.js';
 import { treeStates } from '../../helpers/enums.js';
-import { validateRequestBody, validateFieldsDataType } from '../../helpers/validators.js';
+import { validateRequestBody, validateFieldsDataType, getPermissionLevel } from '../../helpers/validators.js';
 
 
 const { HouseRegistration, TreeSpecies, TreeSpeciesRegistration, Prospectus } = models;
@@ -73,8 +73,8 @@ export const getTreeSpeciesRegistrations = async (req, res) => {
         }
       }
     }
-    
-    return res.render('index.html', { formatedTreeSpeciesRegistration, fileHTML, title, breadcrumbs, treeStates, formattedTreeSpecies, houseRegistrationId });
+    const permissionLevel = getPermissionLevel(req.user.role);
+    return res.render('index.html', { formatedTreeSpeciesRegistration, fileHTML, title, breadcrumbs, treeStates, formattedTreeSpecies, houseRegistrationId, permissionLevel });
   } catch (error) {
     console.error(error);
     return res.render('error.html', { error: 404 });
@@ -139,7 +139,8 @@ export const getTreeRegistration = async(req, res) =>{
 
     if (tree) {
       const { ...data } = tree;
-      return res.render('index.html', { formattedTreeRegistration: data, fileHTML, title, single, treeStates, breadcrumbs, formattedTreeSpecies, prospectusId, units_per_sample, number_of_samples});
+      const permissionLevel = getPermissionLevel(req.user.role);
+      return res.render('index.html', { formattedTreeRegistration: data, fileHTML, title, single, treeStates, breadcrumbs, formattedTreeSpecies, prospectusId, units_per_sample, number_of_samples, permissionLevel});
     } else {
       return res.render('error.html', { error: 404 });
     }

@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 import models from "../models/index.js";
-import { formatDate, validateFieldsDataType, validateRequestBody } from '../../helpers/validators.js';
+import { formatDate, validateFieldsDataType, validateRequestBody, getPermissionLevel } from '../../helpers/validators.js';
 
 const { Focus } = models;
 
@@ -35,7 +35,9 @@ export const getFocuses = async (req,res) => {
 
         const data = focused.length > 0 ? focused : 'No hay focos registrados o que coincidan con tu búsqueda';
 
-        return res.render('index.html', { formattedFocused: data, fileHTML, title, breadcrumbs });
+        const permissionLevel = getPermissionLevel(req.user.role);
+
+        return res.render('index.html', { formattedFocused: data, fileHTML, title, breadcrumbs, permissionLevel });
     }catch(error){
         return res.render('error.html',{error: 404 });
     }
@@ -62,7 +64,8 @@ export const getFocus = async (req, res) => {
             const { createdAt, updatedAt, ...data } = focus.dataValues;
             data.createdAt = formatDate(createdAt);
             data.updatedAt = formatDate(updatedAt);
-            return res.render('index.html',{formattedFocus: data, fileHTML, title, single, breadcrumbs });
+            const permissionLevel = getPermissionLevel(req.user.role);
+            return res.render('index.html',{formattedFocus: data, fileHTML, title, single, breadcrumbs, permissionLevel });
         } else {
             return res.render('error.html',{ error: 404 });
         }

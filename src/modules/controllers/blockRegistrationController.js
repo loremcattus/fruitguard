@@ -1,8 +1,9 @@
 import models from '../models/index.js';
-import { validateRequestBody, validateFieldsDataType, formatDate } from '../../helpers/validators.js';
+import { validateRequestBody, validateFieldsDataType, getPermissionLevel, formatDate } from '../../helpers/validators.js';
 import { Sequelize } from 'sequelize';
+import { states, treeStates } from '../../helpers/enums.js';
 
-const { Focus, Block, BlockRegistration, Campaign } = models;
+const { Campaign, Focus, Block, BlockRegistration, TreeSpeciesRegistration, TreeSpecies, Prospectus } = models;
 
 export const getBlocks = async (req, res) => {
   const fileHTML = 'list-block';
@@ -42,8 +43,8 @@ export const getBlocks = async (req, res) => {
       }
     };
     data.reverse();
-
-    return res.render('index.html', { formattedBlocks: data, fileHTML, title, breadcrumbs });
+    const permissionLevel = getPermissionLevel(req.user.role);
+    return res.render('index.html', { formattedBlocks: data, fileHTML, title, breadcrumbs, permissionLevel });
   } catch (error) {
     console.log(error);
     return res.render('error.html', { error: 404 });
@@ -79,7 +80,8 @@ export const getBlock = async (req, res) => {
     if (block) {
       const { createdAt, ...data } = block;// createdAt, updatedAt,
       data.createdAt = formatDate(createdAt);
-      return res.render('index.html', { formattedBlock: data, fileHTML, title, single, breadcrumbs });
+      const permissionLevel = getPermissionLevel(req.user.role);
+      return res.render('index.html', { formattedBlock: data, fileHTML, title, single, breadcrumbs, permissionLevel });
     } else {
       return res.render('error.html', { error: 404 });
     }
@@ -128,10 +130,10 @@ export const addBlock = async (req, res) => {
 
     // Verifica si el foco ya tiene el bloque asociado
     if (await focus.hasBlock(block)) { return res.sendStatus(409); };
-    
+
     // Añade el bloque al foco
     const blockRegistration = await focus.addBlock(block);
-    
+
     const blockRegistrationFormatted = {
       id: blockRegistration[0].dataValues.id,
       FocusId
@@ -172,7 +174,7 @@ export const updateBlock = async (req, res) => {
         where: { streets }
       }
     });
-    if(registeredBlock){
+    if (registeredBlock) {
       return res.sendStatus(409);
     };
 
@@ -186,7 +188,7 @@ export const updateBlock = async (req, res) => {
       attributes: ['id'],
       include: {
         model: Block,
-        where: {id: oldBlockId}
+        where: { id: oldBlockId }
       }
     });
 
@@ -194,7 +196,7 @@ export const updateBlock = async (req, res) => {
     const [blockWithNewStreets] = await Block.findOrCreate({ attributes: ['id'], where: { streets } });
     const newBlockId = blockWithNewStreets.dataValues.id;
     // Actualizar el BlockId del registro de bloque para vincularlo con el nuevo bloque
-    await blockRegistration.update({BlockId: newBlockId});
+    await blockRegistration.update({ BlockId: newBlockId });
 
     // Borra el bloque antiguo en caso de que no este registrado a ningún otro bloque
     if (focusWithBlock.length == 1) {
@@ -209,5 +211,114 @@ export const updateBlock = async (req, res) => {
   } catch (error) {
     console.error('Error al actualizar la manzana', error);
     return res.status(500).json({ error: 'Ocurrió un error en el servidor' });
+  }
+}
+
+export const generateBlockRegistrationReport = async (req, res) => {
+  try {
+    const { BlockRegistrationId } = req.params;
+    const blockRegistration = await BlockRegistration.findByPk(BlockRegistrationId, {
+      attributes: ['id', 'BlockId', 'FocuId']
+    });
+    const focus = await Focus.findByPk(blockRegistration.dataValues.FocuId, {
+      attributes: ['address', 'CampaignId'], raw: true
+    });
+    const campaign = await Campaign.findByPk(focus.CampaignId, {
+      attributes: ['name', 'region', 'commune'], raw: true
+    });
+    const block = await Block.findByPk(blockRegistration.dataValues.BlockId, {
+      attributes: ['id', 'streets'], raw: true
+    });
+    
+    const houses = await blockRegistration.getHouses();
+
+    const formattedHouses = [];
+    let numberOfPlacesOpen = 0;
+    let numberOfPlacesClosed = 0;
+    let numberOfInhabitedPlaces = 0;
+    let numberOfProblemPlaces = 0;
+    let numberOfPlacesWithFruitTrees = 0;
+    let numberOfTreeSpeciesRegistrationWithSample = 0;
+    let numberOfTreeSpeciesRegistrationWithoutSample = 0;
+    for (const house of houses) {
+      const houseRegistration = house.HouseRegistration.dataValues;
+      const HouseRegistrationId = houseRegistration.id
+      const area = houseRegistration.area;
+      const address = house.dataValues.address
+      let state = '';
+      let hasFruit = false;
+      const treeSpecies = [];
+      if (houseRegistration.state === states.OPEN) {
+        numberOfPlacesOpen++;
+        const treeSpeciesRegistrations = await TreeSpeciesRegistration.findAll({
+          attributes: ['id', 'tree_state', 'TreeSpecyId'],
+          where: { HouseRegistrationId }, raw: true
+        });
+        for (let treeSpeciesRegistration of treeSpeciesRegistrations) {
+          let treeState = treeSpeciesRegistration.tree_state;
+          const TreeSpeciesRegistrationId = treeSpeciesRegistration.id;
+          const { TreeSpecyId } = treeSpeciesRegistration;
+          const species = (await TreeSpecies.findByPk(TreeSpecyId, {
+            attributes: ['species'], raw: true
+          })).species;
+          if ([treeStates.RIPE, treeStates.UNRIPE].includes(treeState)) {
+            hasFruit = true;
+            const prospectus = await Prospectus.findOne({
+              where: { TreeSpeciesRegistrationId }, raw: true
+            });
+            if (state != 'con muestras') state = prospectus ? 'con muestras' : 'sin muestras';
+            if (prospectus) {
+              numberOfTreeSpeciesRegistrationWithSample++;
+              treeState = 'muestra'
+            } else numberOfTreeSpeciesRegistrationWithoutSample++;
+          }
+          treeSpecies.push({ species, treeState });
+        }
+        if (!state) {
+          state = 'sin frutales'
+        };
+
+      } else if (houseRegistration.state === states.CLOSE) {
+        numberOfPlacesClosed++;
+      } else if (houseRegistration.state === states.UNINHABITED) {
+        numberOfInhabitedPlaces++;
+      } else if (houseRegistration.state === states.REFUSE) {
+        numberOfProblemPlaces++;
+      }
+
+      if (!state) state = houseRegistration.state;
+      if (hasFruit) numberOfPlacesWithFruitTrees++;
+
+      formattedHouses.push({
+        area, address, state, treeSpecies
+      });
+
+    }
+
+    const today = new Date();
+    const format = 'D/MM/YYYY';
+
+    const report = {
+      todayDate: formatDate(today, format),
+      campaignName: campaign.name,
+      campaignRegion: campaign.region,
+      campaignCommune: campaign.commune,
+      focusAddress: focus.address,
+      blockId: block.id,
+      blockStreets: block.streets,
+      numberOfPlacesVisited: formattedHouses.length,
+      numberOfInhabitedPlaces,
+      numberOfPlacesClosed,
+      numberOfProblemPlaces,
+      numberOfPlacesOpen,
+      numberOfPlacesWithFruitTrees,
+      numberOfTreeSpeciesRegistrationWithSample,
+      numberOfTreeSpeciesRegistrationWithoutSample,
+      formattedHouses,
+    };
+    return res.status(200).json(report);
+  } catch (error) {
+    console.error('Error al generar el reporte: ', error);
+    return res.sendStatus(404);
   }
 }

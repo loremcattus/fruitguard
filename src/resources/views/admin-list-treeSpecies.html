@@ -1,11 +1,11 @@
 <main>
     <section class="breadcrumbs">
         <a href="/home">Inicio</a>
-        <p>Administración de Especies de Árbol</p>
+        <p>Listar especies de árbol</p>
     </section>
-        <h1 class="custom-section-title">Administración de Especies de Árbol</h1>
+        <h1 class="custom-section-title">Administrar Especies de Árbol</h1>
     <section class="not-logged-card">
-        <h3 class="custom-section-title">Registrar Especie de Árbol</h3>
+        <p class="custom-section-title">Registrar Especie de Árbol</p>
         <form id="registerPost">
             <input class="full" required type="text" id="species" placeholder="Nombre Especie de Árbol">
             <div class="bottom-crud">
@@ -14,7 +14,7 @@
         </form>
     </section>
     <section class="not-logged-card">
-        <h3 class="custom-section-title">Buscar Especie de Árbol</h3>
+        <p class="custom-section-title">Buscar Especie de Árbol</p>
         <form id="searchPost">
             <input class="full" type="text" id="speciesSearch" placeholder="Nombre Especie de Árbol">
             <div class="bottom-crud">
@@ -28,11 +28,7 @@
             <% for (let i = 0; i < data.length; i++) { %>
                 <a href="/admin-tree-species/<%= data[i].id %>">
                     <div class="card-left-side">
-                        <p class="card-left-side-top">ID <%= data[i].id %> | </p>
-                    
-                    </div>
-                    <div>
-                        <p><span class="card-left-side-top-highlight"><%= data[i].species %></span></p>
+                        <p class="card-left-side-top">ID <%= data[i].id %> | <span class="card-left-side-top-highlight"><%= data[i].species.charAt(0).toUpperCase() + data[i].species.slice(1).toLowerCase() %></span></p>
                     </div>
                 </a>
             <% } %>

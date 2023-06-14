@@ -64,7 +64,9 @@ export const getHome = async (req, res) => {
       where: { UserId: userId },
       raw: true
     });
-    CampaignId = userCampaign.CampaignId;
+    if (userCampaign) {
+      CampaignId = userCampaign.CampaignId;
+    }
   }
 
   let TeamId = 0;
@@ -74,7 +76,9 @@ export const getHome = async (req, res) => {
       where: { UserId: userId },
       raw: true
     });
-    TeamId = userTeam.TeamId;
+    if (userTeam) {
+      TeamId = userTeam.TeamId;
+    }
   }
 
   return res.render('index.html', { fileHTML, title, roles, permissionLevel, CampaignId, TeamId });

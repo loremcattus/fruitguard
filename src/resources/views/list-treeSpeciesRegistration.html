@@ -1,11 +1,14 @@
 <main>
     <section class="breadcrumbs">
         <a href="/home">Inicio</a>
-        <a href="/campaigns/">Listar campañas</a>
-        <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
-        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
-        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
-        <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks">Listar manzanas</a>
+        <% if (permissionLevel >= 3) { %>
+            <a href="/campaigns/">Listar campañas</a>
+        <% } else if (permissionLevel >= 2) { %>
+            <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
+            <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
+            <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
+            <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks">Listar manzanas</a>
+        <% } %>
         <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>">Ver manzana</a>
         <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>/houses">Listar casas</a>
         <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>/blocks/<%= breadcrumbs.BlockRegistrationId %>/houses/<%= breadcrumbs.HouseRegistrationId %>">Ver casa</a>
@@ -41,7 +44,7 @@
                 <a href="trees/<%=formatedTreeSpeciesRegistration[i].treeRegistrationId %>">
                     <div class="card-left-side">
                         <p class="card-left-side-top"><%= formatedTreeSpeciesRegistration[i].species.charAt(0).toUpperCase() + formatedTreeSpeciesRegistration[i].species.slice(1).toLowerCase() %></p>
-                        <p class="card-left-side-bottom"><%= formatedTreeSpeciesRegistration[i].tree_state %></p>
+                        <p class="card-left-side-bottom"><%= formatedTreeSpeciesRegistration[i].tree_state.charAt(0).toUpperCase() + formatedTreeSpeciesRegistration[i].tree_state.slice(1).toLowerCase() %></p>
                     </div>
                 </a>
             <% } %>
@@ -56,20 +59,20 @@
 <div class="add-modal" style="display: none;" id="addModal" role="form" aria-labelledby="addModalLabel">
     <div class="modal-items">
         <div class="close-modal" data-dismiss="modal"></div>
-        <h1>Añadir casa</h1>
+        <h1>Añadir árbol</h1>
         <form id="addPost">
             <select class="half" id="speciesAdd">
                 <option value="" disabled selected>Especie</option>
                 <% for (let i = 0; i < formattedTreeSpecies.length; i++) { %>
-                    <option value="<%= formattedTreeSpecies[i].id %>"><%= formattedTreeSpecies[i].species %></option>
+                    <option value="<%= formattedTreeSpecies[i].id %>"><%= formattedTreeSpecies[i].species.charAt(0).toUpperCase() + formattedTreeSpecies[i].species.slice(1).toLowerCase() %></option>
                 <% } %>
             </select>
             </select>
             <select class="half" id="treeStateAdd">
                 <option value="" disabled selected>Estado</option>
-              <% Object.entries(treeStates).forEach(([key, value]) => { %>
-                <option value="<%= value %>"><%= value %></option>
-              <% }); %>
+                <% Object.values(treeStates).forEach(treeState => { %>
+                    <option value="<%= treeState %>"><%= treeState.charAt(0).toUpperCase() + treeState.slice(1).toLowerCase() %></option>
+                <% }); %>
             </select>
             <div class="input-number">
                 <label for="numberTreesAdd">Cantidad de árboles</label>

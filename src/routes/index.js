@@ -5,14 +5,14 @@ import { isLoggedIn, isNotLoggedIn, permissiveActionLink, permissiveActionLinkRo
 import { getLogin, getRegister, resetPassword, getHome } from '../modules/controllers/loginController.js'
 import { getTeams, getTeam, addTeam, deleteTeam, getCars, getDrivers, getPassengers, getTasks } from '../modules/controllers/teamController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign, generateReport } from '../modules/controllers/campaignController.js';
-import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockRegistrationController.js';
+import { getBlocks, getBlock, addBlock, updateBlock, generateBlockRegistrationReport } from '../modules/controllers/blockRegistrationController.js';
 import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
 import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration, updateTreeRegistration, addProspectus } from '../modules/controllers/treeSpeciesRegistrationController.js'
 import { getProspects, getProspectus, updateProspectus } from '../modules/controllers/prospectusController.js';
 import { getAdminUser, addUser, updateUser, deleteUser, getOtherManagers, getAdminUsers } from '../modules/controllers/userController.js';
 import { getAdminCars, getCar, addCar, updateCar } from '../modules/controllers/carController.js';
-import { getAdminTreeSpecies, getAdminTreeSpecie, addTreeSpecies, updateTreeSpecies } from '../modules/controllers/treeSpeciesController.js';
+import { getAdminTreeSpecies, getAdminTreeSpecie, addTreeSpecies, updateTreeSpecies, deleteTreeSpecies } from '../modules/controllers/treeSpeciesController.js';
 import { getAccount, updatedAccount } from '../modules/controllers/accountController.js';
 
 
@@ -41,7 +41,7 @@ router.post('/register', passport.authenticate('localStrategyRegister', {
 
 // Cuenta
 router.get('/account', isLoggedIn, getAccount);
-router.patch('api/account/:userId', isLoggedIn, updatedAccount);
+router.patch('/api/account', isLoggedIn, updatedAccount);
 
 // Usuarios
 router.delete('/api/users/:id', permissiveActionLink(roles.ADMIN), deleteUser);
@@ -52,7 +52,7 @@ router.get('/api/managers/:currentManagerId', permissiveActionLink(roles.MANAGER
 router.get('/campaigns', permissiveActionLink(roles.MANAGER), getCampaigns);
 router.get('/campaigns/:CampaignId', permissiveActionLink(roles.SUPERVISOR), getCampaign);
 router.post('/api/campaigns', permissiveActionLink(roles.MANAGER), addCampaign);
-router.patch('/api/campaigns/:CampaignId', permissiveActionLink(roles.SUPERVISOR), updateCampaign);
+router.patch('/api/campaigns/:CampaignId', permissiveActionLink(roles.MANAGER), updateCampaign);
 // Informe
 router.get('/api/campaigns/:CampaignId', permissiveActionLink(roles.SUPERVISOR), generateReport);
 // Usuarios de campañas
@@ -80,6 +80,7 @@ router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks', permissiveActionLin
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId', permissiveActionLink(roles.PROSPECTOR), getBlock);
 router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks', permissiveActionLink(roles.SUPERVISOR), addBlock);
 router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId', permissiveActionLink(roles.SUPERVISOR), updateBlock);
+router.get('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId', permissiveActionLink(roles.PROSPECTOR), generateBlockRegistrationReport);
 
 // Registro de casas
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses', permissiveActionLink(roles.PROSPECTOR), getHouseRegistrations);
@@ -117,3 +118,4 @@ router.get('/admin-tree-species', permissiveActionLink(roles.SUPERVISOR), getAdm
 router.get('/admin-tree-species/:TreeSpeciesId', permissiveActionLink(roles.SUPERVISOR), getAdminTreeSpecie);
 router.post('/admin-tree-species', permissiveActionLink(roles.SUPERVISOR), addTreeSpecies);
 router.patch('/api/admin-tree-species/:TreeSpeciesId', permissiveActionLink(roles.SUPERVISOR), updateTreeSpecies);
+router.delete('/api/admin-tree-species/:TreeSpeciesId', permissiveActionLink(roles.SUPERVISOR), deleteTreeSpecies);

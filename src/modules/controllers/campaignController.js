@@ -1,6 +1,6 @@
 import { promises as fsPromises } from 'fs';
 import models from '../models/index.js';
-import { validateRequestBody, formatDate, validateFieldsDataType } from '../../helpers/validators.js';
+import { validateRequestBody, formatDate, validateFieldsDataType, getPermissionLevel } from '../../helpers/validators.js';
 import { roles, states, treeStates } from '../../helpers/enums.js';
 
 const { Campaign, User, UserRegistration, Focus, BlockRegistration, HouseRegistration, TreeSpeciesRegistration, Prospectus, TreeSpecies, Sequelize } = models;
@@ -95,7 +95,9 @@ export const getCampaign = async (req, res) => {
         }
       }
 
-      return res.render('index.html', { formattedCampaign, formattedUsers, fileHTML, title, single, roles: [roles.SUPERVISOR, roles.PROSPECTOR], supervisorCount, prospectorCount });
+      const permissionLevel = getPermissionLevel(req.user.role);
+
+      return res.render('index.html', { formattedCampaign, formattedUsers, fileHTML, title, single, roles: [roles.SUPERVISOR, roles.PROSPECTOR], permissionLevel, supervisorCount, prospectorCount });
     } else {
       return res.render('error.html', { error: 404 });
     }

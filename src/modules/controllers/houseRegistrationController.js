@@ -1,7 +1,7 @@
 import models from '../models/index.js';
 import { areas, states } from '../../helpers/enums.js';
 import { Sequelize } from 'sequelize';
-import { validateFieldsDataType, formatDate } from '../../helpers/validators.js';
+import { validateFieldsDataType, getPermissionLevel, formatDate } from '../../helpers/validators.js';
 
 const { HouseRegistration, BlockRegistration, House } = models;
 
@@ -94,7 +94,8 @@ export const getHouseRegistrations = async (req, res) => {
       });
       formattedHouseRegistrations.reverse();
     }
-    return res.render('index.html', { formattedHouseRegistrations, fileHTML, title, breadcrumbs, areas, states });
+    const permissionLevel = getPermissionLevel(req.user.role);
+    return res.render('index.html', { formattedHouseRegistrations, fileHTML, title, breadcrumbs, permissionLevel, areas, states });
 
   } catch (error) {
     console.error(error);
@@ -148,7 +149,8 @@ export const getHouseRegistration = async (req, res) => {
       if (house.state == states.OPEN){
         data.isOpen = true;
       }
-      return res.render('index.html', { formattedHouseRegistrationns: data, fileHTML, areas, states, title, single, breadcrumbs });
+      const permissionLevel = getPermissionLevel(req.user.role);
+      return res.render('index.html', { formattedHouseRegistrationns: data, fileHTML, areas, states, title, single, breadcrumbs, permissionLevel });
     } else {
       return res.render('error.html', { error: 404 });
     }

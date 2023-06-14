@@ -58,7 +58,7 @@ export const updatedAccount = async (req, res) => {
         console.log( req.body );
         let user = await User.update(req.body,{
             where:{
-                id:req.params.userId
+                id: req.user.id
             }
         });
         console.log(user);
