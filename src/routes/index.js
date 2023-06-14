@@ -10,7 +10,6 @@ import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controll
 import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
 import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration, updateTreeRegistration, addProspectus } from '../modules/controllers/treeSpeciesRegistrationController.js'
 import { getProspects, getProspectus, updateProspectus } from '../modules/controllers/prospectusController.js';
-import { getAdmin, getLoginAdmin } from '../modules/controllers/adminController.js';
 import { getAdminUser, addUser, updateUser, deleteUser, getOtherManagers, getAdminUsers } from '../modules/controllers/userController.js';
 import { getAdminCars, getCar, addCar, updateCar } from '../modules/controllers/carController.js';
 import { getAdminTreeSpecies, getAdminTreeSpecie, addTreeSpecies, updateTreeSpecies } from '../modules/controllers/treeSpeciesController.js';
@@ -101,14 +100,6 @@ router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrati
 router.get('/prospects', permissiveActionLinkRole([roles.ANALYST, roles.ADMIN]), getProspects);
 router.get('/prospects/:ProspectusId', permissiveActionLinkRole([roles.ANALYST, roles.ADMIN]), getProspectus);
 router.patch('/prospects/:ProspectusId', permissiveActionLinkRole([roles.ANALYST, roles.ADMIN]), updateProspectus);
-
-// Admin 
-router.get('/loginAdmin', isNotLoggedIn, getLoginAdmin);
-router.post('/loginAdmin', passport.authenticate('localStrategyLoginAdmin', {
-  successRedirect: '/admin',
-  failureRedirect: '/',
-}));
-router.get('/admin', permissiveActionLink(roles.ADMIN), getAdmin);
 
 // Admin Autos
 router.get('/admin-cars', permissiveActionLink(roles.ADMIN), getAdminCars);

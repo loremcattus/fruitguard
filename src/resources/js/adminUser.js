@@ -29,11 +29,14 @@ const licenseCheckboxEdit = document.getElementById('hasLicense');
 const roleSelectEdit = document.getElementById('role');
 const availableInput = document.getElementById('available');
 
+const wasDestroyed = availableInput.checked ? true : false;
 const wasLicense = licenseCheckboxEdit.checked ? true : false;
 
 // Evento de envío del formulario
 formEdit.addEventListener('submit', async (event) => {
   event.preventDefault(); // Evitar el envío del formulario por defecto
+
+  const destroyUser = availableInput.checked ? true : false;
 
   // Obtener los valores de los campos del formulario
   const name = nameInputEdit.value;
@@ -43,15 +46,19 @@ formEdit.addEventListener('submit', async (event) => {
   const role = roleSelectEdit.value;
 
   // TODO: separar rut en run y dvRun
-
-  // Crear el objeto solo con los valores que vengan del formulario
-  const object = {
-    ...(name && { name }),
-    ...(rut && { rut }),
-    ...(email && { email }),
-    ...(wasLicense != hasLicense && { hasLicense }),
-    ...(role && { role }),
-  };
+  let object = {};
+  if (wasDestroyed != destroyUser) {
+    object = { destroyUser };
+  } else {
+    // Crear el objeto solo con los valores que vengan del formulario
+    object = {
+      ...(name && { name }),
+      ...(rut && { rut }),
+      ...(email && { email }),
+      ...(wasLicense != hasLicense && { hasLicense }),
+      ...(role && { role }),
+    };
+  }
 
   if (Object.keys(object).length === 0) {
     showMessage('No hay datos para actualizar', 'error');
@@ -67,7 +74,7 @@ formEdit.addEventListener('submit', async (event) => {
       method: 'PATCH',
       body: JSON.stringify(object),
       headers: {
-        'Content-Type': 'application/json' 
+        'Content-Type': 'application/json'
       }
     })
 

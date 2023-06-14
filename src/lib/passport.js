@@ -64,32 +64,6 @@ export const localStrategyRegister = new LocalStrategy({
   }
 });
 
-export const localStrategyLoginAdmin = new LocalStrategy({
-  usernameField: 'email',
-  passwordField: 'password',
-  passReqToCallback: true
-}, async (req, email, password, done) => {
-  try {
-    const user = await User.findOne({
-      where: { email: email }
-    });
-    // Traer contraseña de base de datos para comparar en matchPassword
-    if (user) {
-      const validPassword = await helpers.matchPassword(password, user.dataValues.password);
-      const validRole = helpers.matchRole(roles.ADMIN, user.dataValues.role);
-      if (validPassword && validRole) {
-        done(null, user);
-      } else {
-        done(null, false);
-      }
-    } else {
-      done(null, false);
-    }
-  } catch (error) {
-    done(error);
-  }
-});
-
 passport.serializeUser((usuario, done) => {
   console.log('Serializando el ID: '+usuario.id);
   done(null, usuario.id);

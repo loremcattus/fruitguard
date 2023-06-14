@@ -121,8 +121,11 @@ export const addUser = async (req, res) => {
       return res.status(409).json({ error: `El valor de run '${run}' ya está registrado` });
     }
 
+
+
     // Crear un nuevo usuario en la base de datos y devolverlo como respuesta
-    const user = await User.create(userData);
+    //const user = await User.create(userData);
+
     return res.status(201).json(user.toJSON());
   } catch (error) {
     console.error('Error al insertar usuario', error);
@@ -139,21 +142,35 @@ export const updateUser = async (req, res) => {
       return res.status(400).json('El cuerpo de la solicitud está vacío.');
     }
 
-    // Filtrar y validar el cuerpo de la solicitud
-    const validatedObject = await validateFieldsDataType(req.body, User);
-    
-    // Comprobar errores de validación
-    if (validatedObject.errors) {
-      return res.status(400).json(validatedFields.errors);
+    if (typeof req.body.destroyUser != 'undefined') {
+      if (req.body.destroyUser) {
+        await User.destroy({
+          where: { id: req.params.UserId }
+        });
+      } else {
+        await User.restore({
+          where: { id: req.params.UserId }
+        });
+      }
+      return res.sendStatus(200);
+    } else {
+      // Filtrar y validar el cuerpo de la solicitud
+      const validatedObject = await validateFieldsDataType(req.body, User);
+      
+      // Comprobar errores de validación
+      if (validatedObject.errors) {
+        return res.status(400).json(validatedFields.errors);
+      }
+  
+      await User.update(req.body, {
+        where: {
+          id: req.params.UserId
+        }
+      });
+  
+      return res.sendStatus(200);
     }
 
-    await User.update(req.body, {
-      where: {
-        id: req.params.UserId
-      }
-    });
-
-    return res.sendStatus(200);
   } catch (error) {
     console.error('Error al actualizar usuario', error);
     return res.status(500).json({ error: 'Ha ocurrido un error al intentar actualizar el usuario' });
@@ -217,4 +234,47 @@ export const getOtherManagers = async (req, res) => {
 
 function formatDataValues(data) {
   return data.map(item => item.dataValues);
+}
+
+//-----------------------------------------------------------
+import nodemailer from 'nodemailer';
+
+function sendCredentials(mail, password){
+  // Configuración del transporte de correo
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: 'jhon.valenzuela.vera@gmail.com',
+      pass: 'qqceuznyzgzjujrs',
+    },
+  });
+
+  // Detalles del correo electrónico  ma.solis@duocuc.cl
+  const mailOptions = {
+    from: 'jhon.valenzuela.vera@gmail.com',
+    to: mail,
+    subject: 'Credenciales cuenta Fruit Guard',
+    text: 'Correo: ' + mail + ' Contraseña: ' + password,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Correo electrónico enviado: ' + info.response);
+    }
+  });
+}
+
+
+function generatePassword() {
+  const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let string = '';
+
+  for (let i = 0; i < 15; i++) {
+    const indice = Math.floor(Math.random() * characters.length);
+    string += characters.charAt(indice);
+  }
+
+  return string;
 }

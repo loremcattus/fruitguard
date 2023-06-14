@@ -10,7 +10,7 @@ import multer from 'multer';
 import sharp from 'sharp';
 import { promises as fsPromises } from 'fs';
 import { router } from './src/routes/index.js';
-import { localStrategyRegister, localStrategyLogin, localStrategyLoginAdmin } from './src/lib/passport.js';
+import { localStrategyRegister, localStrategyLogin } from './src/lib/passport.js';
 
 // Cargar variables de entorno desde el archivo .env
 dotenv.config();
@@ -51,7 +51,6 @@ app.use(passport.session());
 // Configurar la estrategia local de Passport
 passport.use('localStrategyRegister', localStrategyRegister);
 passport.use('localStrategyLogin', localStrategyLogin);
-passport.use('localStrategyLoginAdmin', localStrategyLoginAdmin);
 
 app.use(morgan('dev'));
 app.use(express.urlencoded({extended: false}));//aceptare formatos de string
