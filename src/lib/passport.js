@@ -15,14 +15,16 @@ export const localStrategyLogin = new LocalStrategy({
   passReqToCallback: true
 }, async (req, email, password, done) => {
   try {
-    const user = await User.findOne({
+    const userData = await User.findOne({
       where: { email: email }
     });
     // Traer contraseña de base de datos para comparar en matchPassword
-    if (user) {
-      const validPassword = await helpers.matchPassword(password, user.dataValues.password);
+    if (userData) {
+      const validPassword = await helpers.matchPassword(password, userData.dataValues.password);
       if (validPassword) {
         //Modificar mensaje
+        const user = userData.dataValues;
+        console.log(user);
         console.log("Contraseña correcta");
         done(null, user);
       } else {
@@ -89,12 +91,15 @@ export const localStrategyLoginAdmin = new LocalStrategy({
 });
 
 passport.serializeUser((usuario, done) => {
+  console.log('Serializando el ID: '+usuario.id);
   done(null, usuario.id);
+  console.log('Serialización completada correctamente.');
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await User.findOne({ where: id });
+    const user = await User.findByPk(id);
+    console.log('Deserializando el ID: '+user.dataValues.id);
     done(null, user);
   } catch (error) {
     done(error);

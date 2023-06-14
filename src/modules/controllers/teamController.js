@@ -1,11 +1,6 @@
 import models from '../models/index.js';
 const { UserRegistration, User, Team, Car, Campaign, Focus, Block, BlockRegistration, Sequelize } = models;
 
-// TODO: Obtener el id del supervisor desde la sesión
-const getSupervisorId = async () => {
-  return 7;
-};
-
 const clearTeams = async () => {
   // Obtener el día actual
   const today = new Date().toISOString().slice(0, 10);
@@ -42,7 +37,7 @@ export const getTeams = async (req, res) => {
   try {
     clearTeams();
 
-    const supervisorId = await getSupervisorId();
+    const supervisorId = req.user.id;
 
     const supervisorRegistration = await UserRegistration.findOne({
       attributes: ['id', 'CampaignId'],
@@ -238,9 +233,9 @@ export const getTeam = async (req, res) => {
   }
 }
 
-export const getTasks = async (__, res) => {
+export const getTasks = async (req, res) => {
   try {
-    const supervisorId = await getSupervisorId();
+    const supervisorId = req.user.id;
     const supervisorRegistration = await UserRegistration.findOne({
       attributes: ['CampaignId'],
       where: { UserId: supervisorId }
@@ -376,7 +371,7 @@ export const getCars = async (req, res) => {
 // Listar conductores disponibles
 export const getDrivers = async (req, res) => {
   try {
-    const supervisorId = await getSupervisorId();
+    const supervisorId = req.user.id;
 
     const supervisorRegistration = await UserRegistration.findOne({
       attributes: ['id', 'CampaignId'],
@@ -416,7 +411,7 @@ export const getDrivers = async (req, res) => {
 
 export const getPassengers = async (req, res) => {
   try {
-    const supervisorId = await getSupervisorId();
+    const supervisorId = req.user.id;
 
     const supervisorRegistration = await UserRegistration.findOne({
       attributes: ['id', 'CampaignId'],

@@ -1,12 +1,8 @@
 import { formatDate } from '../../helpers/validators.js';
 import models from '../models/index.js';
+import { roles } from '../../helpers/enums.js';
 
 const { Prospectus, TreeSpeciesRegistration, TreeSpecies, User, HouseRegistration, House, BlockRegistration, Focus } = models;
-
-// TODO: Obtener el id del supervisor desde la sesión
-const getAnalystId = async () => {
-  return 4;
-};
 
 export const getProspects = async (req, res) => {
   const fileHTML = 'list-prospects';
@@ -98,7 +94,19 @@ export const updateProspectus = async (req, res) => {
   const id = parseInt(req.params.ProspectusId);
   try {
     let { weight, hasFly } = req.body;
-    const analyst = await getAnalystId();
+
+    // const user = await User.findByPk({
+    //   attributes: ['role'],
+    //   where: {
+    //     id: req.user.id
+    //   }
+    // });
+
+    // if (user.dataValues.role != roles.ANALYST) return res.sen;
+
+    const analyst = req.user.id;
+
+    
 
     weight = weight ? parseInt(weight) : false;
 

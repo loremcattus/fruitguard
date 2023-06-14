@@ -1,5 +1,7 @@
+import { roles } from '../../helpers/enums.js';
+import { getPermissionLevel } from '../../helpers/validators.js';
 import models from '../models/index.js';
-const { User } = models;
+const { User, UserRegistration } = models;
 
 export const getLogin = async (req, res) => {
   const fileHTML = 'login';
@@ -43,5 +45,29 @@ export const resetPassword = async (req, res) => {
 export const getHome = async (req, res) => {
   const fileHTML = 'home';
   const title = 'Inicio';
-  return res.render('index.html', { fileHTML, title });
+
+  const permissionLevel = getPermissionLevel(req.user.role);
+  const userId = req.user.id;
+
+  let CampaignId = 0;
+  if (permissionLevel == 2) {
+    const userCampaign = await UserRegistration.findOne({
+      attributes: ['CampaignId'],
+      where: { UserId: userId },
+      raw: true
+    });
+    CampaignId = userCampaign.CampaignId;
+  }
+
+  let TeamId = 0;
+  if (permissionLevel == 1) {
+    const userTeam = await UserRegistration.findOne({
+      attributes: ['TeamId'],
+      where: { UserId: userId },
+      raw: true
+    });
+    TeamId = userTeam.TeamId;
+  }
+
+  return res.render('index.html', { fileHTML, title, roles, permissionLevel, CampaignId, TeamId });
 };

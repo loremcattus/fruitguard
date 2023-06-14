@@ -5,8 +5,41 @@
     <hr>
     <h1>¡Bienvenido!</h1>
     <div class="home-options">
-        <a href="" class="button-green-default">Ver campañas</a>
-        <a href="" class="button-green-default">Asignar trabajo</a>
+
+        <% if (permissionLevel == 4) { %> <!-- ADMIN -->
+            <a href="/admin-cars" class="button-green-default">Administrar autos</a>
+            <a href="/admin-users" class="button-green-default">Administrar usuarios</a>
+        <% } %>
+
+        <% if (permissionLevel >= 3) { %> <!-- ADMIN - MANAGER -->
+            <a href="/campaigns" class="button-green-default">Ver campañas</a>
+        <% } %>
+
+        <% if (permissionLevel >= 2) { %> <!-- ADMIN - MANAGER - SUPERVISOR -->
+            <a href="/admin-tree-species" class="button-green-default">Especies de árbol</a>
+        <% } %>
+
+        <% if (permissionLevel == 2) { %> <!-- SUPERVISOR -->
+            <% if (CampaignId) { %>
+                <a href="/campaigns/<%= CampaignId %>" class="button-green-default">Ver campaña</a>
+                <a href="/teams" class="button-green-default">Asignar trabajo</a>
+            <% } else { %>
+                <p>No estas asignado a ninguna campaña</p>
+            <% } %>
+        <% } %>
+
+        <% if (permissionLevel == 1) { %> <!-- PROSPECTOR -->
+            <% if (TeamId) { %>
+                <a href="/teams/<%= TeamId %>" class="button-green-default">Ver equipo</a>
+            <% } else { %>
+                <p>No tienes trabajo asignado</p>
+            <% } %>
+        <% } %>
+
+        <% if (permissionLevel == 0 || permissionLevel == 4) { %> <!-- ADMIN - ANALYST -->
+            <a href="/prospects" class="button-green-default">Buscar prospecto</a>
+        <% } %>
+
     </div>
 </main>
 <div id="message" class="alert" role="alert"></div>

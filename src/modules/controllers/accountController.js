@@ -9,8 +9,10 @@ export const getAccount = async (req,res) => {
     const title = 'Mi perfil';
     const single = true;
 
+    const userId = req.user.id;
+
     try{
-        const user = await User.findByPk(req.params.userId,{
+        const user = await User.findByPk(userId,{
             attributes:['id',
                     'name',
                     'run',
