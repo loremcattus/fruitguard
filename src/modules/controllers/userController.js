@@ -121,6 +121,9 @@ export const addUser = async (req, res) => {
       return res.status(409).json({ error: `El valor de run '${run}' ya está registrado` });
     }
 
+    // Enviar credenciales a usuario
+    sendCredentials(userData.name, userData.email, userData.password);
+
     userData.password = await helpers.encryptPassword(userData.password);
 
     // Crear un nuevo usuario en la base de datos y devolverlo como respuesta
@@ -239,7 +242,7 @@ function formatDataValues(data) {
 //-----------------------------------------------------------
 import nodemailer from 'nodemailer';
 
-function sendCredentials(mail, password){
+function sendCredentials(name, mail, password){
   // Configuración del transporte de correo
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -249,12 +252,28 @@ function sendCredentials(mail, password){
     },
   });
 
-  // Detalles del correo electrónico  ma.solis@duocuc.cl
+  // Detalles del correo electrónico
   const mailOptions = {
     from: 'jhon.valenzuela.vera@gmail.com',
     to: mail,
-    subject: 'Credenciales cuenta Fruit Guard',
-    text: 'Correo: ' + mail + ' Contraseña: ' + password,
+    subject: 'Credenciales Fruit Guard - Acceso a la aplicación del SAG',
+    html: `
+    <p>Estimado/a ` + name + `,</p>
+    <p>¡Bienvenido/a a Fruit Guard! Sus credenciales de acceso a la aplicación del SAG son:</p>
+    <p>Correo electrónico: ` + mail + `</p>
+    <p>Contraseña: ` + password + `</p>
+    <p>Inicie sesión con estas credenciales y aproveche todas las funcionalidades de la aplicación. Si necesita ayuda, contáctenos. ¡Gracias por unirse a Fruit Guard!</p>
+    <p>Atentamente</p>
+    <p>Equipo de Fruit Guard</p>
+    <img src="cid:imagen1">
+  `,
+    attachments: [
+      {
+        filename: 'Sag-footer.jpg',
+        path: 'src/resources/images/Sag-footer.jpg',
+        cid: 'imagen1',
+      },
+    ],
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
