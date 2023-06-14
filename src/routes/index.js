@@ -5,7 +5,7 @@ import { isLoggedIn, isNotLoggedIn, permissiveActionLink, permissiveActionLinkRo
 import { getLogin, getRegister, resetPassword, getHome } from '../modules/controllers/loginController.js'
 import { getTeams, getTeam, addTeam, deleteTeam, getCars, getDrivers, getPassengers, getTasks } from '../modules/controllers/teamController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign, generateReport } from '../modules/controllers/campaignController.js';
-import { getBlocks, getBlock, addBlock, updateBlock } from '../modules/controllers/blockRegistrationController.js';
+import { getBlocks, getBlock, addBlock, updateBlock, generateBlockRegistrationReport } from '../modules/controllers/blockRegistrationController.js';
 import { getFocuses, getFocus, addFocus, updateFocus } from '../modules/controllers/focusController.js';
 import { addHouseRegistration, getHouseRegistrations, getHouseRegistration, updateHouseRegistration } from '../modules/controllers/houseRegistrationController.js';
 import { getTreeSpeciesRegistrations, getTreeRegistration, addTreeSpeciesRegistration, updateTreeRegistration, addProspectus } from '../modules/controllers/treeSpeciesRegistrationController.js'
@@ -82,6 +82,7 @@ router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks', permissiveActionLin
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId', permissiveActionLink(roles.PROSPECTOR), getBlock);
 router.post('/api/campaigns/:CampaignId/focuses/:FocusId/blocks', permissiveActionLink(roles.SUPERVISOR), addBlock);
 router.patch('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId', permissiveActionLink(roles.SUPERVISOR), updateBlock);
+router.get('/api/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId', permissiveActionLink(roles.PROSPECTOR), generateBlockRegistrationReport);
 
 // Registro de casas
 router.get('/campaigns/:CampaignId/focuses/:FocusId/blocks/:BlockRegistrationId/houses', permissiveActionLink(roles.PROSPECTOR), getHouseRegistrations);
