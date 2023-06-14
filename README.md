@@ -14,28 +14,28 @@ Esta aplicación abarca durante todo el ciclo de vida del proceso de muestreo de
 
 1. Descargar XAMPP
 2. Instalar XAMPP
-    + Seleccionar MySql y phpMyAdmin
+    + Seleccionar MySQL y phpMyAdmin
 3. Abrir panel de control de XAMPP
-3. Iniciar MySql y phpMyAdmin
+3. Iniciar MySQL y phpMyAdmin
 
 ## Configuración del entorno de desarrollo
 
 Dentro de la raíz del proyecto iniciar cmd y ejecutar los siguientes comandos:
 + ### Instalar dependencias
 ```
-.\node\npm i
+.\node\npm i --production
 ```
 + ### Crear y poblar base de datos
 ```
-.\node\npm run database
+.\node\npm run setup
 ```
 
 # Manual de uso
 
 ## Visualizar base de datos
 
-1. Desde el panel de control de XAMPP clickear en Admin de MySql.
-2. Seleccionar la base de datos fly_db.
+1. Desde el panel de control de XAMPP clickear en Admin de MySQL.
+2. Seleccionar la base de datos.
 3. Desde aquí podras visualizar las distintas tablas con sus respectivos datos.
 
 # Autores
