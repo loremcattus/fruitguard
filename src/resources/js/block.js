@@ -172,4 +172,91 @@ addStreetButton.addEventListener('click', () => {
   }
 });
 
+// GENERATE REPORT
 
+// 1. Escucha el evento de clic en tu botón
+const generateReportButton = document.getElementById('generateReport');
+generateReportButton.addEventListener('click', fetchDataAndDownloadExcel);
+const currentRoute = window.location.pathname;
+
+function fetchDataAndDownloadExcel() {
+  fetch(`/api${currentRoute}`)
+    .then(response => response.json())
+    .then(data => {
+      // Convierte el JSON en un formato de tabla de Excel XLSX
+      const workbook = convertJsonToXlsx(data);
+
+      // Crea un archivo XLSX
+      const excelBuffer = window.XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `datos.xlsx`;
+
+      link.click();
+      window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+      console.error('Error al obtener los datos:', error);
+    });
+}
+
+// Asegúrate de que la librería SheetJS esté cargada antes de ejecutar este código
+function convertJsonToXlsx(jsonData) {
+  const workbook = XLSX.utils.book_new();
+  const sheetData = [];
+
+  const additionalProperties = [];
+
+  for (const key in jsonData) {
+    if (jsonData.hasOwnProperty(key) && key !== "formattedHouses") {
+      additionalProperties.push({ key, value: jsonData[key] });
+    }
+  }
+
+  if (additionalProperties.length > 0) {
+    for (const property of additionalProperties) {
+      sheetData.push([property.key, property.value]);
+    }
+    sheetData.push([]); // Agregar una fila vacía para separar las propiedades adicionales de los datos de las casas
+  }
+
+  const headerRow = ["Area", "Dirección", "Estado"];
+  const treeSpeciesSet = new Set();
+
+  for (const house of jsonData.formattedHouses) {
+    for (const species of house.treeSpecies) {
+      treeSpeciesSet.add(species.species);
+    }
+  }
+
+  const treeSpeciesArray = Array.from(treeSpeciesSet);
+  headerRow.push(...treeSpeciesArray);
+  sheetData.push(headerRow);
+
+  for (const house of jsonData.formattedHouses) {
+    const rowData = [
+      house.area,
+      house.address,
+      house.state
+    ];
+
+    const treeSpecies = {};
+
+    for (const species of house.treeSpecies) {
+      treeSpecies[species.species] = species.treeState;
+    }
+
+    for (const species of treeSpeciesArray) {
+      rowData.push(treeSpecies[species] || "");
+    }
+
+    sheetData.push(rowData);
+  }
+
+  const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+  return workbook;
+}

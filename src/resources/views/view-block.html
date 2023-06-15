@@ -61,9 +61,10 @@
     </form>
         <hr>
         <div class="buttons-options">
-            <button type="submit" class="button-green-default option-button">GENERAR INFORME</button>
+            <button id="generateReport" class="button-green-default option-button">GENERAR INFORME</button>
             <a href="<%= formattedBlock.id %>/houses" class="button-green-default option-button">VER CASAS</a>
         </div>
 </main>
 <div id="message" class="alert" role="alert"></div>
+<script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
 <script src="/js/block.js" type="module"></script>
