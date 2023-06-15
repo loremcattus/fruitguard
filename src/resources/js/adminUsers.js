@@ -77,7 +77,9 @@ formAdd.addEventListener('submit', async (event) => {
         location.reload();
   
       } else if (response.status === 409) {
-        return showMessage('El rut ya está registrado', 'error');
+        return showMessage('El rut o correo ya está registrado', 'error');
+      } else if (response.status === 400) {
+        return showMessage('El rut es inválido', 'error');
       } else {
         throw new Error('Error al enviar el formulario');
       }

@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import { roles } from '../../helpers/enums.js';
 import { getPermissionLevel } from '../../helpers/validators.js';
@@ -8,12 +9,6 @@ const { User, UserRegistration } = models;
 export const getLogin = async (req, res) => {
   const fileHTML = 'login';
   const title = 'Iniciar Sesión';
-  return res.render('not-logged.html', { fileHTML, title });
-}
-
-export const getRegister = async (req, res) => {
-  const fileHTML = 'register';
-  const title = 'Registrarse';
   return res.render('not-logged.html', { fileHTML, title });
 }
 
@@ -35,12 +30,6 @@ export const resetPassword = async (req, res) => {
 
     const password = await helpers.encryptPassword(newPassword);
 
-    // Crear un nuevo usuario en la base de datos y devolverlo como respuesta
-    // 1. Enviar correo con nueva contraseña...
-    // 2. Encriptar nueva contraseña
-
-    // La actualización de la contraseña tal vez se podría realizar cuando ponga confirmar en su correo,
-    // en ese caso se tendría que encriptar y actualizar con otro endpoint que reciba el string desde el correo
     await user.update({password});
 
     return res.sendStatus(200);
@@ -85,23 +74,27 @@ export const getHome = async (req, res) => {
 };
 
 function sendResetPassword(name, mail, password){
+  dotenv.config();
+
+  const {
+    NODEMAILER_EMAIL: user,
+    NODEMAILER_API_KEY: pass,
+  } = process.env;
+
   // Configuración del transporte de correo
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
-    auth: {
-      user: 'jhon.valenzuela.vera@gmail.com',
-      pass: 'qqceuznyzgzjujrs',
-    },
+    auth: { user, pass },
   });
 
   // Detalles del correo electrónico
   const mailOptions = {
-    from: 'jhon.valenzuela.vera@gmail.com',
+    from: user,
     to: mail,
     subject: 'Recuperación de contraseña para Fruitguard - Acceso a la aplicación del SAG',
     html: `
     <p>Estimado/a ` + name + `,</p>
-    <p>Recibimos tu solicitud de recuperación de contraseña para Fruitguard del Servicio Agrícola Ganadero. Hemos generado una nueva contraseña para tu cuenta: </p>
+    <p>Recibimos tu solicitud de recuperación de contraseña para Fruitguard del Servicio Agrícola y Ganadero. Hemos generado una nueva contraseña para tu cuenta: </p>
     <p>Contraseña: ` + password + `</p>
     <p>Te recomendamos iniciar sesión lo antes posible utilizando estos datos y cambiar la contraseña temporal por una de tu elección.</p>
     <p>Si necesitas ayuda, no dudes en contactarnos.</p>

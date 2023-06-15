@@ -61,6 +61,8 @@ formAdd.addEventListener('submit', async (event) => {
       if (response.status === 201) {
         localStorage.setItem('message', 'Especie de árbol creada correctamente');
         location.reload();
+      } else if (response.status === 409) {
+        return showMessage('La especie de árbol ya existe', 'error');
       } else {
         throw new Error('Error al enviar el formulario');
       }

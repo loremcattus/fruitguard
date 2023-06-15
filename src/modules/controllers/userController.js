@@ -1,9 +1,9 @@
+import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import models from '../models/index.js';
 import { validateRequestBody, validateFieldsDataType, validateRUT, formatDate } from '../../helpers/validators.js';
 import { roles } from '../../helpers/enums.js';
 import helpers from '../../lib/helpers.js';
-
 
 const { User, force, Sequelize } = models;
 
@@ -118,9 +118,11 @@ export const addUser = async (req, res) => {
     }
 
     // Comprobar si el rut ya existe en la base de datos
-    const existingUser = await User.count({ where: { run }, paranoid: false });
-    if (existingUser) {
+    if (await User.count({ where: { run }, paranoid: false })) {
       return res.status(409).json({ error: `El valor de run '${run}' ya está registrado` });
+    }
+    if (await User.count({ where: { email }, paranoid: false })) {
+      return res.status(409).json({ error: `El valor de email '${email}' ya está registrado` });
     }
 
     // Enviar credenciales a usuario
@@ -242,18 +244,22 @@ function formatDataValues(data) {
 }
 
 function sendCredentials(name, mail, password){
+  dotenv.config();
+
+  const {
+    NODEMAILER_EMAIL: user,
+    NODEMAILER_API_KEY: pass,
+  } = process.env;
+
   // Configuración del transporte de correo
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
-    auth: {
-      user: 'jhon.valenzuela.vera@gmail.com',
-      pass: 'qqceuznyzgzjujrs',
-    },
+    auth: { user, pass },
   });
 
   // Detalles del correo electrónico
   const mailOptions = {
-    from: 'jhon.valenzuela.vera@gmail.com',
+    from: user,
     to: mail,
     subject: 'Credenciales Fruit Guard - Acceso a la aplicación del SAG',
     html: `

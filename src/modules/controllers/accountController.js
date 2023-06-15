@@ -1,5 +1,6 @@
 import { formatDate, validateFieldsDataType } from "../../helpers/validators.js";
 import models from "../models/index.js";
+import helpers from '../../lib/helpers.js';
 
 const { User } = models;
 
@@ -55,7 +56,10 @@ export const updatedAccount = async (req, res) => {
         if(validatedFields.errors){
             return res.status(400).json(validatedFields.errors);
         }
-        console.log( req.body );
+        // 
+
+        req.body.password = await helpers.encryptPassword(req.body.password); 
+
         let user = await User.update(req.body,{
             where:{
                 id: req.user.id

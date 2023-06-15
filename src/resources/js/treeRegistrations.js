@@ -72,11 +72,11 @@ formAdd.addEventListener('submit', async (event) => {
 
       // Crear un nuevo elemento de campaña con los datos recibidos
       const newTreeElement = document.createElement('a');
-      newTreeElement.href = `trees/${data.houseRegistrationId}`;
+      newTreeElement.href = `trees/${data.idTreeSpeciesRegistration}`;
       newTreeElement.insertAdjacentHTML('beforeend', `
 			<div class="card-left-side">
-				<p class="card-left-side-top">${data.species}</p>
-				<p class="card-left-side-bottom">${data.tree_state}</p>
+				<p class="card-left-side-top">${data.species.charAt(0).toUpperCase() + data.species.slice(1).toLowerCase()}</p>
+				<p class="card-left-side-bottom">${data.tree_state.charAt(0).toUpperCase() + data.tree_state.slice(1).toLowerCase()}</p>
 			</div>
       `);
 

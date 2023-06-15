@@ -380,7 +380,7 @@ input[type="checkbox" i]:checked {
 .alert {
   position: fixed;
   border-radius: 8px;
-  top: 5vh;
+  top: 6rem;
   left: 5vw;
   right: 5vw;
   padding: 10px;
@@ -499,4 +499,11 @@ input[type="checkbox" i]:checked {
 /* ADMIN VIEWS */
 .custom-section-title {
   margin-bottom: 0.5rem;
+}
+.rut-info {
+  width: 100%;
+  font-size: 0.8rem;
+  color: #747474;
+  margin: 0 0;
+  margin-bottom: 0.2rem;
 }

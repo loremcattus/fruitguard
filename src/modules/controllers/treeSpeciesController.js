@@ -68,6 +68,12 @@ export const addTreeSpecies = async (req, res) => {
     if (!validatedObject.success) {
       return res.status(400).json(validatedObject.error);
     }
+
+    const { species } = req.body;
+    if (await TreeSpecies.count({ where: { species } })) {
+      return res.status(409).json({ error: `La especie '${species}' ya está registrada` });
+    }
+
     // Crear en la base de datos y devolverla como respuesta
     const treeSpecies = await TreeSpecies.create(req.body);
     return res.status(201).json(treeSpecies.toJSON());

@@ -232,11 +232,13 @@ async function fetchTasks() {
   try {
     const response = await fetch('/tasks');
     if (!response.ok) {
+      if (response.status == 404) throw new Error('No hay manzanas por muestrear o registradas en el foco');
       throw new Error('Error al obtener las tareas');
     }
     return await response.json();
   } catch (error) {
     console.error(error);
+    showMessage(error, 'error');
     return false;
     // Manejar el error adecuadamente
   }

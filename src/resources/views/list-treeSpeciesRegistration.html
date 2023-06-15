@@ -3,7 +3,8 @@
         <a href="/home">Inicio</a>
         <% if (permissionLevel >= 3) { %>
             <a href="/campaigns/">Listar campañas</a>
-        <% } else if (permissionLevel >= 2) { %>
+        <% } %>
+        <% if (permissionLevel >= 2) { %>
             <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
             <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
             <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>
@@ -81,7 +82,7 @@
             <hr>
             <div class="bottom-crud">
                 <button type="reset" class="button-40">Cancelar</button>
-                <button type="submit" class="button-green-default button-60">Añadir casa</button>
+                <button type="submit" class="button-green-default button-60">Añadir especie de árbol</button>
             </div>
         </form>
     </div>

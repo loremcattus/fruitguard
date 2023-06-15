@@ -54,7 +54,9 @@
     </form>
     <hr>
     <div class="buttons-options">
-        <button type="button" id="deleteTeam" class="button-green-default option-button">Disolver equipo</button>
+        <% if (permissionLevel >= 2) { %>
+            <button type="button" id="deleteTeam" class="button-green-default option-button">Disolver equipo</button>
+        <% } %>
     </div>
 </main>
 

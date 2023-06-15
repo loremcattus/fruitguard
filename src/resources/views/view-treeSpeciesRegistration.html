@@ -3,7 +3,8 @@
         <a href="/home">Inicio</a>
         <% if (permissionLevel >= 3) { %>
             <a href="/campaigns/">Listar campañas</a>
-        <% } else if (permissionLevel >= 2) { %>
+        <% } %>
+        <% if (permissionLevel >= 2) { %>
             <a href="/campaigns/<%= breadcrumbs.CampaignId %>">Ver campaña</a>
             <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses">Listar focos</a>
             <a href="/campaigns/<%= breadcrumbs.CampaignId %>/focuses/<%= breadcrumbs.FocusId %>">Ver foco</a>

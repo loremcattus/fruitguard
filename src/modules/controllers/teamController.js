@@ -1,3 +1,4 @@
+import { getPermissionLevel } from '../../helpers/validators.js';
 import models from '../models/index.js';
 const { UserRegistration, User, Team, Car, Campaign, Focus, Block, BlockRegistration, Sequelize } = models;
 
@@ -226,7 +227,9 @@ export const getTeam = async (req, res) => {
       blocks,
     }
 
-    return res.render('index.html', { formattedTeam, fileHTML, title, single });
+    const permissionLevel = getPermissionLevel(req.user.role);
+
+    return res.render('index.html', { formattedTeam, fileHTML, title, single, permissionLevel });
   } catch (error) {
     console.error('Error al obtener equipo: ', error);
     return res.sendStatus(500);

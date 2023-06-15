@@ -9,8 +9,9 @@
         <form id="registerPost">
             <input class="full" required type="email" id="email" placeholder="Correo electrónico">
             <input class="full" required type="text" id="name" placeholder="Nombre completo">
-            <input oninput="validateRut()" name="rut" class="full" required type="text" id="rut" placeholder="RUT">
-            <select  class="half" id="role">
+            <input name="rut" class="full" required type="text" id="rut" placeholder="RUT">
+            <p class="rut-info">Formato: XXXXXXXX-X</p>
+            <select required class="half" id="role">
                 <option disabled value="" selected>Rol</option>
                 <% Object.keys(roles).forEach(function(key) { %>
                     <option value="<%= roles[key] %>"><%= roles[key] %></option>

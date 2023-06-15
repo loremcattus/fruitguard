@@ -2,7 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import { roles } from '../helpers/enums.js';
 import { isLoggedIn, isNotLoggedIn, permissiveActionLink, permissiveActionLinkRole } from '../lib/auth.js';
-import { getLogin, getRegister, resetPassword, getHome } from '../modules/controllers/loginController.js'
+import { getLogin, resetPassword, getHome } from '../modules/controllers/loginController.js'
 import { getTeams, getTeam, addTeam, deleteTeam, getCars, getDrivers, getPassengers, getTasks } from '../modules/controllers/teamController.js';
 import { getCampaigns, getCampaign, addCampaign, updateCampaign, deleteUserFromCampaign, getNonCampaignUsers, addUsersToCampaign, generateReport } from '../modules/controllers/campaignController.js';
 import { getBlocks, getBlock, addBlock, updateBlock, generateBlockRegistrationReport } from '../modules/controllers/blockRegistrationController.js';
@@ -31,13 +31,6 @@ router.get('/logout', function (req, res, next) {
       res.redirect('/');
     });
   });
-
-// Registrarse
-router.get('/register', isNotLoggedIn, getRegister);
-router.post('/register', passport.authenticate('localStrategyRegister', {
-  successRedirect: '/',
-  failureRedirect: '/',
-}));
 
 // Cuenta
 router.get('/account', isLoggedIn, getAccount);

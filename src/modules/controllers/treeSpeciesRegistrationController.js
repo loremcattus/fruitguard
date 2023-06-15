@@ -211,13 +211,13 @@ export const addTreeSpeciesRegistration = async (req, res) => {
 
     if (created || !(await houseRegistration.hasTreeSpecies(treeSpecies))) {
 
-      const idTreeSpeciesRegistration = treeSpecies.id;
       const species  = treeSpecies.species;
       const tree_state = req.body.treeState;
       const tree_number = req.body.numberTrees;
 
       if (species && tree_state && tree_number) {
-        await houseRegistration.addTreeSpecies(treeSpecies, {through:{ species, tree_state, tree_number }});
+        const treeSpecieRegistration = await houseRegistration.addTreeSpecies(treeSpecies, {through:{ species, tree_state, tree_number }});
+        const idTreeSpeciesRegistration = treeSpecieRegistration[0].dataValues.id;
         let formatedTreeSpeciesRegistration = { idTreeSpeciesRegistration, species, tree_state, tree_number, houseRegistrationId }
         return res.status(201).json(formatedTreeSpeciesRegistration);
       } else {
