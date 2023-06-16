@@ -22,6 +22,7 @@ Requiere Windows 10 u 11
     + Seleccionar MySQL y phpMyAdmin
 
 ![INSTALLER](https://docs.cs-cart.com/latest/_images/step7.png)
+
 3. Abrir panel de control de XAMPP
 4. Iniciar MySQL y Apache
 ![START](https://wpblogx.com/wp-content/uploads/2017/12/XAMPP-control-panel-start-Apache-and-mysql.jpg)
