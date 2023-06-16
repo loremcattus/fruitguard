@@ -38,13 +38,17 @@ Dentro de la raíz del proyecto iniciar cmd y ejecutar los siguientes comandos:
 + ### Instalar dependencias
 
 ```
-.\node\npm i --production
+npm i
 ```
 + ### Crear y poblar base de datos
 
 ```
-.\node\npm run setup
+npm run setup
 ```
+
+## Configurar variables de entorno
+
+Las variables de entorno están definidas en el archivo .env.sample, estas se deben configurar según los comentarios dentro de este archivo, en un nuevo archivo .env
 
 ## Creación de carpeta para evidencias
 
