@@ -102,11 +102,17 @@ export const updateCar = async (req, res) => {
     if (Object.keys(req.body).length === 0) {
       return res.status(400).json('El cuerpo de la solicitud está vacío.');
     }
+    
+    const { patent, available } = req.body;
+    
+    let { capacity } = req.body;
+    capacity = capacity ? parseInt(capacity) : '';
 
-    const { capacity, patent, available } = req.body;
-    const capacityToInt = parseInt(capacity);
-
-    const carData = {capacity: capacityToInt, patent, available};
+    const carData = {
+      ...(capacity && { capacity }),
+      ...(patent && { patent }),
+      ...(available != undefined && { available }),      
+    };
 
     await Car.update(carData, {
       where: {
