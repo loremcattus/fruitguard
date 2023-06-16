@@ -20,6 +20,7 @@ Requiere Windows 10 u 11
 ![DOWNLOAD](https://wdb24.com/wp-content/uploads/2014/12/download-xampp-windows.png)
 2. Instalar XAMPP
     + Seleccionar MySQL y phpMyAdmin
+
 ![INSTALLER](https://docs.cs-cart.com/latest/_images/step7.png)
 3. Abrir panel de control de XAMPP
 4. Iniciar MySQL y Apache
@@ -39,7 +40,11 @@ Dentro de la raíz del proyecto iniciar cmd y ejecutar los siguientes comandos:
 
 ## Creación de carpeta para evidencias
 
-Para guardar las evidencias de los registros de especie de árbol es necesario crear la carpeta evidence dentro de data, quedando de la siguiente forma: data\evidence
+Para guardar las evidencias de los 
+registros de especie de árbol es 
+necesario crear la carpeta evidence
+dentro de data, quedando de la siguiente
+forma: data\evidence 
 
 # Autores
 
