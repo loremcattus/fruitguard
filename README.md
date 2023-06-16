@@ -16,7 +16,7 @@ Esta aplicación abarca durante todo el ciclo de vida del proceso de muestreo de
 2. Instalar XAMPP
     + Seleccionar MySQL y phpMyAdmin
 3. Abrir panel de control de XAMPP
-3. Iniciar MySQL y phpMyAdmin
+3. Iniciar MySQL y Apache
 
 ## Configuración del entorno de desarrollo
 
@@ -36,7 +36,7 @@ Dentro de la raíz del proyecto iniciar cmd y ejecutar los siguientes comandos:
 
 1. Desde el panel de control de XAMPP clickear en Admin de MySQL.
 2. Seleccionar la base de datos.
-3. Desde aquí podras visualizar las distintas tablas con sus respectivos datos.
+3. Desde aquí podrás visualizar las distintas tablas con sus respectivos datos.
 
 # Autores
 

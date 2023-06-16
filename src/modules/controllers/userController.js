@@ -168,7 +168,14 @@ export const updateUser = async (req, res) => {
       if (validatedObject.errors) {
         return res.status(400).json(validatedFields.errors);
       }
-  
+
+      if(req.body.rut){
+        const { run, dvRun } = helpers.separarRut(req.body.rut);
+        req.body.run = run;
+        req.body.dvRun = dvRun;
+        delete req.body.rut;
+      }
+
       await User.update(req.body, {
         where: {
           id: req.params.UserId
