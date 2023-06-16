@@ -14,7 +14,6 @@ const formAdd = document.getElementById('addPost');
 const regionsSelectAdd = document.getElementById('regionAdd');
 const communesSelectAdd = document.getElementById('communeAdd');
 const nameInputAdd = document.getElementById('nameAdd');
-const fileInputAdd = document.getElementById('file-upload');
 
 // Evento de envío del formulario
 formAdd.addEventListener('submit', async (event) => {
@@ -31,7 +30,6 @@ formAdd.addEventListener('submit', async (event) => {
     const region = regionsSelectAdd.value;
     const commune = communesSelectAdd.value;
     const name = nameInputAdd.value;
-    const file = fileInputAdd.files[0];
     const managerId = 2;
 
     // Crear el objeto con los valores del formulario
@@ -39,7 +37,6 @@ formAdd.addEventListener('submit', async (event) => {
       region,
       commune,
       name,
-      file,
       managerId
     };
 

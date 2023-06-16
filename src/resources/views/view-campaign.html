@@ -51,7 +51,7 @@
             </div>
         </div>
         <div class="item-post">
-            <p class="key-post">Region</p>
+            <p class="key-post">Región</p>
             <div class="value-post">
                 <p><%= formattedCampaign.region %></p>
                 <select class="region-select" id="region" style="display: none;">
@@ -68,16 +68,6 @@
                 </select>
             </div>
         </div>
-        <!-- <div class="item-post">
-            <p class="key-post">Mapa de la zona</p>
-            <div class="value-post">
-                <p><a href=""><%= // formattedCampaign.mapId ? 'Mapa de'+formattedCampaign.commune : 'No hay mapa asignado' %></a></p>
-                <label class="green-url-default" id="file-label" style="display: none;">
-                    Añadir mapa de la zona
-                    <input type="file" id="file-upload">
-                </label>
-            </div>
-        </div> -->
         <% if (permissionLevel >= 3) { %>
             <hr>
             <button id="edit" class="button-green-default button-60">Editar</button>
