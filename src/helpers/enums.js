@@ -23,7 +23,7 @@ export const treeStates = {
   RIPE: 'fruta madura',
   UNRIPE: 'fruta verde',
   FRUITLESS: 'sin fruta',
-  SAPLING: 'arból nuevo'
+  SAPLING: 'árbol nuevo'
 };
 
 export const permissionLevel = {
